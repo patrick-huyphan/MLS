@@ -28,3 +28,5 @@ if __name__ == "__main__":
 	print(" patterns: "+ str(patterns))
 	rules = fpg.generate_association_rules(patterns, 0.7)
 	print(" rules: " + str(rules))
+	
+	ior.read2Matrix("C:\Users\patrick_huy\OneDrive\Documents\long prj\FPC\_DataSets\mushroom.dat")
