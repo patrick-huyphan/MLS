@@ -1,23 +1,35 @@
 #!/usr/bin/python
 # MLS
+
+def buildBitString(a)
+	return b
+
+def intersec(a, b):
+
+	return c
+	
+def isSub(a, b):
+	return c
+	
 def addZ(PA,z):
 	for x in PA:
 		if x:
 		
 	return PA
 
-def fft(PA,PB):
+	
+def batchMerge(PA,PB):
 	for x in PA:
 		for y in PB:
-			q = x|y		
+			q = intersec(x,y)		
 			if(q):
-				if(x in q): s1= -1
-				if(y in q): s2= -1
+				if(isSub(x,q)): s1= -1
+				if(isSub(y,q)): s2= -1
 				for z in M:
-					if(z in q):
+					if(isSub(z,q)):
 						y=x
 						break
-					if(q in z):
+					if(isSub(q,z)):
 						flag = 1
 						break
 			else:

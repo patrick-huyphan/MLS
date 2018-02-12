@@ -13,6 +13,25 @@ def readFile(fileName):
 		print(line)
 	f.close()
 
+def read2RawData(fileName, maxrow):
+	f = open(fileName, 'r')
+	mat = []
+	count = 0
+	for line in f:
+		#print("MAX in line: "+str(max))
+		llist = []
+		for s in line.split():
+			llist.append(s)
+			#print(s)
+		#print(llist)
+		mat.append(llist)
+		count= count + 1
+		if(maxrow>0):
+			if(count>maxrow):
+				break
+	f.close()
+	return mat
+	
 def read2Matrix(fileName):
 	f = open(fileName, 'r')
 	max = 0
