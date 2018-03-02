@@ -4,9 +4,9 @@
 import numpy as np
 
 def run(name):
-	print("hello" +name)
+    print("hello" +name)
 
-	
+    
 '''
  *
  * @author patrick_huy update in X update in rho theta
@@ -20,8 +20,11 @@ def run(name):
  * fx: ||A - X||, cost of node, min of sum square b.w node X to control node A. A is inference centroid node. if Ai == Aj, Xi and Xj has same centroid and in same cluster.
  * gx: lambda wij||Xi - Xj||, cost of edge, the edge cost is a sum of norms of differences of the adjacent edge variables
  * h:  lambda2 u||X|| for sparse data
- * 
+ *
+ * should design matrix data and vector (row and column of matrix)to easy process with sparse data: <<indexR, indexC>, value>
 '''
+
+def init():
 
 def initU():
 
@@ -58,56 +61,62 @@ def getPresentMat():
  * @param _e2
  * @throws IOException
 '''
-def SCC()
+def SCC():
+    init()
     V0 = []
     U0 = []
     U = initU()
     V = initV()
     while(loop< maxloop):
-		X = X0
-		U = U0
-		V = V0
-		for (int i = 0; i < numberOfVertices; i++):
-			D = calcD(i, V, U)
-			updateX(i, D) 
-		}
-		V = updateV(V, U)
-		U = updateU(U, V)
-		
-		if (checkStop(X0, U0, V0, V) && (loop > 1)):
-		{
-			print(" SCC STOP at " + loop)
-			break
-		}
-		loop++
-	
-	getCluster()
-	getPresentMat()
-	
-def FSCC()
+        X = X0
+        U = U0
+        V = V0
+        for (int i = 0; i < numberOfVertices; i++):
+            D = calcD(i, V, U)
+            updateX(i, D) 
+        }
+        V = updateV(V, U)
+        U = updateU(U, V)
+        
+        if (checkStop(X0, U0, V0, V) && (loop > 1)):
+        {
+            print(" SCC STOP at " + loop)
+            break
+        }
+        loop++
+    
+    getCluster()
+    getPresentMat()
+
+def updateU2():
+
+def updateV2():
+    
+def FSCC():
+    init()
     V0 = []
     U0 = []
     U = initU()
     V = initV()
     while(loop< maxloop):
-		X = X0
-		U = U0
-		V = V0
-		for (int i = 0; i < numberOfVertices; i++):
-			D = calcD(i, V, U)
-			updateX(i, D) 
-		}
-		V = updateV(V, U)
-		U = updateU(U, V)
-		
-		if (checkStop(X0, U0, V0, V) && (loop > 1)):
-		{
-			print(" SCC STOP at " + loop)
-			break
-		}
-		updateU2()
-		updateV2()
-		loop++
-	
-	getCluster()
-	getPresentMat()	
+        X = X0
+        U = U0
+        V = V0
+        for (int i = 0; i < numberOfVertices; i++):
+            D = calcD(i, V, U)
+            updateX(i, D) 
+        }
+        V = updateV(V, U)
+        U = updateU(U, V)
+        
+        if (checkStop(X0, U0, V0, V) && (loop > 1)):
+        {
+            print(" SCC STOP at " + loop)
+            break
+        }
+        updateU2()
+        updateV2()
+        loop++
+    
+    getCluster()
+    getPresentMat()    
