@@ -1,5 +1,7 @@
-#!/usr/bin/python
+#!/home/hduser/Downloads/Or/bin
 # MLS
+import sys
+sys.path.insert(0, '/home/hduser/workspace/MLS/P/')
 
 import numpy as np
 import dataProcess.dataIO.read as ior
@@ -10,25 +12,43 @@ from numpy import arange,array,ones,linalg
 from pylab import plot,show
 
 def lnr():
-	xi = arange(0,9)
-	A = array([ xi, ones(9)])
-	# linearly generated sequence
-	y = [19, 20, 20.5, 21.5, 22, 23, 23, 25.5, 24]
-	w = linalg.lstsq(A.T,y)[0] # obtaining the parameters
+    xi = arange(0,9)
+    A = array([ xi, ones(9)])
+    # linearly generated sequence
+    y = [19, 20, 20.5, 21.5, 22, 23, 23, 25.5, 24]
+    w = linalg.lstsq(A.T,y)[0] # obtaining the parameters
 
-	# plotting the line
-	line = w[0]*xi+w[1] # regression line
-	plot(xi,line,'r-',xi,y,'o')
-	show()
-	
+    # plotting the line
+    line = w[0]*xi+w[1] # regression line
+    plot(xi,line,'r-',xi,y,'o')
+    show()
+
+def fpgr(transactions):
+    '''
+    for tran in transactions:
+        print(" transaction: "+ str(tran))
+    
+    patterns = fpg.find_frequent_patterns(transactions, 2)
+    for patte in patterns:
+        print(" pattern: "+ str(patte))
+        
+    rules = fpg.generate_association_rules(patterns, 0.7)
+    for rule in rules:
+        print(" rule: " + str(rule))
+    '''
+    patterns = fpg.find_frequent_patterns_batch(transactions, 2)
+    for patte in patterns.batch:
+        print(" pattern2: "+ str(patte.value) +" "+ str(patte.count))
+        
 if __name__ == "__main__":
-	print("main start")
+    print("main start")
 
-	iow.write("test write")
-	ior.read("test read")
-	admm.run("ADMM")
-	
-	transactions = [[1, 2, 5],
+    iow.write("test write")
+    ior.read("test read")
+    admm.run("ADMM")
+    
+    #lnr()
+    transactions = [[1, 2, 5],
                 [2, 4],
                 [2, 3],
                 [1, 2, 4],
@@ -37,16 +57,12 @@ if __name__ == "__main__":
                 [1, 3],
                 [1, 2, 3, 5],
                 [1, 2, 3]]
-	transactions = ior.read2RawData("C:\Users\patrick_huy\OneDrive\Documents\long prj\FPC\_DataSets\mushroom.dat",20)
-	print(" transactions: "+ str(transactions))
-	patterns = fpg.find_frequent_patterns(transactions, 2)
-	print(" patterns: "+ str(patterns))
-	rules = fpg.generate_association_rules(patterns, 0.7)
-	print(" rules: " + str(rules))
-	
-	
-	
-	ior.read2SparseMatrix("C:\Data\Master\data_mining\data\data_694_446.csv")
-	
-	lnr()
-	#ior.read2Matrix("C:\Users\patrick_huy\OneDrive\Documents\long prj\FPC\_DataSets\mushroom.dat")
+    transactions2 = ior.read2RawData("/home/hduser/workspace/MLS/data/mushroom.dat",0, 500, 100)
+    #transactions3 = ior.read2RawData("/home/hduser/workspace/MLS/data/mushroom.dat",150, 500, 50)
+    fpgr(transactions2)
+    #fpgr(transactions3)
+    
+    
+    #ior.read2SparseMatrix("C:\Data\Master\data_mining\data\data_694_446.csv")
+    
+    #ior.read2Matrix("C:\Users\patrick_huy\OneDrive\Documents\long prj\FPC\_DataSets\mushroom.dat")
