@@ -3,6 +3,9 @@
 
 import numpy as np
 from scipy import spatial
+from numpy import arange,array,ones,linalg
+from pylab import plot,show
+from scipy import sparse
 
 def run(name):
     print("hello" +name)
@@ -28,14 +31,15 @@ def cosine_similarity(v1,v2):
    return spatial.distance.cosine(v1, v2)
    #return ( np.sum(vector*matrix,axis=1) / ( np.sqrt(np.sum(matrix**2,axis=1)) * np.sqrt(np.sum(vector**2)) ) )[::-1]
 
-def initEdge(data):
+def initEdge(data, d):
     edge = []
-
-    for i in range(0,numberOfVertices):
-        for j in range(i+1,numberOfVertices):
-            sim = cosine_similarity(data[i],data[j])
+    
+    for i in range(0,d):
+        for j in range(i+1,d):
+            sim = cosine_similarity(data[:,i],data[:,j])
             if sim > 0.13:
-                edge.append([j,j,sim])
+                edge.append([i,j,sim])
+    #print(edge)
     '''
     for v1 in data:
         for v2 in data:
@@ -46,7 +50,8 @@ def initEdge(data):
     return edge
 
 def init(data):
-
+    return 0
+    
 def initUV(edges, matrix):
     u = []
     v = []
@@ -55,14 +60,17 @@ def initUV(edges, matrix):
         u.append([egde[1],egde[0],[0]])
         v.append([egde[0],egde[1],[matrix[egde[0]]]])
         v.append([egde[1],egde[0],[matrix[egde[1]]]])
-    return u,v
+    return (u,v)
 
 def initV(edges):
-
+    return 0
+    
 def calcD():
-
-def updateX():
-
+    return 0
+    
+def updateX(i, V, U,B):
+    return 0
+    
 def updateUV(U,V,X):
     u = []
     v = []
@@ -70,15 +78,19 @@ def updateUV(U,V,X):
     return u,v
     
 def updateV():
-
+    return 0
+    
 def updateU():
+    return 0
 
-def checkStop():
-
+def checkStop(X0, U0, V0, V):
+    return 0
+    
 def getCluster():
-
+    return 0
+    
 def getPresentMat():
-
+    return 0
 '''
  * with convex optimization, set start point and solve problem with linear
  * or quadratic programming:
@@ -97,43 +109,54 @@ def getPresentMat():
  * @throws IOException
 '''
 def SCC(data):
-    edge = initEdge(data);
+    sA = sparse.csr_matrix(data)
+    #print(sA)
+    sD = sparse.csr_matrix.todense(sA)
+    #print(sD)
+    d = np.shape(data)
+    print(str(d) +" "+ str(d[0]) +" "+str(d[1]))
+    edge = initEdge(data, d[0])
     init(data)
     V0 = []
     U0 = []
+    X0 = []
     U,V = initUV(edge, data)
     #V = initV()
     B = []
-    
+    loop = 0
+    maxloop = 100
     while(loop< maxloop):
         X = X0
         U = U0
         V = V0
         
-        for i in range(0,numberOfVertices):
+        for i in range(0,d[0]):
             X = updateX(i, V, U,B) 
 
         U,V = updateUV(V, U, X)
         #V = updateV(V, U)
         #U = updateU(U, V)
         
-        if (checkStop(X0, U0, V0, V) && (loop > 1)):
-        {
+        if (checkStop(X0, U0, V0, V) and (loop > 1)):
             print(" SCC STOP at " + loop)
             break
-        }
-        loop++
+
+        loop = loop+1
     
     getCluster()
     getPresentMat()
 
 def updateU2():
-
-def updateV2():
+    return 0
     
+def updateV2():
+    return 0
+        
 def FSCC(data):
-    initEdge(data);
+    d = np.shape(data)
+    initEdge(data, d[0]);
     init(data)
+    
     V0 = []
     U0 = []
     U = initU()
@@ -142,21 +165,20 @@ def FSCC(data):
         X = X0
         U = U0
         V = V0
-        for (int i = 0; i < numberOfVertices; i++):
+        for i in range(0,d[0]):
             D = calcD(i, V, U)
             updateX(i, D) 
-        }
+        
         V = updateV(V, U)
         U = updateU(U, V)
         
-        if (checkStop(X0, U0, V0, V) && (loop > 1)):
-        {
+        if (checkStop(X0, U0, V0, V) and (loop > 1)):
             print(" SCC STOP at " + loop)
             break
-        }
+
         updateU2()
         updateV2()
-        loop++
+        loop = loop+1
     
     getCluster()
     getPresentMat()    

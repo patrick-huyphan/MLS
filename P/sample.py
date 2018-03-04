@@ -8,6 +8,7 @@ import numpy as np
 import dataProcess.dataIO.read as ior
 import dataProcess.dataIO.write as iow
 import dataProcess.ADMM as admm
+import dataProcess.ASCC as ascc
 import dataProcess.fpgrowth as fpg
 from numpy import arange,array,ones,linalg
 from pylab import plot,show
@@ -74,8 +75,9 @@ if __name__ == "__main__":
         #ior.saveSparseMatrix("/home/hduser/workspace/MLS/data/data_694_446.dat",data)
         mat = ior.rawData2matrix("/home/hduser/workspace/MLS/data/data_694_446.dat",0, 446, 696)
         #print(mat[:, [0,2]]) # get column 0,2
-        sA = sparse.csr_matrix(mat)
-        print(sA)
-        sD = sparse.csr_matrix.todense(sA)
-        print(sD)
+        ascc.SCC(mat)
+        #sA = sparse.csr_matrix(mat)
+        #print(sA)
+        #sD = sparse.csr_matrix.todense(sA)
+        #print(sD)
     #ior.read2Matrix("C:\Users\patrick_huy\OneDrive\Documents\long prj\FPC\_DataSets\mushroom.dat")
