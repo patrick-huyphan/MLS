@@ -2,6 +2,7 @@
 # MLS
 
 import numpy as np
+from scipy import spatial
 
 def run(name):
     print("hello" +name)
@@ -23,17 +24,51 @@ def run(name):
  *
  * should design matrix data and vector (row and column of matrix)to easy process with sparse data: <<indexR, indexC>, value>
 '''
+def cosine_similarity(v1,v2):
+   return spatial.distance.cosine(v1, v2)
+   #return ( np.sum(vector*matrix,axis=1) / ( np.sqrt(np.sum(matrix**2,axis=1)) * np.sqrt(np.sum(vector**2)) ) )[::-1]
 
-def init():
+def initEdge(data):
+    edge = []
 
-def initU():
+    for i in range(0,numberOfVertices):
+        for j in range(i+1,numberOfVertices):
+            sim = cosine_similarity(data[i],data[j])
+            if sim > 0.13:
+                edge.append([j,j,sim])
+    '''
+    for v1 in data:
+        for v2 in data:
+            sim = cosine_similarity(v1,v2)
+            if sim > 0.13:
+                edge.append([v1,v2,sim])
+    '''
+    return edge
 
-def initV():
+def init(data):
+
+def initUV(edges, matrix):
+    u = []
+    v = []
+    for egde in edges:
+        u.append([egde[0],egde[1],[0]])
+        u.append([egde[1],egde[0],[0]])
+        v.append([egde[0],egde[1],[matrix[egde[0]]]])
+        v.append([egde[1],egde[0],[matrix[egde[1]]]])
+    return u,v
+
+def initV(edges):
 
 def calcD():
 
 def updateX():
 
+def updateUV(U,V,X):
+    u = []
+    v = []
+    
+    return u,v
+    
 def updateV():
 
 def updateU():
@@ -61,22 +96,26 @@ def getPresentMat():
  * @param _e2
  * @throws IOException
 '''
-def SCC():
-    init()
+def SCC(data):
+    edge = initEdge(data);
+    init(data)
     V0 = []
     U0 = []
-    U = initU()
-    V = initV()
+    U,V = initUV(edge, data)
+    #V = initV()
+    B = []
+    
     while(loop< maxloop):
         X = X0
         U = U0
         V = V0
-        for (int i = 0; i < numberOfVertices; i++):
-            D = calcD(i, V, U)
-            updateX(i, D) 
-        }
-        V = updateV(V, U)
-        U = updateU(U, V)
+        
+        for i in range(0,numberOfVertices):
+            X = updateX(i, V, U,B) 
+
+        U,V = updateUV(V, U, X)
+        #V = updateV(V, U)
+        #U = updateU(U, V)
         
         if (checkStop(X0, U0, V0, V) && (loop > 1)):
         {
@@ -92,8 +131,9 @@ def updateU2():
 
 def updateV2():
     
-def FSCC():
-    init()
+def FSCC(data):
+    initEdge(data);
+    init(data)
     V0 = []
     U0 = []
     U = initU()
