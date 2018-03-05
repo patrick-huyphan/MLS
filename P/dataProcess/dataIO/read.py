@@ -30,7 +30,7 @@ def read2RawData(fileName, fromx, tox, maxcol):
             if(int(s) > maxcol):
                 break
             #print(s)
-        print(llist)
+        #print(llist)
         mat.append(llist)
         count= count + 1
         #if(maxrow>0):

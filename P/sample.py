@@ -2,7 +2,8 @@
 # MLS
 import sys
 sys.path.insert(0, '/home/hduser/workspace/MLS/P/')
-
+import os
+import pathlib
 import config.config as cf
 import numpy as np
 import dataProcess.dataIO.read as ior
@@ -40,8 +41,8 @@ def fpgr(transactions):
         print(" rule: " + str(rule))
     '''
     patterns = fpg.find_frequent_patterns_batch(transactions, 2)
-    for patte in patterns.batch:
-        print(" pattern2: "+ str(patte.value) +" "+ str(patte.count))
+    #for patte in patterns.batch:
+        #print(" pattern2: "+ str(patte.value) +" "+ str(patte.count))
     return patterns
 
 def linuxDataPath():
@@ -70,6 +71,10 @@ if __name__ == "__main__":
     batch1 = fpgr(transactions2)
     transactions3 = ior.read2RawData("/home/hduser/workspace/MLS/data/mushroom.dat",150, 500, 50)
     batch2 = fpgr(transactions3)
+    #for patte in batch1.batch:
+    #    print(" pattern1: "+ str(patte.value) +" "+ str(patte.count))
+    #for patte in batch2.batch:
+    #    print(" pattern2: "+ str(patte.value) +" "+ str(patte.count))
     
     batch3 = fpg.mergeBatch(batch1, batch2)
     for patte in batch3.batch:
@@ -81,6 +86,10 @@ if __name__ == "__main__":
         mat = ior.rawData2matrix("/home/hduser/workspace/MLS/data/data_694_446.dat",0, 446, 696)
         #print(mat[:, [0,2]]) # get column 0,2
         ascc.SCC(mat)
+        current_dir = os.getcwd() #pathlib.Path("/../../data/data_694_446.dat").parent
+        print(current_dir)
+        current_file = pathlib.Path(__file__)
+        print(current_file)
         #sA = sparse.csr_matrix(mat)
         #print(sA)
         #sD = sparse.csr_matrix.todense(sA)
