@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # MLS
 
-def buildBitString(a)
+def buildBitString(a):
     return b
 
 def intersec(a, b):

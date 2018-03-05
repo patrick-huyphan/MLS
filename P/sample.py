@@ -42,6 +42,7 @@ def fpgr(transactions):
     patterns = fpg.find_frequent_patterns_batch(transactions, 2)
     for patte in patterns.batch:
         print(" pattern2: "+ str(patte.value) +" "+ str(patte.count))
+    return patterns
 
 def linuxDataPath():
     return "/home/hduser/workspace/MLS/data/"
@@ -65,11 +66,15 @@ if __name__ == "__main__":
                 [1, 3],
                 [1, 2, 3, 5],
                 [1, 2, 3]]
-    #transactions2 = ior.read2RawData("/home/hduser/workspace/MLS/data/mushroom.dat",0, 500, 100)
-    #transactions3 = ior.read2RawData("/home/hduser/workspace/MLS/data/mushroom.dat",150, 500, 50)
-    #fpgr(transactions2)
-    #fpgr(transactions3)
+    transactions2 = ior.read2RawData("/home/hduser/workspace/MLS/data/mushroom.dat",0, 500, 100)
+    batch1 = fpgr(transactions2)
+    transactions3 = ior.read2RawData("/home/hduser/workspace/MLS/data/mushroom.dat",150, 500, 50)
+    batch2 = fpgr(transactions3)
     
+    batch3 = fpg.mergeBatch(batch1, batch2)
+    for patte in batch3.batch:
+        print(" batch3: "+ str(patte.value) +" "+ str(patte.count))
+        
     if cf.get_platform() == "linux":
         #data = ior.read2SparseMatrix("/home/hduser/workspace/MLS/data/data_694_446.csv")
         #ior.saveSparseMatrix("/home/hduser/workspace/MLS/data/data_694_446.dat",data)
