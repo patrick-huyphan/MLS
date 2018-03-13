@@ -31,6 +31,15 @@ def cosine_similarity(v1,v2):
    return spatial.distance.cosine(v1, v2)
    #return ( np.sum(vector*matrix,axis=1) / ( np.sqrt(np.sum(matrix**2,axis=1)) * np.sqrt(np.sum(vector**2)) ) )[::-1]
 
+def getKey(key):
+    return key.split()
+
+def setKey(dest, src):
+    return str(dest)+" "+str(src)
+
+def proxN2_2(v1, v2):
+    return 0
+
 def initEdge(data, d):
     edge = []
     
@@ -51,44 +60,82 @@ def initEdge(data, d):
 
 def init(data):
     A = []
-	return A
+    return A
 '''
 U and V has [des, src, [nodedata]]
 '''
 def initUV(edges, matrix):
-    u = []
-    v = []
+    u = {}
+    v = {}
     for egde in edges:
-        u.append([egde[0],egde[1],[0]])
-        u.append([egde[1],egde[0],[0]])
-        v.append([egde[0],egde[1],[matrix[egde[0]]]])
-        v.append([egde[1],egde[0],[matrix[egde[1]]]])
+        u[setKey(egde[0], egde[1])] = [0]
+        u[setKey(egde[1], egde[0])] = [0]
+        v[setKey(egde[0], egde[1])] = [matrix[egde[0]]]
+        v[setKey(egde[1], egde[0])] = [matrix[egde[1]]]
     return (u,v)
 
 def initV(edges):
     return 0
 '''
-
+        double[] sumdi = new double[numOfFeature];
+        double[] sumdj = new double[numOfFeature];
+               
+        // (sum(j>i)(ui-zi)-sum(i>j)(uj-zj))
+        //TODO: review i>j and i>j???
+        for(Key k: V.E.keySet())
+        {
+            if(i == k.src)
+            {
+                sumdi = Vector.plus(sumdi, Vector.plus(U.get(k), V.get(k)));
+            }
+            if(i == k.dst)
+            {
+                sumdj = Vector.plus(sumdj, Vector.plus(U.get(k), V.get(k)));
+            }
+        }
+        double[] sumd = Vector.sub(sumdi, sumdj);
+        X[i] = Vector.scale(Vector.plus(B,sumd), 1./(1+numberOfVertices));
 ''' 
 def updateX(d, edge, V, U, A, B):
     x = []
-	for i in range(0,d[0]):
-		for(e in edge):
-			if e[0]:
-				x[i] = [0];
-			if e[1]:
-				x[i] = [0];
-	return x
+    for i in range(0,d[0]):
+        sumdi = []
+        sumdi = []
+        for(e in edge):
+            if e[0] == i:
+                sumdi = sumdi + U[setKey(e[0],e[1])] + V[setKey(e[0],e[1])];
+            if e[1] == i:
+                sumdj = sumdj + U[setKey(e[0],e[1])] + V[setKey(e[0],e[1])];
+        sumd = sumdi - sumdj
+        x[i] = (B + sumd)* 1./(1+d[0])
+    return x
 
 '''
-
+        ======
+        ListENode ret = new ListENode();
+        V.E.keySet().stream().forEach((v) -> {
+            double[] data = Vector.sub(V.get(v), Vector.sub(X[v.src], X[v.dst]));
+            data = Vector.plus(U.get(v), data);
+            ret.put(v.src, v.dst, data);//, Edge.getEdgeW(edges, v.src, v.dst)));
+        });
+        =====V:
+        ListENode ret = new ListENode();
+        V.E.keySet().stream().forEach((v) -> {
+            double[] bbu = Vector.sub(Vector.sub(X[v.src], X[v.dst]), U.get(v));
+            double w = Edge.getEdgeW(edges, v.src, v.dst);
+            bbu = Vector.proxN2_2(bbu, lambda*w);
+            ret.put(v.src, v.dst, bbu);
+        });//
+        return ret;        
 '''     
 def updateUV(edge, U,V,X):
-    u = []
-    v = []
+    v = {}
+    u = {}
     for(e in edge):
-		u = U
-		v = V
+        v[setKey(e[0],e[1])] = U[setKey(e[0],e[1])] + V[setKey(e[0],e[1])] - X[e[0]] - X[[e[1]]]
+    #for(e in edge):
+        u[setKey(e[0],e[1])] = proxN2_2(X[e[0]] - X[[e[1]]] - U[setKey(e[0],e[1])], e[2])
+        
     return u,v
     
 def updateV():
@@ -99,29 +146,33 @@ def updateU():
 
 
 def primalResidual():
-	return 0
-	
+    return 0
+
 def dualResidual():
-	return 0
-	
+    return 0
+
 '''
 
 ''' 
 def checkStop(edge, X0, U0, V0, V):
     return 0
-    
+
 
 '''
 
 ''' 
 def getCluster(edge, X0):
     return 0
-    
+
 '''
 
 ''' 
 def getPresentMat(edge, X0):
     return 0
+
+def updateRho():
+    return 0
+
 '''
  * with convex optimization, set start point and solve problem with linear
  * or quadratic programming:
@@ -147,18 +198,18 @@ def SCC(data):
     d = np.shape(data)
     print(str(d) +" "+ str(d[0]) +" "+str(d[1]))
     '''
-	edge: sim b.w 2 node
-	'''
-	edge = initEdge(data, d[0])
-	'''
-	init data: 
+    edge: sim b.w 2 node
     '''
-	A = init(data)
-    V0 = [] # List of edge 
-    U0 = [] # List of edge
+    edge = initEdge(data, d[0])
+    '''
+    init data: 
+    '''
+    A = init(data)
+    V0 = {} # List of edge 
+    U0 = {} # List of edge
     X0 = [] # matrix for get cluster
     B = []
-	U,V = initUV(edge, data)
+    U,V = initUV(edge, data)
     
     loop = 0
     maxloop = 100
@@ -166,7 +217,7 @@ def SCC(data):
         X = X0
         U = U0
         V = V0
-		
+        
         X = updateX(d, edge, V, U, A, B) 
 
         U,V = updateUV(edge, V, U, X)
@@ -190,14 +241,14 @@ def updateV2():
 
 '''
 
-''' 	
+'''     
 def updateUV2(edge, V, U, X):
-    u = []
-    v = []
+    u = {}
+    v = {}
     for(e in edge):
-		u = U
-		v = V
-		
+        u = U
+        v = V
+        
     return u,v
 '''
 enhence SCC, speed up to reach stop condition
@@ -211,8 +262,8 @@ def FSCC(data):
     print(str(d) +" "+ str(d[0]) +" "+str(d[1]))
     edge = initEdge(data, d[0])
     A = init(data)
-    V0 = []
-    U0 = []
+    V0 = {}
+    U0 = {}
     X0 = []
     U,V = initUV(edge, data)
     #V = initV()
