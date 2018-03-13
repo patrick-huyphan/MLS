@@ -127,15 +127,16 @@ def mergeLine2(l1, l2):
     #print(l1)
     for t1 in l1:
         #print(t1)
-        if type(t1) is list:
-            ret.append(t1)
+        #if type(t1) is list:
+        ret.append(t1)
+        ret.append(1)
         idx1 = idx1+1
 
     for t1 in l2:
         #print(t1)
         #ret.append(t1)
-        if type(t1) is list:
-            ret.append([t1,idx2])
+        #if type(t1) is list:
+        ret.append(2)
         idx2 = idx2+1 
 
         #for t2 in l2:
@@ -156,19 +157,27 @@ map trans to pair(trans,count)
 reduce: mergeTrans, list of tran and count
 '''
 def sampleFun2(sc, dataName):
-    data = sc.textFile(dataName)
-    
-    trans = data.map(lambda line : line.strip().split(' ')).map(addCount2)#splitLine(line))
+    data = sc.textFile(dataName,8)
+    print(data.getNumPartitions())
+    #for kv in data.collect():
+    #    print(str(kv)+ "---")
+    trans = data.map(lambda line : (line.strip().split(' '),1))#.map(lambda row : (row,1))#splitLine(line))
     
     #trans = data.flatMap(lambda line : splitLine(line)).map(lambda x: (x[0],x[1]))
     #print(trans.collect())
-    for kv in trans.collect():
-        print(str(kv)+ "---")
+#    for kv in trans.collect():
+#        print(str(kv)+ "---")
         
     trans2 = trans.reduce(mergeLine2)
-
+    for kv in trans2:#.collect():
+        print("---2: " +str(kv))
+    #trans3= data.mapPartitions(lambda line:  line.strip().split(' ')).collect()
+    
+    #trans3 = data.mapPartitions(lambda line : [line, line] , 8).collect()
+    #trans3 = trans.
+    
 #    trans2 = trans.groupBy(lambda word: word[0])#groupByKey() #reduceByKey(lambda a, b: [a,b])
-    for kv in trans2:
+    for kv in trans3:
         print("---2: " +str(kv))
     
 if __name__ == "__main__":
