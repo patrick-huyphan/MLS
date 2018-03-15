@@ -10,6 +10,13 @@ import dataProcess.fpgrowth as fpg
 from pyspark import SparkContext, SparkConf
 from pyspark.mllib.fpm import FPGrowth
 from operator import add
+sys.path.insert(0, '/home/hduser/workspace/MLS/P/')
+
+import config.config as cf
+import dataProcess.ASCC as ascc
+from numpy import arange,array,ones,linalg
+from pylab import plot,show
+from scipy import sparse
 
 import random
 num_samples = 100000000
@@ -179,16 +186,24 @@ def sampleFun2(sc, dataName):
 #    trans2 = trans.groupBy(lambda word: word[0])#groupByKey() #reduceByKey(lambda a, b: [a,b])
     for kv in trans3:
         print("---2: " +str(kv))
+def linuxDataPath():
+    return "/home/hduser/workspace/MLS/data/"
+def winDataPath():
+    return "C:\\cygwin64\\home\\patrick_huy\\workspace\\allinOne\\data\\"
     
 if __name__ == "__main__":
     conf = SparkConf().setAppName('MyFirstStandaloneApp')
     sc = SparkContext(conf=conf)
-
+    path = ""
+    if cf.get_platform() == "linux":
+        path = linuxDataPath()
+    else:
+        path = winDataPath()
 #   mat = ior.read2Matrix("C:\Users\patrick_huy\OneDrive\Documents\long prj\FPC\_DataSets\mushroom.dat")
     
     #fggrowth(sc,"/home/hduser/workspace/MLS/data/mushroom.dat")
     
-    sampleFun2(sc,"/home/hduser/workspace/MLS/data/mushroom.dat")
+    sampleFun2(sc,path+"mushroom.dat")
     
     #transactions = ior.read2RawData("/home/hduser/workspace/MLS/data/mushroom.dat",50, 150, 30)
     
