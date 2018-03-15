@@ -258,6 +258,106 @@ def SCC(data):
     getCluster(edge, X)
     getPresentMat(edge, X)
 
+def ASCC(data):
+    sA = sparse.csr_matrix(data)
+    #print(sA)
+    sD = sparse.csr_matrix.todense(sA)
+    #print(sD)
+    d = np.shape(data)
+    print(str(d) +" "+ str(d[0]) +" "+str(d[1]))
+    '''
+    edge: sim b.w 2 node
+    '''
+    edge = initEdge(data, d[0])
+    '''
+    init data: 
+    '''
+    A = init(data)
+    V0 = {} # List of edge 
+    U0 = {} # List of edge
+    X = [[0 for x in range(d[0])] for y in range(d[1])] #C-R # matrix for get cluster
+    X0 = [[0 for x in range(d[0])] for y in range(d[1])] #C-R # matrix for get cluster
+    B = np.array([1]*d[1])
+    U,V = initUV(edge, data)
+    
+    loop = 0
+    maxloop = 100
+    while(loop< maxloop):
+        '''
+        z= (C+B)-(C+B) 
+        A= X-A +z
+        B*= Ai-Ak-C
+        B=[]B*  
+        C=C+(B-Ai+Ak)
+        R=Ai-Ak-Bik
+        S=(Bik-Bik) - (Bki-Bki)  
+        '''
+        #if loop > 0 :
+        X0 = backpData(X)
+        U0 = backpData(U)
+        V0 = backpData(V)
+        
+        X = updateX(d, edge, V, U, A, B) 
+
+        U,V = updateUV(edge, V, U, X, d)
+        #V = updateV(V, U)
+        #U = updateU(U, V)
+        
+        if (checkStop(edge, X0, U0, V0, V) and (loop > 1)):
+            print(" SCC STOP at " + loop)
+            break
+
+        loop = loop+1
+    
+    getCluster(edge, X)
+    getPresentMat(edge, X)
+    
+def FASCC(data):
+    sA = sparse.csr_matrix(data)
+    #print(sA)
+    sD = sparse.csr_matrix.todense(sA)
+    #print(sD)
+    d = np.shape(data)
+    print(str(d) +" "+ str(d[0]) +" "+str(d[1]))
+    '''
+    edge: sim b.w 2 node
+    '''
+    edge = initEdge(data, d[0])
+    '''
+    init data: 
+    '''
+    A = init(data)
+    V0 = {} # List of edge 
+    U0 = {} # List of edge
+    X = [[0 for x in range(d[0])] for y in range(d[1])] #C-R # matrix for get cluster
+    X0 = [[0 for x in range(d[0])] for y in range(d[1])] #C-R # matrix for get cluster
+    B = np.array([1]*d[1])
+    U,V = initUV(edge, data)
+    
+    loop = 0
+    maxloop = 100
+    while(loop< maxloop):
+        #if loop > 0 :
+        X0 = backpData(X)
+        U0 = backpData(U)
+        V0 = backpData(V)
+        
+        X = updateX(d, edge, V, U, A, B) 
+
+        U,V = updateUV(edge, V, U, X, d)
+        #V = updateV(V, U)
+        #U = updateU(U, V)
+        
+        if (checkStop(edge, X0, U0, V0, V) and (loop > 1)):
+            print(" SCC STOP at " + loop)
+            break
+
+        loop = loop+1
+    
+    getCluster(edge, X)
+    getPresentMat(edge, X)
+    
+
 def updateU2():
     return 0
     
@@ -267,7 +367,7 @@ def updateV2():
 '''
 
 '''     
-def updateUV2(edge, V, U, X):
+def updateUV2(edge, V, U, X, d):
     u = {}
     v = {}
     for e in edge:
@@ -286,23 +386,28 @@ def FSCC(data):
     d = np.shape(data)
     print(str(d) +" "+ str(d[0]) +" "+str(d[1]))
     edge = initEdge(data, d[0])
+    '''
+    init data: 
+    '''
     A = init(data)
-    V0 = {}
-    U0 = {}
-    X0 = []
+    V0 = {} # List of edge 
+    U0 = {} # List of edge
+    X = [[0 for x in range(d[0])] for y in range(d[1])] #C-R # matrix for get cluster
+    X0 = [[0 for x in range(d[0])] for y in range(d[1])] #C-R # matrix for get cluster
+    B = np.array([1]*d[1])
     U,V = initUV(edge, data)
-    #V = initV()
-    B = []
+    
     loop = 0
     maxloop = 100
     while(loop< maxloop):
-        X = X0
-        U = U0
-        V = V0
+        #if loop > 0 :
+        X0 = backpData(X)
+        U0 = backpData(U)
+        V0 = backpData(V)
         
         X = updateX(d, edge, V, U, A, B) 
 
-        U,V = updateUV(edge, V, U, X)
+        U,V = updateUV(edge, V, U, X, d)
         #V = updateV(V, U)
         #U = updateU(U, V)
         
@@ -310,7 +415,7 @@ def FSCC(data):
             print(" SCC STOP at " + loop)
             break
 
-        U,V = updateUV2(V, U, X)
+        U,V = updateUV2(V, U, X, d)
         loop = loop+1
     
     getCluster()
