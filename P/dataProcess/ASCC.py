@@ -16,9 +16,9 @@ def run(name):
  * @author patrick_huy update in X update in rho theta
  * SCC is quadratic programming:
  * minimize->x: (1/2)x_TPx+qTx+r
- * Gx ≤ h 
+ * Gx <= h 
  * Ax = b
- * where P ∈ S^+n, G ∈ R^mXn and A ∈ R^pXn
+ * where P  S^+n, G  R^mXn and A  R^pXn
  * 
  * For convex clustering min fx + gx +h
  * fx: ||A - X||, cost of node, min of sum square b.w node X to control node A. A is inference centroid node. if Ai == Aj, Xi and Xj has same centroid and in same cluster.
@@ -32,13 +32,14 @@ def cosine_similarity(v1,v2):
    #return ( np.sum(vector*matrix,axis=1) / ( np.sqrt(np.sum(matrix**2,axis=1)) * np.sqrt(np.sum(vector**2)) ) )[::-1]
 
 def getKey(key):
-    return key.split()
+    return key.split("_")
 
 def setKey(dest, src):
-    return str(dest)+" "+str(src)
+    return str(dest)+"_"+str(src)
 
-def proxN2_2(v1, v2):
-    return 0
+def proxN2_2(v1, v2, d):
+    ret = np.array([1]*d[1]) 
+    return ret
 
 def initEdge(data, d):
     edge = []
@@ -68,10 +69,11 @@ def initUV(edges, matrix):
     u = {}
     v = {}
     for egde in edges:
-        u[setKey(egde[0], egde[1])] = [0]
-        u[setKey(egde[1], egde[0])] = [0]
-        v[setKey(egde[0], egde[1])] = [matrix[egde[0]]]
-        v[setKey(egde[1], egde[0])] = [matrix[egde[1]]]
+        #print("init uv "+ str(egde))
+        u.update({setKey(egde[0], egde[1]) : [0]})
+        u.update({setKey(egde[1], egde[0]) : [0]})
+        v.update({setKey(egde[0], egde[1]) : [matrix[egde[0]]]})
+        v.update({setKey(egde[1], egde[0]) : [matrix[egde[1]]]})
     return (u,v)
 
 def initV(edges):
@@ -97,17 +99,27 @@ def initV(edges):
         X[i] = Vector.scale(Vector.plus(B,sumd), 1./(1+numberOfVertices));
 ''' 
 def updateX(d, edge, V, U, A, B):
-    x = []
+    x = [[0 for x in range(d[0])] for y in range(d[1])] #C-R
     for i in range(0,d[0]):
-        sumdi = []
-        sumdi = []
-        for(e in edge):
+        sumdi = np.array([0]*d[1])
+        sumdj = np.array([0]*d[1])
+        for e in edge:
+            #print(str(i)+" "+ str(e[0])+"-"+str(e[1]))
+            #print(U[setKey(e[0],e[1])])
+            #print(V[setKey(e[0],e[1])])
+            #print(np.array(U[setKey(e[0],e[1])]) + np.array(V[setKey(e[0],e[1])]))
+            
             if e[0] == i:
-                sumdi = sumdi + U[setKey(e[0],e[1])] + V[setKey(e[0],e[1])];
+                #print(str(i)+" "+ str(e[0])+"-"+str(e[1]))
+                sumdi = sumdi + np.array(U[setKey(e[0],e[1])]) + np.array(V[setKey(e[0],e[1])])
             if e[1] == i:
-                sumdj = sumdj + U[setKey(e[0],e[1])] + V[setKey(e[0],e[1])];
+                #print(str(i)+" "+ str(e[0])+"-"+str(e[1]))
+                sumdj = sumdj + np.array(U[setKey(e[0],e[1])]) + np.array(V[setKey(e[0],e[1])])
         sumd = sumdi - sumdj
-        x[i] = (B + sumd)* 1./(1+d[0])
+        tmp = (B + sumd)
+        #print(str(i)+":  "+ str(tmp))
+        tmp = tmp* 1./(1+d[0])
+        x[i] = tmp
     return x
 
 '''
@@ -128,13 +140,19 @@ def updateX(d, edge, V, U, A, B):
         });//
         return ret;        
 '''     
-def updateUV(edge, U,V,X):
+def updateUV(edge, U,V,X,d):
     v = {}
     u = {}
-    for(e in edge):
-        v[setKey(e[0],e[1])] = U[setKey(e[0],e[1])] + V[setKey(e[0],e[1])] - X[e[0]] - X[[e[1]]]
+    for e in edge:
+        u1 = np.array(U[setKey(e[0],e[1])])
+        #u2 = 
+        v1 = np.array(V[setKey(e[0],e[1])]) 
+        #v2 =
+        x1 = np.array(X[e[0]])
+        x2 = np.array(X[e[1]])  
+        v.update({setKey(e[0],e[1]) : u1 + v1 - x1 - x2})
     #for(e in edge):
-        u[setKey(e[0],e[1])] = proxN2_2(X[e[0]] - X[[e[1]]] - U[setKey(e[0],e[1])], e[2])
+        u.update({setKey(e[0],e[1]) : proxN2_2(x1 - np.array(x2) - np.array(u1), e[2],d)}) 
         
     return u,v
     
@@ -173,6 +191,11 @@ def getPresentMat(edge, X0):
 def updateRho():
     return 0
 
+def backpData(X):
+    ret = []
+    for x in X:
+        ret.append(x)
+    return ret
 '''
  * with convex optimization, set start point and solve problem with linear
  * or quadratic programming:
@@ -207,20 +230,22 @@ def SCC(data):
     A = init(data)
     V0 = {} # List of edge 
     U0 = {} # List of edge
-    X0 = [] # matrix for get cluster
-    B = []
+    X = [[0 for x in range(d[0])] for y in range(d[1])] #C-R # matrix for get cluster
+    X0 = [[0 for x in range(d[0])] for y in range(d[1])] #C-R # matrix for get cluster
+    B = np.array([1]*d[1])
     U,V = initUV(edge, data)
     
     loop = 0
     maxloop = 100
     while(loop< maxloop):
-        X = X0
-        U = U0
-        V = V0
+        #if loop > 0 :
+        X0 = backpData(X)
+        U0 = backpData(U)
+        V0 = backpData(V)
         
         X = updateX(d, edge, V, U, A, B) 
 
-        U,V = updateUV(edge, V, U, X)
+        U,V = updateUV(edge, V, U, X, d)
         #V = updateV(V, U)
         #U = updateU(U, V)
         
@@ -245,7 +270,7 @@ def updateV2():
 def updateUV2(edge, V, U, X):
     u = {}
     v = {}
-    for(e in edge):
+    for e in edge:
         u = U
         v = V
         
