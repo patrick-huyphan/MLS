@@ -133,16 +133,25 @@ def mergeLine2(l1, l2):
     for t1 in l1:
         #print(t1)
         if type(t1) is list:
-            tmp1.append(t1)
+            ret.append([t1,1])
     for t2 in l2:
         if type(t2) is list:
-            tmp2.append(t2)
-    #sa = set(t1)
-    #sb = set(t2)
-    #c = sa.intersection(sb)
-    #if len(c)>0:
-    ret.append(tmp1)
-    ret.append(tmp2)
+            tmp2.append([t2,2])
+    #merge 2 set
+    '''
+    if(len(tmp1)==1):
+        ret.append(tmp1)
+    if(len(tmp2)==1):
+        ret.append(tmp2)
+        
+    for x in tmp1:
+        for y in tmp2:
+            sa = set(x)
+            sb = set(y)
+            c = sa.intersection(sb)
+            #if len(c)>0:
+            ret.append(c)
+    #
         #idx1 = idx1+1
 
     #for t1 in l2:
@@ -151,7 +160,8 @@ def mergeLine2(l1, l2):
         #if type(t1) is list:
         #ret.append(2)
         #idx2 = idx2+1 
-
+    '''
+    ret.append(tmp2)
     return ret
 
 '''
@@ -180,7 +190,7 @@ def sampleFun2(sc, dataName):
     
 #    trans2 = trans.groupBy(lambda word: word[0])#groupByKey() #reduceByKey(lambda a, b: [a,b])
     for kv in trans3:
-        print("---2: " +str(kv))
+        print("\n---2: " +str(kv))
 def linuxDataPath():
     return "/home/hduser/workspace/MLS/data/"
 def winDataPath():
