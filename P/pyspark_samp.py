@@ -7,13 +7,11 @@ import dataProcess.dataIO.read as ior
 import dataProcess.dataIO.write as iow
 import dataProcess.ADMM as admm
 import dataProcess.fpgrowth as fpg
+import config.config as cf
+import dataProcess.ASCC as ascc
 from pyspark import SparkContext, SparkConf
 from pyspark.mllib.fpm import FPGrowth
 from operator import add
-sys.path.insert(0, '/home/hduser/workspace/MLS/P/')
-
-import config.config as cf
-import dataProcess.ASCC as ascc
 from numpy import arange,array,ones,linalg
 from pylab import plot,show
 from scipy import sparse
@@ -83,8 +81,6 @@ def fggrowth(sc, dataName):
     for fi in result:
         print(fi)
         
-def f(x): print(x)
-
 def buildKey(x):
     key=''
     for k in x:
@@ -134,29 +130,20 @@ def mergeLine2(l1, l2):
     #print(l1)
     for t1 in l1:
         #print(t1)
-        #if type(t1) is list:
-        ret.append(t1)
-        ret.append(1)
-        idx1 = idx1+1
+        if type(t1) is list:
+            for t2 in l2:
+                if type(t2) is list:
+                    ret.append(t1)
+                    ret.append(t2)
+        #idx1 = idx1+1
 
-    for t1 in l2:
+    #for t1 in l2:
         #print(t1)
         #ret.append(t1)
         #if type(t1) is list:
-        ret.append(2)
-        idx2 = idx2+1 
+        #ret.append(2)
+        #idx2 = idx2+1 
 
-        #for t2 in l2:
-            #print(t1)
-            #print(t2)
-            #sb = set(t2[0])
-            #sa = set(t1[0])
-            #c = sa.intersection(sb)
-            #if len(c)>0:
-            #    ret.append([c,t1[1]+t2[1]])
-            #else:
-            #ret.append(t1)
-            #    ret.append(t2)
     return ret
 
 '''

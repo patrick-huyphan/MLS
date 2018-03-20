@@ -40,6 +40,10 @@ def setKey(dest, src):
 def proxN2_2(v1, v2, d):
     ret = np.array([1]*d[1]) 
     return ret
+    
+def proxN1_2(v1, v2, d):
+    ret = np.array([1]*d[1]) 
+    return ret    
 
 def initEdge(data, d):
     edge = []
@@ -61,6 +65,13 @@ def initEdge(data, d):
 
 def init(data):
     A = []
+    return A
+    
+def initA(data, l2):
+    A = []
+    for cl in data:
+         v = 1/a[:cl]
+         A[:cl] = [0]
     return A
 '''
 U and V has [des, src, [nodedata]]
@@ -163,10 +174,10 @@ def updateU():
     return 0
 
 
-def primalResidual():
+def primalResidual(edges, U):
     return 0
 
-def dualResidual():
+def dualResidual(edges, X, U):
     return 0
 
 '''
@@ -279,6 +290,7 @@ def ASCC(data):
     X0 = [[0 for x in range(d[0])] for y in range(d[1])] #C-R # matrix for get cluster
     B = np.array([1]*d[1])
     U,V = initUV(edge, data)
+    napl = 1
     
     loop = 0
     maxloop = 100
@@ -303,11 +315,15 @@ def ASCC(data):
         #V = updateV(V, U)
         #U = updateU(U, V)
         
-        if (checkStop(edge, X0, U0, V0, V) and (loop > 1)):
+        r= dualResidual(edges, X, U)
+        s= primalResidual(edges, U)
+        
+        if (((r-s)< e) and (loop > 1)):
             print(" SCC STOP at " + loop)
             break
 
         loop = loop+1
+        napl = napl*1.01
     
     getCluster(edge, X)
     getPresentMat(edge, X)
@@ -333,9 +349,14 @@ def FASCC(data):
     X0 = [[0 for x in range(d[0])] for y in range(d[1])] #C-R # matrix for get cluster
     B = np.array([1]*d[1])
     U,V = initUV(edge, data)
-    
+    napl = 1
     loop = 0
+    r0 = 0
+    s0 = 0
     maxloop = 100
+    alpha0 = 0.8
+    alpha1 = 0.8
+    
     while(loop< maxloop):
         #if loop > 0 :
         X0 = backpData(X)
@@ -348,11 +369,21 @@ def FASCC(data):
         #V = updateV(V, U)
         #U = updateU(U, V)
         
-        if (checkStop(edge, X0, U0, V0, V) and (loop > 1)):
+        r= dualResidual(edges, X, U)
+        s= primalResidual(edges, U)
+        if (((r-s)< e) and (loop > 1)):
             print(" SCC STOP at " + loop)
             break
-
+        else:
+            if (r-s)< (r0-s0):
+                alpha1 = 1/2(1+ sqrt(1+4* pow(alpha0)))
+                updateUV2(edge, V, U, X, d)
+            else:
+                alpha1 = 1
+                restartV()
+            
         loop = loop+1
+        napl = napl*1.01
     
     getCluster(edge, X)
     getPresentMat(edge, X)

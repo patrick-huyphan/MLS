@@ -90,11 +90,11 @@ if __name__ == "__main__":
         #ior.saveSparseMatrix("/home/hduser/workspace/MLS/data/data_694_446.dat",data)
     mat = ior.rawData2matrix(path+"data_694_446.dat",0, 446, 696)
         #print(mat[:, [0,2]]) # get column 0,2
-    ascc.SCC(mat)
+    ascc.ASCC(mat)
     current_dir = os.getcwd() #pathlib.Path("/../../data/data_694_446.dat").parent
     print(current_dir)
-    current_file = pathlib.Path(__file__)
-    print(current_file)
+    #current_file = pathlib.Path(__file__)
+    #print(current_file)
         #sA = sparse.csr_matrix(mat)
         #print(sA)
         #sD = sparse.csr_matrix.todense(sA)
