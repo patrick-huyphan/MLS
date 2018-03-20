@@ -127,14 +127,22 @@ def mergeLine2(l1, l2):
     flag2 = False
     idx1=0
     idx2=0
+    tmp1 = []
+    tmp2 = []
     #print(l1)
     for t1 in l1:
         #print(t1)
         if type(t1) is list:
-            for t2 in l2:
-                if type(t2) is list:
-                    ret.append(t1)
-                    ret.append(t2)
+            tmp1.append(t1)
+    for t2 in l2:
+        if type(t2) is list:
+            tmp2.append(t2)
+    #sa = set(t1)
+    #sb = set(t2)
+    #c = sa.intersection(sb)
+    #if len(c)>0:
+    ret.append(tmp1)
+    ret.append(tmp2)
         #idx1 = idx1+1
 
     #for t1 in l2:
