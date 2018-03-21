@@ -120,6 +120,11 @@ def addCount(line):
 def addCount2(line):
     return [line,1]
 
+# get list return list
+def checkInput(inputList):
+    return 0
+
+
 def mergeLine2(l1, l2):
     ret = []
     count = False
@@ -130,14 +135,31 @@ def mergeLine2(l1, l2):
     tmp1 = []
     tmp2 = []
     #print(l1)
+    #if type(t1) is list and len(t1)==1:
+    
+    
     for t1 in l1:
+        #ret.append(t1)
         #print(t1)
         if type(t1) is list:
-            ret.append([t1,1])
+            #if type(t1[0]) is list:
+                
+            #else:
+            t1.append(1)
+            for t2 in l2:
+                if type(t2) is list:
+                    t2.append(2)
+                    t1.append(t2)
+            ret.append(t1)
+    #if type(t2) is list and len(t2)>1:
+    '''    
     for t2 in l2:
         if type(t2) is list:
-            tmp2.append([t2,2])
+            t2.append(1)
+            ret.append(t2)
+            #tmp2.append([2,t2])
     #merge 2 set
+    '''
     '''
     if(len(tmp1)==1):
         ret.append(tmp1)
@@ -161,7 +183,7 @@ def mergeLine2(l1, l2):
         #ret.append(2)
         #idx2 = idx2+1 
     '''
-    ret.append(tmp2)
+    #ret.append(tmp2)
     return ret
 
 '''
