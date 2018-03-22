@@ -123,7 +123,65 @@ def addCount2(line):
 # get list return list
 def checkInput(inputList):
     return 0
-
+def insert_batch(self, item, count):
+    #print("insert_batch")
+    count = False
+    flag1 = False
+    flag2 = False
+    idx=0
+    #print("item "+str(item))
+    mBatch = []
+    for pattern in self:
+        #print("--"+str(sorted(pattern.value)) + " "+ str(pattern.count))
+        sa = set(pattern)
+        sb = set(item)
+        c = sa.intersection(sb)
+        #d = c
+        #newNode = FPNode(sorted(c), pattern.count+1, None)
+        if len(c)>0:
+            #print("intersection "+str(c)+" "+ str(newNode.count))
+            #if(sa.issubset(c)):
+                #print("c in pat " + str(idx))
+                #node =  self.batch[idx]
+                #self.batch.remove(pattern)
+                #print(" remove "+str(sorted(pattern.value)) + " "+ str(pattern.count))
+            if(sb.issubset(c)):
+                flag1 = True
+                #print("flag1 = True")
+                #print("c in item " + str(idx))                    
+            for mx in mBatch:
+                ms = set(mx.value)
+                if(ms.issubset(c)):
+                    mBatch.remove(mx)
+                    #print(" remove mx "+str(sorted(mx.value)) + " "+ str(mx.count))
+                    #print("mBatch.remove(mx)") 
+                if(c.issubset(ms)):
+                    flag2 = True
+                    #print(":") 
+        else:
+            flag2 = True
+            
+        if(flag2 == False):
+            #print("add node "+str(newNode.value) +" "+str(newNode.count))
+            mBatch.append(newNode)
+        #else:
+        #    print("not add node "+str(newNode.value) +" "+str(newNode.count))
+        flag2 = False
+        
+        #if(pattern.value == item):
+            #print(str(idx))
+        #    count = True
+        #    batch[idx].count = batch[idx].count+1
+        #idx = idx +1
+                    
+    if count==False:
+        #print("add new node "+str(item))
+        self.append(FPNode(item, 1, None))
+    #print(len(batch))
+    for node in mBatch:
+        self.append(node)
+    #return batch
+    #print("------------------------------------------")
 
 def mergeLine2(l1, l2):
     ret = []
@@ -157,10 +215,10 @@ def mergeLine2(l1, l2):
                 if type(tmp) is list:
                     islist2 += 1
                     #tmp.append(islist2)
-                    tmp1.append(tmp)#.append(2))
+                    tmp2.append(tmp)#.append(2))
             if islist2 == 0:
                 #t2.append(4)
-                tmp1.append(t2)#.append(4))
+                tmp2.append(t2)#.append(4))
 
                     #t2.append(2)
                     #t1.append([t2,2])
@@ -198,6 +256,7 @@ def mergeLine2(l1, l2):
         #idx2 = idx2+1 
     '''
     ret.append(tmp1)
+    ret.append(tmp2)
     return ret
 
 '''
@@ -217,9 +276,11 @@ def sampleFun2(sc, dataName):
 #        print(str(kv)+ "---")
         
     trans2 = trans.reduce(mergeLine2)
+    count = 0;
     for kv in trans2:#.collect():
+        count +=1
         for kv2 in kv:
-            print("---2: " +str(kv2))
+            print(str(count)+"---2: " +str(kv2))
     #trans3= data.mapPartitions(lambda line:  line.strip().split(' ')).collect()
     
     #trans3 = data.mapPartitions(lambda line : [line, line] , 8).collect()
