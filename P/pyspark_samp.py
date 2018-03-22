@@ -139,18 +139,32 @@ def mergeLine2(l1, l2):
     
     
     for t1 in l1:
-        #ret.append(t1)
-        #print(t1)
         if type(t1) is list:
-            #if type(t1[0]) is list:
-                
-            #else:
-            t1.append(1)
-            for t2 in l2:
-                if type(t2) is list:
-                    t2.append(2)
-                    t1.append(t2)
-            ret.append(t1)
+            islist = 0
+            for tmp in t1:
+                if type(tmp) is list:
+                    islist += 1
+                    #tmp.append(islist)
+                    tmp1.append(tmp)#.append(3))
+            if islist == 0:
+                #t1.append(1)
+                tmp1.append(t1)#.append(1))
+
+    for t2 in l2:
+        if type(t2) is list:
+            islist2 = 0
+            for tmp in t2:
+                if type(tmp) is list:
+                    islist2 += 1
+                    #tmp.append(islist2)
+                    tmp1.append(tmp)#.append(2))
+            if islist2 == 0:
+                #t2.append(4)
+                tmp1.append(t2)#.append(4))
+
+                    #t2.append(2)
+                    #t1.append([t2,2])
+            #ret.append(t1)
     #if type(t2) is list and len(t2)>1:
     '''    
     for t2 in l2:
@@ -183,7 +197,7 @@ def mergeLine2(l1, l2):
         #ret.append(2)
         #idx2 = idx2+1 
     '''
-    #ret.append(tmp2)
+    ret.append(tmp1)
     return ret
 
 '''
@@ -204,7 +218,8 @@ def sampleFun2(sc, dataName):
         
     trans2 = trans.reduce(mergeLine2)
     for kv in trans2:#.collect():
-        print("---2: " +str(kv))
+        for kv2 in kv:
+            print("---2: " +str(kv2))
     #trans3= data.mapPartitions(lambda line:  line.strip().split(' ')).collect()
     
     #trans3 = data.mapPartitions(lambda line : [line, line] , 8).collect()
@@ -213,6 +228,7 @@ def sampleFun2(sc, dataName):
 #    trans2 = trans.groupBy(lambda word: word[0])#groupByKey() #reduceByKey(lambda a, b: [a,b])
     for kv in trans3:
         print("\n---2: " +str(kv))
+        
 def linuxDataPath():
     return "/home/hduser/workspace/MLS/data/"
 def winDataPath():
