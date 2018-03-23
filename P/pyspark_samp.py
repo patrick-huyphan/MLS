@@ -81,10 +81,10 @@ class Batch(object):
         Initialize the batch.
         """
         self.batch = []
-        #print("batch start")
+        print("batch start")
         self.frequent = self.find_frequent_items(transactions, threshold)
         self.batch = self.build_batch(transactions, self.frequent)
-        #print("batch end")
+        print("batch end")
 
     @staticmethod
     def find_frequent_items(transactions, threshold):
@@ -94,7 +94,8 @@ class Batch(object):
         items = {}
 
         for transaction in transactions:
-            for item in transaction:
+            _tmp = transaction[0:-1]
+            for item in _tmp:
                 if item in items:
                     items[item] += 1
                 else:
@@ -111,7 +112,8 @@ class Batch(object):
         Build patern.
         """
         for transaction in transactions:
-            sorted_items = [x for x in transaction if x in frequent]
+            _tmp = transaction[0:-1]
+            sorted_items = [x for x in _tmp if x in frequent]
             #sorted_items.sort(key=lambda x: frequent[x], reverse=True)
             sorted(sorted_items)
             #print("sorted_items "+str(sorted_items))
@@ -430,7 +432,10 @@ def splitLine(line):
         kv.append([item, line.strip().split(' ')])
     return kv
 def splitLine2(line):
-    kv= line.strip().split(' ')
+    kv= []
+    tmp = line.strip().split(' ')
+    for v in tmp:
+        kv.append(int(v))
     kv.append(1)
     return kv
     
