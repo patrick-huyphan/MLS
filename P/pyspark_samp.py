@@ -92,6 +92,10 @@ def splitLine(line):
     for item in line.strip().split(' '): 
         kv.append([item, line.strip().split(' ')])
     return kv
+def splitLine2(line):
+    kv= line.strip().split(' ')
+    kv.append(1)
+    return kv
     
 def mergeLine(l1, l2):
     ret = []
@@ -124,81 +128,52 @@ def addCount2(line):
 def checkInput(inputList):
     return 0
 
-
-def mergeLine2(l1, l2):
+def fpgr(transactions):
+    patterns = fpg.find_frequent_patterns_batch(transactions, 2)
+    return patterns
+'''
+the last element is the count of pattern
+'''
+def getLine2List(line):
+    ret = []
+    for t1 in line:
+        if type(t1) is list:
+            #tmp1.append(t1)
+            
+            islist = 0
+            for tmp in t1:
+                if type(tmp) is list:
+                    islist += 1
+                    #tmp.append(islist)
+                    ret.append(tmp)#.append(3))
+            if islist == 0:
+                #t1.append(1)
+                ret.append(t1)#.append(1))
+    return ret
+'''
+from list data, build batch and merge 2 batch
+'''
+def mergebatch(p1, p2):
     ret = []
     count = False
     flag1 = False
     flag2 = False
     idx1=0
     idx2=0
-    tmp1 = []
-    tmp2 = []
-    #print(l1)
-    #if type(t1) is list and len(t1)==1:
-    
-    
-    for t1 in l1:
-        if type(t1) is list:
-            islist = 0
-            for tmp in t1:
-                if type(tmp) is list:
-                    islist += 1
-                    #tmp.append(islist)
-                    tmp1.append(tmp)#.append(3))
-            if islist == 0:
-                #t1.append(1)
-                tmp1.append(t1)#.append(1))
-
-    for t2 in l2:
-        if type(t2) is list:
-            islist2 = 0
-            for tmp in t2:
-                if type(tmp) is list:
-                    islist2 += 1
-                    #tmp.append(islist2)
-                    tmp1.append(tmp)#.append(2))
-            if islist2 == 0:
-                #t2.append(4)
-                tmp1.append(t2)#.append(4))
-
-                    #t2.append(2)
-                    #t1.append([t2,2])
-            #ret.append(t1)
-    #if type(t2) is list and len(t2)>1:
-    '''    
-    for t2 in l2:
-        if type(t2) is list:
-            t2.append(1)
-            ret.append(t2)
-            #tmp2.append([2,t2])
-    #merge 2 set
-    '''
-    '''
-    if(len(tmp1)==1):
-        ret.append(tmp1)
-    if(len(tmp2)==1):
-        ret.append(tmp2)
-        
-    for x in tmp1:
-        for y in tmp2:
-            sa = set(x)
-            sb = set(y)
-            c = sa.intersection(sb)
-            #if len(c)>0:
-            ret.append(c)
-    #
-        #idx1 = idx1+1
-
-    #for t1 in l2:
-        #print(t1)
-        #ret.append(t1)
-        #if type(t1) is list:
-        #ret.append(2)
-        #idx2 = idx2+1 
-    '''
-    ret.append(tmp1)
+    batch1 = fpgr(p1)
+    batch2 = fpgr(p2)
+    batch3 = fpg.mergeBatch(batch1, batch2)
+    ret.append(p1)
+    ret.append(p2)
     return ret
+
+def reducePattern(l1, l2):
+    tmp1 = getLine2List(l1)
+    tmp2 = getLine2List(l2)
+    
+    #ret.append(tmp1)
+    #ret.append(tmp2)
+    return mergebatch(tmp1, tmp2)
 
 '''
 map trans to pair(trans,count)
@@ -209,25 +184,29 @@ def sampleFun2(sc, dataName):
     print(data.getNumPartitions())
     #for kv in data.collect():
     #    print(str(kv)+ "---")
-    trans = data.map(lambda line : (line.strip().split(' '),1))#.map(lambda row : (row,1))#splitLine(line))
+    trans = data.map(lambda line : (splitLine2(line),1))
     
     #trans = data.flatMap(lambda line : splitLine(line)).map(lambda x: (x[0],x[1]))
     #print(trans.collect())
-#    for kv in trans.collect():
-#        print(str(kv)+ "---")
+    for kv in trans.collect():
+        print(str(kv)+ "---")
         
-    trans2 = trans.reduce(mergeLine2)
+    trans2 = trans.reduce(reducePattern)
+    count= 0
     for kv in trans2:#.collect():
+        count +=1
         for kv2 in kv:
-            print("---2: " +str(kv2))
+            print(str(count)+"---2: " +str(kv2))
+            #for kv3 in kv2:
+            #    print("---3: " +str(kv3))
     #trans3= data.mapPartitions(lambda line:  line.strip().split(' ')).collect()
     
     #trans3 = data.mapPartitions(lambda line : [line, line] , 8).collect()
     #trans3 = trans.
     
 #    trans2 = trans.groupBy(lambda word: word[0])#groupByKey() #reduceByKey(lambda a, b: [a,b])
-    for kv in trans3:
-        print("\n---2: " +str(kv))
+#    for kv in trans3:
+#        print("\n---2: " +str(kv))
         
 def linuxDataPath():
     return "/home/hduser/workspace/MLS/data/"
