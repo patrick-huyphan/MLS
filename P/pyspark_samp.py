@@ -18,6 +18,343 @@ from scipy import sparse
 
 import random
 num_samples = 100000000
+
+
+class FPNode(object):
+    """
+    A node in the FP tree.
+    """
+
+    def __init__(self, value, count, parent):
+        """
+        Create the node.
+        """
+        self.value = value
+        self.count = count
+        self.parent = parent
+        self.link = None
+        self.children = []
+        #self.batch = []
+
+    def has_child(self, value):
+        """
+        Check if node has a particular child node.
+        """
+        for node in self.children:
+            if node.value == value:
+                return True
+
+        return False
+
+    def get_child(self, value):
+        """
+        Return a child node with a particular value.
+        """
+        for node in self.children:
+            if node.value == value:
+                return node
+
+        return None
+        
+    def intercept(self, other):
+        value = sorted(set(other.value) & set(self.value), key = self.value.index)
+        return FPNode(value,self.count + other.count, self)
+
+    def add_child(self, value):
+        """
+        Add a node as a child node.
+        """
+        child = FPNode(value, 1, self)
+        self.children.append(child)
+        return child
+    
+    def isZero(self):
+        return self.value.length>0
+    
+    def isContained(self, other):
+        return other.value.issubset(self.value)
+    
+
+class Batch(object):
+    def __init__(self, transactions, threshold):
+        """
+        Initialize the batch.
+        """
+        self.batch = []
+        print("batch start")
+        self.frequent = self.find_frequent_items(transactions, threshold)
+        self.batch = self.build_batch(transactions, self.frequent)
+        print("batch end")
+
+    @staticmethod
+    def find_frequent_items(transactions, threshold):
+        """
+        Create a dictionary of items with occurrences above the threshold.
+        """
+        items = {}
+
+        for transaction in transactions:
+            for item in transaction:
+                if item in items:
+                    items[item] += 1
+                else:
+                    items[item] = 1
+
+        for key in list(items.keys()):
+            if items[key] < threshold:
+                del items[key]
+        #print(str(items))
+        return items
+
+    def build_batch(self, transactions, frequent):
+        """
+        Build patern.
+        """
+        for transaction in transactions:
+            sorted_items = [x for x in transaction if x in frequent]
+            #sorted_items.sort(key=lambda x: frequent[x], reverse=True)
+            sorted(sorted_items)
+            #print("sorted_items "+str(sorted_items))
+            if len(sorted_items) > 0:
+                self.insert_batch(sorted_items, 1)
+        #print(len(batch))        
+        return self.batch
+    '''
+    check in current batch: if true -> continue
+    check in update batch: if true -> continue, else add to update.
+    merge update into current
+    '''
+    def insert_batch(self, item, count):
+        #print("insert_batch")
+        count = False
+        flag1 = False
+        flag2 = False
+        idx=0
+        #print("item "+str(item))
+        mBatch = []
+        for pattern in self.batch:
+            #print("--"+str(sorted(pattern.value)) + " "+ str(pattern.count))
+            sa = set(pattern.value)
+            sb = set(item)
+            c = sa.intersection(sb)
+            #d = c
+            newNode = FPNode(sorted(c), pattern.count+1, None)
+            if len(c)>0:
+                #print("intersection "+str(c)+" "+ str(newNode.count))
+                if(sa.issubset(c)):
+                    #print("c in pat " + str(idx))
+                    #node =  self.batch[idx]
+                    self.batch.remove(pattern)
+                    #print(" remove "+str(sorted(pattern.value)) + " "+ str(pattern.count))
+                if(sb.issubset(c)):
+                    flag1 = True
+                    #print("flag1 = True")
+                    #print("c in item " + str(idx))                    
+                for mx in mBatch:
+                    ms = set(mx.value)
+                    if(ms.issubset(c)):
+                        mBatch.remove(mx)
+                        #print(" remove mx "+str(sorted(mx.value)) + " "+ str(mx.count))
+                        #print("mBatch.remove(mx)") 
+                    if(c.issubset(ms)):
+                        flag2 = True
+                        #print(":") 
+            else:
+                flag2 = True
+                
+            if(flag2 == False):
+                #print("add node "+str(newNode.value) +" "+str(newNode.count))
+                mBatch.append(newNode)
+            #else:
+            #    print("not add node "+str(newNode.value) +" "+str(newNode.count))
+            flag2 = False
+            
+            #if(pattern.value == item):
+                #print(str(idx))
+            #    count = True
+            #    batch[idx].count = batch[idx].count+1
+            #idx = idx +1
+                        
+        if count==False:
+            #print("add new node "+str(item))
+            self.batch.append(FPNode(item, 1, None))
+        #print(len(batch))
+        for node in mBatch:
+            self.batch.append(node)
+        #return batch
+        #print("------------------------------------------")
+
+    def insert_batch2(self, item, count):
+        #print("insert_batch")
+        count = False
+        flag1 = False
+        flag2 = False
+        idx=0
+        #print("item "+str(item))
+        mBatch = []
+        for pattern in self.batch:
+            #print("--"+str(sorted(pattern.value)) + " "+ str(pattern.count))
+            sa = set(pattern.value)
+            sb = set(item)
+            c = sa.intersection(sb)
+            #d = c
+            newNode = FPNode(sorted(c), pattern.count+1, None)
+            if len(c)>0:
+                #print("intersection "+str(c)+" "+ str(newNode.count))
+                if(sa.issubset(c)):
+                    #print("c in pat " + str(idx))
+                    #node =  self.batch[idx]
+                    self.batch.remove(pattern)
+                    print(" remove "+str(sorted(pattern.value)) + " "+ str(pattern.count))
+                if(sb.issubset(c)):
+                    flag1 = True
+                    #print("flag1 = True")
+                    #print("c in item " + str(idx))                    
+                for mx in mBatch:
+                    ms = set(mx.value)
+                    if(ms.issubset(c)):
+                        mBatch.remove(mx)
+                        print(" remove mx "+str(sorted(mx.value)) + " "+ str(mx.count))
+                        #print("mBatch.remove(mx)") 
+                    if(c.issubset(ms)):
+                        flag2 = True
+                        #print(":") 
+            else:
+                flag2 = True
+                
+            if(flag2 == False):
+                #print("add node "+str(newNode.value) +" "+str(newNode.count))
+                mBatch.append(newNode)
+            #else:
+            #    print("not add node "+str(newNode.value) +" "+str(newNode.count))
+            flag2 = False
+            
+            #if(pattern.value == item):
+                #print(str(idx))
+            #    count = True
+            #    batch[idx].count = batch[idx].count+1
+            #idx = idx +1
+                        
+        if count==False:
+            #print("add new node "+str(item))
+            self.batch.append(FPNode(item, 1, None))
+        #print(len(batch))
+        for node in mBatch:
+            self.batch.append(node)
+        #return batch
+        #print("------------------------------------------")        
+    def mine_patterns(self, threshold):
+        """
+        Mine the constructed FP tree for frequent patterns.
+        """
+        '''
+        if self.tree_has_single_path(self.root):
+            return self.generate_pattern_list()
+        else:
+            return self.zip_patterns(self.mine_sub_trees(threshold))
+        '''
+    def zip_patterns(self, patterns):
+        """
+        Append suffix to patterns in dictionary if
+        we are in a conditional FP tree.
+        """
+        '''
+        suffix = self.root.value
+
+        if suffix is not None:
+            # We are in a conditional tree.
+            new_patterns = {}
+            for key in patterns.keys():
+                new_patterns[tuple(sorted(list(key) + [suffix]))] = patterns[key]
+
+            return new_patterns
+
+        return patterns
+        '''
+        
+    def generate_pattern_list(self):
+        """
+        Generate a list of patterns with support counts.
+        """
+        patterns = {}
+
+        return patterns
+
+    def mine_sub_trees(self, threshold):
+        """
+        Generate subtrees and mine them for patterns.
+        """
+        patterns = {}
+        mining_order = sorted(self.frequent.keys(),
+                              key=lambda x: self.frequent[x])
+
+        # Get items in tree in reverse order of occurrences.
+        for item in mining_order:
+            suffixes = []
+            conditional_tree_input = []
+            node = self.headers[item]
+
+            # Follow node links to get a list of
+            # all occurrences of a certain item.
+            while node is not None:
+                suffixes.append(node)
+                node = node.link
+
+            # For each occurrence of the item, 
+            # trace the path back to the root node.
+            for suffix in suffixes:
+                frequency = suffix.count
+                path = []
+                parent = suffix.parent
+
+                while parent.parent is not None:
+                    path.append(parent.value)
+                    parent = parent.parent
+
+                for i in range(frequency):
+                    conditional_tree_input.append(path)
+
+            # Now we have the input for a subtree,
+            # so construct it and grab the patterns.
+            subtree = FPTree(conditional_tree_input, threshold,
+                             item, self.frequent[item])
+            subtree_patterns = subtree.mine_patterns(threshold)
+
+            # Insert subtree patterns into main patterns dictionary.
+            for pattern in subtree_patterns.keys():
+                if pattern in patterns:
+                    patterns[pattern] += subtree_patterns[pattern]
+                else:
+                    patterns[pattern] = subtree_patterns[pattern]
+
+        return patterns
+
+    """
+    merge batch A and B:
+    - for each itemA in A:
+        for each itemB in B:
+            q= itemA intersec itemB
+            if(q != 0):
+            if itema is child(Q): A\itemA
+            if....
+            
+            A = A U C
+            
+    """
+    def mergeBatch(self, other):
+        for itemA in other.batch:
+            self.insert(itemA, self.batch)
+            #for itemB in self.batch:
+        #return newbatch        
+
+
+def mergeBatchLocal(transactions1, transactions2):
+    for itemA in transactions2.batch:
+        #print(" itemA: "+ str(itemA.value) +" "+ str(itemA.count))
+        transactions1.insert_batch2(itemA.value, itemA.count)
+    return transactions1
+
+
 def inside(p):     
     x, y = random.random(), random.random()
     return x*x + y*y < 1
@@ -160,9 +497,9 @@ def mergebatch(p1, p2):
     flag2 = False
     idx1=0
     idx2=0
-    batch1 = fpgr(p1)
-    batch2 = fpgr(p2)
-    batch3 = fpg.mergeBatch(batch1, batch2)
+    batch1 = Batch(p1,2)
+    batch2 = Batch(p2,2)
+    batch3 = mergeBatchLocal(batch1, batch2)
     ret.append(p1)
     ret.append(p2)
     return ret
