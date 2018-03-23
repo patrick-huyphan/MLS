@@ -81,10 +81,10 @@ class Batch(object):
         Initialize the batch.
         """
         self.batch = []
-        print("batch start")
+        #print("batch start")
         self.frequent = self.find_frequent_items(transactions, threshold)
         self.batch = self.build_batch(transactions, self.frequent)
-        print("batch end")
+        #print("batch end")
 
     @staticmethod
     def find_frequent_items(transactions, threshold):
@@ -434,24 +434,6 @@ def splitLine2(line):
     kv.append(1)
     return kv
     
-def mergeLine(l1, l2):
-    ret = []
-    
-    for x in l1:
-        ret.append([x[0],x[1]])
-        
-    for y in l2:
-        idx=0
-        for k in ret:
-            if k[0]==y[0]:
-                ret[idx] = [k[0],x[1]+y[1]]
-            else:
-                ret.append([y[0],y[1]])
-            
-            idx=idx+1
-#    print(ret)
-    return ret
-
 def addCount(line):
     ret=[]
     for x in line:
@@ -465,9 +447,6 @@ def addCount2(line):
 def checkInput(inputList):
     return 0
 
-def fpgr(transactions):
-    patterns = fpg.find_frequent_patterns_batch(transactions, 2)
-    return patterns
 '''
 the last element is the count of pattern
 '''
@@ -487,22 +466,20 @@ def getLine2List(line):
                 #t1.append(1)
                 ret.append(t1)#.append(1))
     return ret
+def batch2List(batch):
+    ret = []
+    #for pa in batch.batch:
+    return ret
 '''
 from list data, build batch and merge 2 batch
 '''
 def mergebatch(p1, p2):
-    ret = []
-    count = False
-    flag1 = False
-    flag2 = False
-    idx1=0
-    idx2=0
     batch1 = Batch(p1,2)
     batch2 = Batch(p2,2)
-    batch3 = mergeBatchLocal(batch1, batch2)
-    ret.append(p1)
-    ret.append(p2)
-    return ret
+    batch3 = mergeBatchLocal(batch1, batch2).batch
+    #ret.append(p1)
+    #ret.append(p2)
+    return batch3
 
 def reducePattern(l1, l2):
     tmp1 = getLine2List(l1)
