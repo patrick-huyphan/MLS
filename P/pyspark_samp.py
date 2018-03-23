@@ -18,6 +18,343 @@ from scipy import sparse
 
 import random
 num_samples = 100000000
+
+
+class FPNode(object):
+    """
+    A node in the FP tree.
+    """
+
+    def __init__(self, value, count, parent):
+        """
+        Create the node.
+        """
+        self.value = value
+        self.count = count
+        self.parent = parent
+        self.link = None
+        self.children = []
+        #self.batch = []
+
+    def has_child(self, value):
+        """
+        Check if node has a particular child node.
+        """
+        for node in self.children:
+            if node.value == value:
+                return True
+
+        return False
+
+    def get_child(self, value):
+        """
+        Return a child node with a particular value.
+        """
+        for node in self.children:
+            if node.value == value:
+                return node
+
+        return None
+        
+    def intercept(self, other):
+        value = sorted(set(other.value) & set(self.value), key = self.value.index)
+        return FPNode(value,self.count + other.count, self)
+
+    def add_child(self, value):
+        """
+        Add a node as a child node.
+        """
+        child = FPNode(value, 1, self)
+        self.children.append(child)
+        return child
+    
+    def isZero(self):
+        return self.value.length>0
+    
+    def isContained(self, other):
+        return other.value.issubset(self.value)
+    
+
+class Batch(object):
+    def __init__(self, transactions, threshold):
+        """
+        Initialize the batch.
+        """
+        self.batch = []
+        #print("batch start")
+        self.frequent = self.find_frequent_items(transactions, threshold)
+        self.batch = self.build_batch(transactions, self.frequent)
+        #print("batch end")
+
+    @staticmethod
+    def find_frequent_items(transactions, threshold):
+        """
+        Create a dictionary of items with occurrences above the threshold.
+        """
+        items = {}
+
+        for transaction in transactions:
+            for item in transaction:
+                if item in items:
+                    items[item] += 1
+                else:
+                    items[item] = 1
+
+        for key in list(items.keys()):
+            if items[key] < threshold:
+                del items[key]
+        #print(str(items))
+        return items
+
+    def build_batch(self, transactions, frequent):
+        """
+        Build patern.
+        """
+        for transaction in transactions:
+            sorted_items = [x for x in transaction if x in frequent]
+            #sorted_items.sort(key=lambda x: frequent[x], reverse=True)
+            sorted(sorted_items)
+            #print("sorted_items "+str(sorted_items))
+            if len(sorted_items) > 0:
+                self.insert_batch(sorted_items, 1)
+        #print(len(batch))        
+        return self.batch
+    '''
+    check in current batch: if true -> continue
+    check in update batch: if true -> continue, else add to update.
+    merge update into current
+    '''
+    def insert_batch(self, item, count):
+        #print("insert_batch")
+        count = False
+        flag1 = False
+        flag2 = False
+        idx=0
+        #print("item "+str(item))
+        mBatch = []
+        for pattern in self.batch:
+            #print("--"+str(sorted(pattern.value)) + " "+ str(pattern.count))
+            sa = set(pattern.value)
+            sb = set(item)
+            c = sa.intersection(sb)
+            #d = c
+            newNode = FPNode(sorted(c), pattern.count+1, None)
+            if len(c)>0:
+                #print("intersection "+str(c)+" "+ str(newNode.count))
+                if(sa.issubset(c)):
+                    #print("c in pat " + str(idx))
+                    #node =  self.batch[idx]
+                    self.batch.remove(pattern)
+                    #print(" remove "+str(sorted(pattern.value)) + " "+ str(pattern.count))
+                if(sb.issubset(c)):
+                    flag1 = True
+                    #print("flag1 = True")
+                    #print("c in item " + str(idx))                    
+                for mx in mBatch:
+                    ms = set(mx.value)
+                    if(ms.issubset(c)):
+                        mBatch.remove(mx)
+                        #print(" remove mx "+str(sorted(mx.value)) + " "+ str(mx.count))
+                        #print("mBatch.remove(mx)") 
+                    if(c.issubset(ms)):
+                        flag2 = True
+                        #print(":") 
+            else:
+                flag2 = True
+                
+            if(flag2 == False):
+                #print("add node "+str(newNode.value) +" "+str(newNode.count))
+                mBatch.append(newNode)
+            #else:
+            #    print("not add node "+str(newNode.value) +" "+str(newNode.count))
+            flag2 = False
+            
+            #if(pattern.value == item):
+                #print(str(idx))
+            #    count = True
+            #    batch[idx].count = batch[idx].count+1
+            #idx = idx +1
+                        
+        if count==False:
+            #print("add new node "+str(item))
+            self.batch.append(FPNode(item, 1, None))
+        #print(len(batch))
+        for node in mBatch:
+            self.batch.append(node)
+        #return batch
+        #print("------------------------------------------")
+
+    def insert_batch2(self, item, count):
+        #print("insert_batch")
+        count = False
+        flag1 = False
+        flag2 = False
+        idx=0
+        #print("item "+str(item))
+        mBatch = []
+        for pattern in self.batch:
+            #print("--"+str(sorted(pattern.value)) + " "+ str(pattern.count))
+            sa = set(pattern.value)
+            sb = set(item)
+            c = sa.intersection(sb)
+            #d = c
+            newNode = FPNode(sorted(c), pattern.count+1, None)
+            if len(c)>0:
+                #print("intersection "+str(c)+" "+ str(newNode.count))
+                if(sa.issubset(c)):
+                    #print("c in pat " + str(idx))
+                    #node =  self.batch[idx]
+                    self.batch.remove(pattern)
+                    print(" remove "+str(sorted(pattern.value)) + " "+ str(pattern.count))
+                if(sb.issubset(c)):
+                    flag1 = True
+                    #print("flag1 = True")
+                    #print("c in item " + str(idx))                    
+                for mx in mBatch:
+                    ms = set(mx.value)
+                    if(ms.issubset(c)):
+                        mBatch.remove(mx)
+                        print(" remove mx "+str(sorted(mx.value)) + " "+ str(mx.count))
+                        #print("mBatch.remove(mx)") 
+                    if(c.issubset(ms)):
+                        flag2 = True
+                        #print(":") 
+            else:
+                flag2 = True
+                
+            if(flag2 == False):
+                #print("add node "+str(newNode.value) +" "+str(newNode.count))
+                mBatch.append(newNode)
+            #else:
+            #    print("not add node "+str(newNode.value) +" "+str(newNode.count))
+            flag2 = False
+            
+            #if(pattern.value == item):
+                #print(str(idx))
+            #    count = True
+            #    batch[idx].count = batch[idx].count+1
+            #idx = idx +1
+                        
+        if count==False:
+            #print("add new node "+str(item))
+            self.batch.append(FPNode(item, 1, None))
+        #print(len(batch))
+        for node in mBatch:
+            self.batch.append(node)
+        #return batch
+        #print("------------------------------------------")        
+    def mine_patterns(self, threshold):
+        """
+        Mine the constructed FP tree for frequent patterns.
+        """
+        '''
+        if self.tree_has_single_path(self.root):
+            return self.generate_pattern_list()
+        else:
+            return self.zip_patterns(self.mine_sub_trees(threshold))
+        '''
+    def zip_patterns(self, patterns):
+        """
+        Append suffix to patterns in dictionary if
+        we are in a conditional FP tree.
+        """
+        '''
+        suffix = self.root.value
+
+        if suffix is not None:
+            # We are in a conditional tree.
+            new_patterns = {}
+            for key in patterns.keys():
+                new_patterns[tuple(sorted(list(key) + [suffix]))] = patterns[key]
+
+            return new_patterns
+
+        return patterns
+        '''
+        
+    def generate_pattern_list(self):
+        """
+        Generate a list of patterns with support counts.
+        """
+        patterns = {}
+
+        return patterns
+
+    def mine_sub_trees(self, threshold):
+        """
+        Generate subtrees and mine them for patterns.
+        """
+        patterns = {}
+        mining_order = sorted(self.frequent.keys(),
+                              key=lambda x: self.frequent[x])
+
+        # Get items in tree in reverse order of occurrences.
+        for item in mining_order:
+            suffixes = []
+            conditional_tree_input = []
+            node = self.headers[item]
+
+            # Follow node links to get a list of
+            # all occurrences of a certain item.
+            while node is not None:
+                suffixes.append(node)
+                node = node.link
+
+            # For each occurrence of the item, 
+            # trace the path back to the root node.
+            for suffix in suffixes:
+                frequency = suffix.count
+                path = []
+                parent = suffix.parent
+
+                while parent.parent is not None:
+                    path.append(parent.value)
+                    parent = parent.parent
+
+                for i in range(frequency):
+                    conditional_tree_input.append(path)
+
+            # Now we have the input for a subtree,
+            # so construct it and grab the patterns.
+            subtree = FPTree(conditional_tree_input, threshold,
+                             item, self.frequent[item])
+            subtree_patterns = subtree.mine_patterns(threshold)
+
+            # Insert subtree patterns into main patterns dictionary.
+            for pattern in subtree_patterns.keys():
+                if pattern in patterns:
+                    patterns[pattern] += subtree_patterns[pattern]
+                else:
+                    patterns[pattern] = subtree_patterns[pattern]
+
+        return patterns
+
+    """
+    merge batch A and B:
+    - for each itemA in A:
+        for each itemB in B:
+            q= itemA intersec itemB
+            if(q != 0):
+            if itema is child(Q): A\itemA
+            if....
+            
+            A = A U C
+            
+    """
+    def mergeBatch(self, other):
+        for itemA in other.batch:
+            self.insert(itemA, self.batch)
+            #for itemB in self.batch:
+        #return newbatch        
+
+
+def mergeBatchLocal(transactions1, transactions2):
+    for itemA in transactions2.batch:
+        #print(" itemA: "+ str(itemA.value) +" "+ str(itemA.count))
+        transactions1.insert_batch2(itemA.value, itemA.count)
+    return transactions1
+
+
 def inside(p):     
     x, y = random.random(), random.random()
     return x*x + y*y < 1
@@ -92,25 +429,11 @@ def splitLine(line):
     for item in line.strip().split(' '): 
         kv.append([item, line.strip().split(' ')])
     return kv
+def splitLine2(line):
+    kv= line.strip().split(' ')
+    kv.append(1)
+    return kv
     
-def mergeLine(l1, l2):
-    ret = []
-    
-    for x in l1:
-        ret.append([x[0],x[1]])
-        
-    for y in l2:
-        idx=0
-        for k in ret:
-            if k[0]==y[0]:
-                ret[idx] = [k[0],x[1]+y[1]]
-            else:
-                ret.append([y[0],y[1]])
-            
-            idx=idx+1
-#    print(ret)
-    return ret
-
 def addCount(line):
     ret=[]
     for x in line:
@@ -123,141 +446,51 @@ def addCount2(line):
 # get list return list
 def checkInput(inputList):
     return 0
-def insert_batch(self, item, count):
-    #print("insert_batch")
-    count = False
-    flag1 = False
-    flag2 = False
-    idx=0
-    #print("item "+str(item))
-    mBatch = []
-    for pattern in self:
-        #print("--"+str(sorted(pattern.value)) + " "+ str(pattern.count))
-        sa = set(pattern)
-        sb = set(item)
-        c = sa.intersection(sb)
-        #d = c
-        #newNode = FPNode(sorted(c), pattern.count+1, None)
-        if len(c)>0:
-            #print("intersection "+str(c)+" "+ str(newNode.count))
-            #if(sa.issubset(c)):
-                #print("c in pat " + str(idx))
-                #node =  self.batch[idx]
-                #self.batch.remove(pattern)
-                #print(" remove "+str(sorted(pattern.value)) + " "+ str(pattern.count))
-            if(sb.issubset(c)):
-                flag1 = True
-                #print("flag1 = True")
-                #print("c in item " + str(idx))                    
-            for mx in mBatch:
-                ms = set(mx.value)
-                if(ms.issubset(c)):
-                    mBatch.remove(mx)
-                    #print(" remove mx "+str(sorted(mx.value)) + " "+ str(mx.count))
-                    #print("mBatch.remove(mx)") 
-                if(c.issubset(ms)):
-                    flag2 = True
-                    #print(":") 
-        else:
-            flag2 = True
-            
-        if(flag2 == False):
-            #print("add node "+str(newNode.value) +" "+str(newNode.count))
-            mBatch.append(newNode)
-        #else:
-        #    print("not add node "+str(newNode.value) +" "+str(newNode.count))
-        flag2 = False
-        
-        #if(pattern.value == item):
-            #print(str(idx))
-        #    count = True
-        #    batch[idx].count = batch[idx].count+1
-        #idx = idx +1
-                    
-    if count==False:
-        #print("add new node "+str(item))
-        self.append(FPNode(item, 1, None))
-    #print(len(batch))
-    for node in mBatch:
-        self.append(node)
-    #return batch
-    #print("------------------------------------------")
 
-def mergeLine2(l1, l2):
+'''
+the last element is the count of pattern
+'''
+def getLine2List(line):
     ret = []
-    count = False
-    flag1 = False
-    flag2 = False
-    idx1=0
-    idx2=0
-    tmp1 = []
-    tmp2 = []
-    #print(l1)
-    #if type(t1) is list and len(t1)==1:
-    
-    
-    for t1 in l1:
+    for t1 in line:
         if type(t1) is list:
+            #tmp1.append(t1)
+            
             islist = 0
             for tmp in t1:
                 if type(tmp) is list:
                     islist += 1
                     #tmp.append(islist)
-                    tmp1.append(tmp)#.append(3))
+                    ret.append(tmp)#.append(3))
             if islist == 0:
                 #t1.append(1)
-                tmp1.append(t1)#.append(1))
-
-    for t2 in l2:
-        if type(t2) is list:
-            islist2 = 0
-            for tmp in t2:
-                if type(tmp) is list:
-                    islist2 += 1
-                    #tmp.append(islist2)
-                    tmp2.append(tmp)#.append(2))
-            if islist2 == 0:
-                #t2.append(4)
-                tmp2.append(t2)#.append(4))
-
-                    #t2.append(2)
-                    #t1.append([t2,2])
-            #ret.append(t1)
-    #if type(t2) is list and len(t2)>1:
-    '''    
-    for t2 in l2:
-        if type(t2) is list:
-            t2.append(1)
-            ret.append(t2)
-            #tmp2.append([2,t2])
-    #merge 2 set
-    '''
-    '''
-    if(len(tmp1)==1):
-        ret.append(tmp1)
-    if(len(tmp2)==1):
-        ret.append(tmp2)
-        
-    for x in tmp1:
-        for y in tmp2:
-            sa = set(x)
-            sb = set(y)
-            c = sa.intersection(sb)
-            #if len(c)>0:
-            ret.append(c)
-    #
-        #idx1 = idx1+1
-
-    #for t1 in l2:
-        #print(t1)
-        #ret.append(t1)
-        #if type(t1) is list:
-        #ret.append(2)
-        #idx2 = idx2+1 
-    '''
-    ret.append(tmp1)
-    ret.append(tmp2)
+                ret.append(t1)
     return ret
+
+def batch2List(batch):
+    ret = []
+    #for pa in batch.batch:
+    return ret
+'''
+from list data, build batch and merge 2 batch
+'''
+def mergebatch(p1, p2):
+    ret=[]
+    batch1 = Batch(p1,2)
+    batch2 = Batch(p2,2)
+    batch3 = mergeBatchLocal(batch1, batch2).batch
+    ret.append(p1)
+    ret.append(p2)
+    #ret.append(batch3)
+    return ret
+
+def reducePattern(l1, l2):
+    tmp1 = getLine2List(l1)
+    tmp2 = getLine2List(l2)
+    
+    #ret.append(tmp1)
+    #ret.append(tmp2)
+    return mergebatch(tmp1, tmp2)
 
 '''
 map trans to pair(trans,count)
@@ -268,27 +501,29 @@ def sampleFun2(sc, dataName):
     print(data.getNumPartitions())
     #for kv in data.collect():
     #    print(str(kv)+ "---")
-    trans = data.map(lambda line : (line.strip().split(' '),1))#.map(lambda row : (row,1))#splitLine(line))
+    trans = data.map(lambda line : (splitLine2(line),1))
     
     #trans = data.flatMap(lambda line : splitLine(line)).map(lambda x: (x[0],x[1]))
     #print(trans.collect())
-#    for kv in trans.collect():
-#        print(str(kv)+ "---")
+    for kv in trans.collect():
+        print(str(kv)+ "---")
         
-    trans2 = trans.reduce(mergeLine2)
-    count = 0;
+    trans2 = trans.reduce(reducePattern)
+    count= 0
     for kv in trans2:#.collect():
         count +=1
         for kv2 in kv:
             print(str(count)+"---2: " +str(kv2))
+            #for kv3 in kv2:
+            #    print("---3: " +str(kv3))
     #trans3= data.mapPartitions(lambda line:  line.strip().split(' ')).collect()
     
     #trans3 = data.mapPartitions(lambda line : [line, line] , 8).collect()
     #trans3 = trans.
     
 #    trans2 = trans.groupBy(lambda word: word[0])#groupByKey() #reduceByKey(lambda a, b: [a,b])
-    for kv in trans3:
-        print("\n---2: " +str(kv))
+#    for kv in trans3:
+#        print("\n---2: " +str(kv))
         
 def linuxDataPath():
     return "/home/hduser/workspace/MLS/data/"
