@@ -188,7 +188,7 @@ class Batch(object):
 
     def insert_batch2(self, item, count):
         #print("insert_batch")
-        count = False
+        #count = False
         flag1 = False
         flag2 = False
         idx=0
@@ -207,17 +207,15 @@ class Batch(object):
                     #print("c in pat " + str(idx))
                     #node =  self.batch[idx]
                     self.batch.remove(pattern)
-                    print(" remove "+str(sorted(pattern.value)) + " "+ str(pattern.count))
+                    #print(" remove "+str(sorted(pattern.value)) + " "+ str(pattern.count))
                 if(sb.issubset(c)):
                     flag1 = True
-                    #print("flag1 = True")
-                    #print("c in item " + str(idx))                    
+                    #print("flag1 = True, c in item " + str(idx))                    
                 for mx in mBatch:
                     ms = set(mx.value)
                     if(ms.issubset(c)):
                         mBatch.remove(mx)
-                        print(" remove mx "+str(sorted(mx.value)) + " "+ str(mx.count))
-                        #print("mBatch.remove(mx)") 
+                        #print(" remove mx "+str(sorted(mx.value)) + " "+ str(mx.count))
                     if(c.issubset(ms)):
                         flag2 = True
                         #print(":") 
@@ -354,12 +352,10 @@ def mergeBatchLocal(transactions1, transactions2):
     for itemA in transactions2.batch:
         #print(" itemA: "+ str(itemA.value) +" "+ str(itemA.count))
         transactions1.insert_batch2(itemA.value, itemA.count)
+#    for itemA in transactions1.batch:
+#        print(" itemA: "+ str(itemA.value) +" "+ str(itemA.count))
     return transactions1
 
-
-def inside(p):     
-    x, y = random.random(), random.random()
-    return x*x + y*y < 1
 
 """
 build tree in parallelize
@@ -419,18 +415,13 @@ def fggrowth(sc, dataName):
     result = model.freqItemsets().collect()
     for fi in result:
         print(fi)
-        
-def buildKey(x):
-    key=''
-    for k in x:
-        key +=str(k)+"/"
-    return key
-    
+           
 def splitLine(line):
     kv=[]
     for item in line.strip().split(' '): 
         kv.append([item, line.strip().split(' ')])
     return kv
+    
 def splitLine2(line):
     kv= []
     tmp = line.strip().split(' ')
@@ -439,18 +430,6 @@ def splitLine2(line):
     kv.append(1)
     return kv
     
-def addCount(line):
-    ret=[]
-    for x in line:
-        ret.append([x,1])
-    return ret
-    
-def addCount2(line):
-    return [line,1]
-
-# get list return list
-def checkInput(inputList):
-    return 0
 
 '''
 the last element is the count of pattern
@@ -483,10 +462,43 @@ def mergebatch(p1, p2):
     ret=[]
     batch1 = Batch(p1,2)
     batch2 = Batch(p2,2)
-    batch3 = mergeBatchLocal(batch1, batch2).batch
+    batch3 = mergeBatchLocal(batch1, batch2)#.batch
+    #for b in batch3:
+    #    print(b)
+    batch4 = []
+    batch5 = []
+    print("p1: "+str(p1))
+    print("p2: "+str(p2))
+    
+    l = len(batch3.batch)
+    count =0
+    for itemA in batch3.batch:
+        itemA.value.append(itemA.count)
+        if count > l/2:
+            batch5.append(itemA.value)
+            #print(" item5 adđ: "+ str(itemA.value))
+        else:
+            batch4.append(itemA.value)
+            #print(" item4 add: "+ str(itemA.value))
+        count += 1
+    '''    
+    for itemA in batch4:
+        print(" item4: "+ str(itemA)) 
+    for itemA in batch5:
+        print(" item5: "+ str(itemA))
+    for itemA in p1:
+        print(" p1: "+ str(itemA)) 
+    for itemA in p2:
+        print(" p2: "+ str(itemA))
+    '''
+    #ret.append(batch4)
+    #ret.append(batch5)
+
     ret.append(p1)
     ret.append(p2)
-    #ret.append(batch3)
+    
+    print("b1: "+str(batch4))
+    print("b2: "+str(batch5))
     return ret
 
 def reducePattern(l1, l2):
@@ -532,6 +544,7 @@ def sampleFun2(sc, dataName):
         
 def linuxDataPath():
     return "/home/hduser/workspace/MLS/data/"
+
 def winDataPath():
     return "C:\\cygwin64\\home\\patrick_huy\\workspace\\allinOne\\data\\"
     
@@ -546,8 +559,8 @@ if __name__ == "__main__":
 #   mat = ior.read2Matrix("C:\Users\patrick_huy\OneDrive\Documents\long prj\FPC\_DataSets\mushroom.dat")
     
     #fggrowth(sc,"/home/hduser/workspace/MLS/data/mushroom.dat")
-    
-    sampleFun2(sc,path+"mushroom.dat")
+    dataName = ["mushroom.dat","mushroom_2.dat"]
+    sampleFun2(sc,path + "mushroom.dat") #str(dataName[sys.argv[0]]))#
     
     #transactions = ior.read2RawData("/home/hduser/workspace/MLS/data/mushroom.dat",50, 150, 30)
     
