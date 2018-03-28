@@ -460,8 +460,9 @@ from list data, build batch and merge 2 batch
 '''
 def mergebatch(p1, p2):
     ret=[]
-    batch1 = Batch(p1,2)
-    batch2 = Batch(p2,2)
+    
+    batch1 = Batch(p1,0)
+    batch2 = Batch(p2,0)
     batch3 = mergeBatchLocal(batch1, batch2).batch
     #for b in batch3:
     #    print(b)
@@ -481,6 +482,7 @@ def mergebatch(p1, p2):
             batch4.append(itemA.value)
             #print(" item4 add: "+ str(itemA.value))
         count += 1
+    
     '''    
     for itemA in batch4:
         print(" item4: "+ str(itemA)) 
@@ -492,19 +494,21 @@ def mergebatch(p1, p2):
         print(" p2: "+ str(itemA))
     '''
 
-    x1 = []
-    x2 = []
-    for itemA in p1:
-        x1.append(itemA)
-    for itemA in p2:
-        x2.append(itemA)
-    ret.append(x1)
-    ret.append(x2)
-
-    #ret.append(p1)
-    #ret.append(p2)
-    #ret.append(batch4)
-    #ret.append(batch5)    
+    #x1 = []
+    #x2 = []
+    #for itemA in p1:
+    #    x1.append(itemA)
+    #for itemA in p2:
+    #    x2.append(itemA)
+    #ret.append(x1)
+    #ret.append(x2)
+    
+    #if len(batch4) == 0:
+    #    ret.append(p1)
+    #    ret.append(p2)
+    #else:
+    ret.append(batch4)
+    ret.append(batch5)    
     
     print("b1: "+str(batch4))
     print("b2: "+str(batch5))
