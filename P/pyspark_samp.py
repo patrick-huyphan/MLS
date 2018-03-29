@@ -117,8 +117,13 @@ class Batch(object):
             #sorted_items.sort(key=lambda x: frequent[x], reverse=True)
             sorted(sorted_items)
             #print("sorted_items "+str(sorted_items))
-            if len(sorted_items) > 0:
-                self.insert_batch(sorted_items, 1)
+            
+            #if len(sorted_items) > 0:
+            #    self.insert_batch(sorted_items, 1)
+            
+            newNode = FPNode(sorted_items, 1, None)
+            self.batch.append(newNode)
+            
         #print(len(batch))        
         return self.batch
     '''
@@ -436,10 +441,10 @@ the last element is the count of pattern
 '''
 def getLine2List(line):
     ret = []
+    #print("inline "+str(line))
     for t1 in line:
         if type(t1) is list:
             #tmp1.append(t1)
-            
             islist = 0
             for tmp in t1:
                 if type(tmp) is list:
@@ -460,17 +465,17 @@ from list data, build batch and merge 2 batch
 '''
 def mergebatch(p1, p2):
     ret=[]
-    
+
     batch1 = Batch(p1,0)
     batch2 = Batch(p2,0)
     batch3 = mergeBatchLocal(batch1, batch2).batch
-    #for b in batch3:
-    #    print(b)
+
     batch4 = []
     batch5 = []
-    print("p1: "+str(p1))
-    print("p2: "+str(p2))
-    
+
+    #print("p1: "+str(p1))
+    #print("p2: "+str(p2))
+
     l = len(batch3)
     count =0
     for itemA in batch3:
@@ -482,47 +487,60 @@ def mergebatch(p1, p2):
             batch4.append(itemA.value)
             #print(" item4 add: "+ str(itemA.value))
         count += 1
-    
-    '''    
-    for itemA in batch4:
-        print(" item4: "+ str(itemA)) 
-    for itemA in batch5:
-        print(" item5: "+ str(itemA))
-    for itemA in p1:
-        print(" p1: "+ str(itemA)) 
-    for itemA in p2:
-        print(" p2: "+ str(itemA))
-    '''
 
-    #x1 = []
-    #x2 = []
-    #for itemA in p1:
-    #    x1.append(itemA)
-    #for itemA in p2:
-    #    x2.append(itemA)
-    #ret.append(x1)
-    #ret.append(x2)
-    
     #if len(batch4) == 0:
     #    ret.append(p1)
     #    ret.append(p2)
     #else:
-    ret.append(batch4)
-    ret.append(batch5)    
+    #ret.append(batch4)
+    #ret.append(batch5)
+    ret.append(batch3)    
     
-    print("b1: "+str(batch4))
-    print("b2: "+str(batch5))
+    #print("b1: "+str(batch4))
+    #print("b2: "+str(batch5))
     
     return ret
 
 def reducePattern(l1, l2):
     tmp1 = getLine2List(l1)
     tmp2 = getLine2List(l2)
-    
+    #print(" l1 "+str(l1))
+    #print(" l2 "+str(l2))
     #ret.append(tmp1)
     #ret.append(tmp2)
     return mergebatch(tmp1, tmp2)
 
+def reducePattern2(l1, l2):
+    tmp1 = []
+    tmp2 = []
+    #print(" l1 "+str(l1))
+    #print(" l2 "+str(l2))
+    for i in l1:
+        if type(i) is list:
+            tmp1.append(i)
+            #ret.append(i)
+    for i in l2:
+        if type(i) is list:
+            tmp2.append(i)
+            #ret.append(i)
+
+    #print(" t1 "+str(tmp1))
+    #print(" t2 "+str(tmp2))
+    
+    batch1 = Batch(tmp1,0)
+    batch2 = Batch(tmp2,0)
+    
+    batch3 = mergeBatchLocal(batch1, batch2).batch
+    
+    #tmp3 = mergebatch(tmp1, tmp2)
+    ret = []
+    for tm in batch3:
+        itm = tm.value
+        itm. append(tm.count)
+        ret.append(itm)
+    print(" t3 "+str(ret))
+    
+    return ret 
 '''
 map trans to pair(trans,count)
 reduce: mergeTrans, list of tran and count
@@ -536,15 +554,16 @@ def sampleFun2(sc, dataName):
     
     #trans = data.flatMap(lambda line : splitLine(line)).map(lambda x: (x[0],x[1]))
     #print(trans.collect())
-    for kv in trans.collect():
-        print(str(kv)+ "---")
+    #for kv in trans.collect():
+    #    print(str(kv)+ "---")
         
-    trans2 = trans.reduce(reducePattern)
+    trans2 = trans.reduce(reducePattern2)
     count= 0
     for kv in trans2:#.collect():
+        print(str(count)+"---2: " +str(kv))
         count +=1
-        for kv2 in kv:
-            print(str(count)+"---2: " +str(kv2))
+        #for kv2 in kv:
+        #    print(str(count)+"---2: " +str(kv2))
             #for kv3 in kv2:
             #    print("---3: " +str(kv3))
     #trans3= data.mapPartitions(lambda line:  line.strip().split(' ')).collect()
@@ -574,7 +593,7 @@ if __name__ == "__main__":
     
     #fggrowth(sc,"/home/hduser/workspace/MLS/data/mushroom.dat")
     dataName = ["mushroom.dat","mushroom_2.dat"]
-    sampleFun2(sc,path + "mushroom.dat") #str(dataName[sys.argv[0]]))#
+    sampleFun2(sc,path + "mushroom_.dat") #str(dataName[sys.argv[0]]))#
     
     #transactions = ior.read2RawData("/home/hduser/workspace/MLS/data/mushroom.dat",50, 150, 30)
     
