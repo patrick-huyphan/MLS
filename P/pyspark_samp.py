@@ -476,7 +476,7 @@ def mergebatch(p1, p2):
         itemA.value.append(itemA.count)
         if count > l/2:
             batch5.append(itemA.value)
-            #print(" item5 adđ: "+ str(itemA.value))
+            #print(" item5 add: "+ str(itemA.value))
         else:
             batch4.append(itemA.value)
             #print(" item4 add: "+ str(itemA.value))
@@ -491,11 +491,11 @@ def mergebatch(p1, p2):
     for itemA in p2:
         print(" p2: "+ str(itemA))
     '''
-    #ret.append(batch4)
-    #ret.append(batch5)
+    ret.append(batch4)
+    ret.append(batch5)
 
-    ret.append(p1)
-    ret.append(p2)
+    #ret.append(p1)
+    #ret.append(p2)
     
     print("b1: "+str(batch4))
     print("b2: "+str(batch5))
