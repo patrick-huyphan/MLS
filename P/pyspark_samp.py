@@ -460,9 +460,10 @@ from list data, build batch and merge 2 batch
 '''
 def mergebatch(p1, p2):
     ret=[]
-    batch1 = Batch(p1,2)
-    batch2 = Batch(p2,2)
-    batch3 = mergeBatchLocal(batch1, batch2)#.batch
+    
+    batch1 = Batch(p1,0)
+    batch2 = Batch(p2,0)
+    batch3 = mergeBatchLocal(batch1, batch2).batch
     #for b in batch3:
     #    print(b)
     batch4 = []
@@ -470,9 +471,9 @@ def mergebatch(p1, p2):
     print("p1: "+str(p1))
     print("p2: "+str(p2))
     
-    l = len(batch3.batch)
+    l = len(batch3)
     count =0
-    for itemA in batch3.batch:
+    for itemA in batch3:
         itemA.value.append(itemA.count)
         if count > l/2:
             batch5.append(itemA.value)
@@ -481,6 +482,7 @@ def mergebatch(p1, p2):
             batch4.append(itemA.value)
             #print(" item4 add: "+ str(itemA.value))
         count += 1
+    
     '''    
     for itemA in batch4:
         print(" item4: "+ str(itemA)) 
@@ -491,14 +493,17 @@ def mergebatch(p1, p2):
     for itemA in p2:
         print(" p2: "+ str(itemA))
     '''
+
     ret.append(batch4)
     ret.append(batch5)
 
     #ret.append(p1)
     #ret.append(p2)
+
     
     print("b1: "+str(batch4))
     print("b2: "+str(batch5))
+    
     return ret
 
 def reducePattern(l1, l2):
