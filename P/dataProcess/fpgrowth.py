@@ -119,7 +119,7 @@ class Batch(object):
             sb = set(item)
             c = sa.intersection(sb)
             #d = c
-            newNode = FPNode(sorted(c), pattern.count+1, None)
+            newNode = FPNode(sorted(c), pattern.count+count, None)
             if len(c)>0:
                 #print("intersection "+str(c)+" "+ str(newNode.count))
                 if(sa.issubset(c)):
@@ -156,9 +156,9 @@ class Batch(object):
             #    batch[idx].count = batch[idx].count+1
             #idx = idx +1
                         
-        if count==False:
+        if flag1==False:
             #print("add new node "+str(item))
-            self.batch.append(FPNode(item, 1, None))
+            self.batch.append(FPNode(item, count, None))
         #print(len(batch))
         for node in mBatch:
             self.batch.append(node)
@@ -179,7 +179,7 @@ class Batch(object):
             sb = set(item)
             c = sa.intersection(sb)
             #d = c
-            newNode = FPNode(sorted(c), pattern.count+1, None)
+            newNode = FPNode(sorted(c), pattern.count+count, None)
             if len(c)>0:
                 #print("intersection "+str(c)+" "+ str(newNode.count))
                 if(sa.issubset(c)):
@@ -216,9 +216,9 @@ class Batch(object):
             #    batch[idx].count = batch[idx].count+1
             #idx = idx +1
                         
-        if count==False:
+        if flag1==False:
             #print("add new node "+str(item))
-            self.batch.append(FPNode(item, 1, None))
+            self.batch.append(FPNode(item, count, None))
         #print(len(batch))
         for node in mBatch:
             self.batch.append(node)

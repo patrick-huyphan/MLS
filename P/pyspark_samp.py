@@ -15,6 +15,7 @@ from operator import add
 from numpy import arange,array,ones,linalg
 from pylab import plot,show
 from scipy import sparse
+import time
 
 import random
 num_samples = 100000000
@@ -81,10 +82,17 @@ class Batch(object):
         Initialize the batch.
         """
         self.batch = []
-        print("batch start")
-        self.frequent = self.find_frequent_items(transactions, threshold)
-        self.batch = self.build_batch(transactions, self.frequent)
-        print("batch end")
+        #print("batch start")
+        #self.frequent = self.find_frequent_items(transactions, threshold)
+        #self.batch = self.build_batchPa(transactions, self.frequent)
+        for transaction in transactions:
+            #_tmp = transaction[:-1]
+            #count = transaction[-1]
+            #sorted(sorted_items)
+            #print(str(count) +" sorted_items "+str(_tmp))
+            #newNode = FPNode(_tmp, count, None)
+            self.batch.append(FPNode(transaction[:-1], transaction[-1], None))
+        #print("batch end")
 
     @staticmethod
     def find_frequent_items(transactions, threshold):
@@ -106,7 +114,7 @@ class Batch(object):
                 del items[key]
         #print(str(items))
         return items
-
+        
     def build_batch(self, transactions, frequent):
         """
         Build patern.
@@ -118,11 +126,11 @@ class Batch(object):
             sorted(sorted_items)
             #print("sorted_items "+str(sorted_items))
             
-            #if len(sorted_items) > 0:
-            #    self.insert_batch(sorted_items, 1)
+            if len(sorted_items) > 0:
+                self.insert_batch(sorted_items, 1)
             
-            newNode = FPNode(sorted_items, 1, None)
-            self.batch.append(newNode)
+            #newNode = FPNode(sorted_items, 1, None)
+            #self.batch.append(newNode)
             
         #print(len(batch))        
         return self.batch
@@ -204,8 +212,8 @@ class Batch(object):
             sa = set(pattern.value)
             sb = set(item)
             c = sa.intersection(sb)
-            #d = c
-            newNode = FPNode(sorted(c), pattern.count+1, None)
+
+            newNode = FPNode(sorted(c), pattern.count+count, None)
             if len(c)>0:
                 #print("intersection "+str(c)+" "+ str(newNode.count))
                 if(sa.issubset(c)):
@@ -232,107 +240,16 @@ class Batch(object):
                 mBatch.append(newNode)
             #else:
             #    print("not add node "+str(newNode.value) +" "+str(newNode.count))
-            flag2 = False
-            
-            #if(pattern.value == item):
-                #print(str(idx))
-            #    count = True
-            #    batch[idx].count = batch[idx].count+1
-            #idx = idx +1
+            flag2 = False            
                         
-        if count==False:
+        if flag1==False:
             #print("add new node "+str(item))
-            self.batch.append(FPNode(item, 1, None))
+            self.batch.append(FPNode(item, count, None))
         #print(len(batch))
         for node in mBatch:
             self.batch.append(node)
         #return batch
         #print("------------------------------------------")        
-    def mine_patterns(self, threshold):
-        """
-        Mine the constructed FP tree for frequent patterns.
-        """
-        '''
-        if self.tree_has_single_path(self.root):
-            return self.generate_pattern_list()
-        else:
-            return self.zip_patterns(self.mine_sub_trees(threshold))
-        '''
-    def zip_patterns(self, patterns):
-        """
-        Append suffix to patterns in dictionary if
-        we are in a conditional FP tree.
-        """
-        '''
-        suffix = self.root.value
-
-        if suffix is not None:
-            # We are in a conditional tree.
-            new_patterns = {}
-            for key in patterns.keys():
-                new_patterns[tuple(sorted(list(key) + [suffix]))] = patterns[key]
-
-            return new_patterns
-
-        return patterns
-        '''
-        
-    def generate_pattern_list(self):
-        """
-        Generate a list of patterns with support counts.
-        """
-        patterns = {}
-
-        return patterns
-
-    def mine_sub_trees(self, threshold):
-        """
-        Generate subtrees and mine them for patterns.
-        """
-        patterns = {}
-        mining_order = sorted(self.frequent.keys(),
-                              key=lambda x: self.frequent[x])
-
-        # Get items in tree in reverse order of occurrences.
-        for item in mining_order:
-            suffixes = []
-            conditional_tree_input = []
-            node = self.headers[item]
-
-            # Follow node links to get a list of
-            # all occurrences of a certain item.
-            while node is not None:
-                suffixes.append(node)
-                node = node.link
-
-            # For each occurrence of the item, 
-            # trace the path back to the root node.
-            for suffix in suffixes:
-                frequency = suffix.count
-                path = []
-                parent = suffix.parent
-
-                while parent.parent is not None:
-                    path.append(parent.value)
-                    parent = parent.parent
-
-                for i in range(frequency):
-                    conditional_tree_input.append(path)
-
-            # Now we have the input for a subtree,
-            # so construct it and grab the patterns.
-            subtree = FPTree(conditional_tree_input, threshold,
-                             item, self.frequent[item])
-            subtree_patterns = subtree.mine_patterns(threshold)
-
-            # Insert subtree patterns into main patterns dictionary.
-            for pattern in subtree_patterns.keys():
-                if pattern in patterns:
-                    patterns[pattern] += subtree_patterns[pattern]
-                else:
-                    patterns[pattern] = subtree_patterns[pattern]
-
-        return patterns
 
     """
     merge batch A and B:
@@ -421,11 +338,6 @@ def fggrowth(sc, dataName):
     for fi in result:
         print(fi)
            
-def splitLine(line):
-    kv=[]
-    for item in line.strip().split(' '): 
-        kv.append([item, line.strip().split(' ')])
-    return kv
     
 def splitLine2(line):
     kv= []
@@ -435,7 +347,6 @@ def splitLine2(line):
     kv.append(1)
     return kv
     
-
 '''
 the last element is the count of pattern
 '''
@@ -456,10 +367,6 @@ def getLine2List(line):
                 ret.append(t1)
     return ret
 
-def batch2List(batch):
-    ret = []
-    #for pa in batch.batch:
-    return ret
 '''
 from list data, build batch and merge 2 batch
 '''
@@ -513,6 +420,8 @@ def reducePattern(l1, l2):
 def reducePattern2(l1, l2):
     tmp1 = []
     tmp2 = []
+    
+    startTime = time.time()
     #print(" l1 "+str(l1))
     #print(" l2 "+str(l2))
     for i in l1:
@@ -526,11 +435,15 @@ def reducePattern2(l1, l2):
 
     #print(" t1 "+str(tmp1))
     #print(" t2 "+str(tmp2))
-    
+    endTime = time.time() - startTime
+    print("(1)Take time running: "+ str(endTime))
     batch1 = Batch(tmp1,0)
     batch2 = Batch(tmp2,0)
-    
+    endTime = time.time() - startTime
+    print("(2)Take time running: "+ str(endTime))
     batch3 = mergeBatchLocal(batch1, batch2).batch
+    endTime = time.time() - startTime
+    print("(3)Take time running: "+ str(endTime))
     
     #tmp3 = mergebatch(tmp1, tmp2)
     ret = []
@@ -538,8 +451,9 @@ def reducePattern2(l1, l2):
         itm = tm.value
         itm. append(tm.count)
         ret.append(itm)
-    print(" t3 "+str(ret))
-    
+    #print(" t3 "+str(ret))
+    endTime = time.time() - startTime
+    print("(4)Take time running: "+ str(endTime))
     return ret 
 '''
 map trans to pair(trans,count)
@@ -548,32 +462,17 @@ reduce: mergeTrans, list of tran and count
 def sampleFun2(sc, dataName):
     data = sc.textFile(dataName,8)
     print(data.getNumPartitions())
-    #for kv in data.collect():
-    #    print(str(kv)+ "---")
+    
     trans = data.map(lambda line : (splitLine2(line),1))
     
-    #trans = data.flatMap(lambda line : splitLine(line)).map(lambda x: (x[0],x[1]))
-    #print(trans.collect())
     #for kv in trans.collect():
     #    print(str(kv)+ "---")
         
     trans2 = trans.reduce(reducePattern2)
     count= 0
     for kv in trans2:#.collect():
-        print(str(count)+"---2: " +str(kv))
+        print(str(count)+"---2: "+str(kv[-1])+"---" +str(kv))
         count +=1
-        #for kv2 in kv:
-        #    print(str(count)+"---2: " +str(kv2))
-            #for kv3 in kv2:
-            #    print("---3: " +str(kv3))
-    #trans3= data.mapPartitions(lambda line:  line.strip().split(' ')).collect()
-    
-    #trans3 = data.mapPartitions(lambda line : [line, line] , 8).collect()
-    #trans3 = trans.
-    
-#    trans2 = trans.groupBy(lambda word: word[0])#groupByKey() #reduceByKey(lambda a, b: [a,b])
-#    for kv in trans3:
-#        print("\n---2: " +str(kv))
         
 def linuxDataPath():
     return "/home/hduser/workspace/MLS/data/"
@@ -593,19 +492,9 @@ if __name__ == "__main__":
     
     #fggrowth(sc,"/home/hduser/workspace/MLS/data/mushroom.dat")
     dataName = ["mushroom.dat","mushroom_2.dat"]
+    startTime = time.time()
     sampleFun2(sc,path + "mushroom_.dat") #str(dataName[sys.argv[0]]))#
-    
-    #transactions = ior.read2RawData("/home/hduser/workspace/MLS/data/mushroom.dat",50, 150, 30)
-    
-    #mat = ior.read2SparseMatrix("C:\Data\Master\data_mining\data\data_694_446.csv")
-    
-    #matrdd = sc.parallelize(transactions,2)
+    endTime = time.time() - startTime
+    print("total time: "+str(endTime))
 
-    #print(matrdd.collect())
-    
-    #first = matrdd.take(2)
-    #print(first)
-    #count = sc.parallelize(range(0, num_samples)).filter(inside).count()
-    #pi = 4 * count / num_samples
-    #print(pi)
     sc.stop()
