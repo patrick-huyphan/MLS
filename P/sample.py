@@ -81,9 +81,9 @@ if __name__ == "__main__":
     #for patte in batch2.batch:
     #    print(" pattern2: "+ str(patte.value) +" "+ str(patte.count))
     
-    #batch3 = fpg.mergeBatch(batch1, batch2)
-    #for patte in batch3.batch:
-    #    print(" batch3: "+ str(patte.value) +" "+ str(patte.count))
+    batch3 = fpg.mergeBatch(batch1, batch2)
+    for patte in batch3.batch:
+        print(" batch3: "+ str(patte.value) +" "+ str(patte.count))
         
     #if cf.get_platform() == "linux":
         #data = ior.read2SparseMatrix("/home/hduser/workspace/MLS/data/data_694_446.csv")

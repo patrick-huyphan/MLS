@@ -315,9 +315,9 @@ def ASCC(data):
         #V = updateV(V, U)
         #U = updateU(U, V)
         
-        r= dualResidual(edges, X, U)
-        s= primalResidual(edges, U)
-        
+        r= dualResidual(edge, X, U)
+        s= primalResidual(edge, U)
+        e= 0
         if (((r-s)< e) and (loop > 1)):
             print(" SCC STOP at " + loop)
             break
@@ -369,8 +369,9 @@ def FASCC(data):
         #V = updateV(V, U)
         #U = updateU(U, V)
         
-        r= dualResidual(edges, X, U)
-        s= primalResidual(edges, U)
+        r= dualResidual(edge, X, U)
+        s= primalResidual(edge, U)
+        e=0
         if (((r-s)< e) and (loop > 1)):
             print(" SCC STOP at " + loop)
             break

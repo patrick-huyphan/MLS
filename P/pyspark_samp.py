@@ -459,21 +459,52 @@ def reducePattern2(l1, l2):
 map trans to pair(trans,count)
 reduce: mergeTrans, list of tran and count
 '''
+def useReduce(trans):
+    trans2 = trans.reduce(reducePattern2)
+    count= 0
+    for kv in trans2:#.collect():
+        print(str(count)+"---2: "+str(kv[-1])+"---" +str(kv))
+        count +=1
+            
+def seqOp(acc, value):
+    #acc[0] + value
+    #acc[1] + 1
+    print(" seqOp a "+str(acc))
+    print(" seqOp  v"+str(value)) 
+    return [acc, value]
+
+def combOp(acc1, acc2):
+    #acc1[0] + acc2[0]
+    #acc1[1] + acc2[1]
+    print(" combOp a1 "+str(acc1))
+    print(" combOp a2 "+str(acc2))
+    return [acc1, acc2]
+    
+def useAgree(trans):        
+    trans2 = trans.aggregate(([], []),seqOp, combOp)
+    #((1, 0),
+    #(lambda acc, value: (acc[0] + value, acc[1] + 1)),
+    #(lambda acc1, acc2: (acc1[0] + acc2[0], acc1[1] + acc2[1])))
+    count= 0
+    for kv in trans2:#.collect():
+        print(str(count)+"---2: "+str(kv[-1])+"---" +str(kv))
+        count +=1
+        
 def sampleFun2(sc, dataName):
-    data = sc.textFile(dataName,8)
+    data = sc.textFile(dataName)
     print(data.getNumPartitions())
     
     trans = data.map(lambda line : (splitLine2(line),1))
     
     #for kv in trans.collect():
     #    print(str(kv)+ "---")
-        
-    trans2 = trans.reduce(reducePattern2)
-    count= 0
-    for kv in trans2:#.collect():
-        print(str(count)+"---2: "+str(kv[-1])+"---" +str(kv))
-        count +=1
-        
+    
+    useAgree(trans)
+    
+    #useReduce(trans)
+
+    
+    
 def linuxDataPath():
     return "/home/hduser/workspace/MLS/data/"
 
@@ -491,9 +522,9 @@ if __name__ == "__main__":
 #   mat = ior.read2Matrix("C:\Users\patrick_huy\OneDrive\Documents\long prj\FPC\_DataSets\mushroom.dat")
     
     #fggrowth(sc,"/home/hduser/workspace/MLS/data/mushroom.dat")
-    dataName = ["mushroom.dat","mushroom_2.dat"]
+    dataName = ["mushroom.dat","mushroom_.dat"]
     startTime = time.time()
-    sampleFun2(sc,path + "mushroom_.dat") #str(dataName[sys.argv[0]]))#
+    sampleFun2(sc,path + "mushroom.dat") #str(dataName[sys.argv[0]]))#
     endTime = time.time() - startTime
     print("total time: "+str(endTime))
 
