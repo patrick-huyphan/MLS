@@ -478,7 +478,8 @@ def combOp(acc1, acc2):
     #acc1[1] + acc2[1]
     print(" combOp a1 "+str(acc1))
     print(" combOp a2 "+str(acc2))
-    return [acc1, acc2]
+    ret = reducePattern2(acc1, acc2) 
+    return ret #[acc1, acc2]
     
 def useAgree(trans):        
     trans2 = trans.aggregate(([], []),seqOp, combOp)
@@ -499,9 +500,9 @@ def sampleFun2(sc, dataName):
     #for kv in trans.collect():
     #    print(str(kv)+ "---")
     
-    useAgree(trans)
+    #useAgree(trans)
     
-    #useReduce(trans)
+    useReduce(trans)
 
     
     
@@ -524,7 +525,7 @@ if __name__ == "__main__":
     #fggrowth(sc,"/home/hduser/workspace/MLS/data/mushroom.dat")
     dataName = ["mushroom.dat","mushroom_.dat"]
     startTime = time.time()
-    sampleFun2(sc,path + "mushroom.dat") #str(dataName[sys.argv[0]]))#
+    sampleFun2(sc,path + "mushroom_.dat") #str(dataName[sys.argv[0]]))#
     endTime = time.time() - startTime
     print("total time: "+str(endTime))
 

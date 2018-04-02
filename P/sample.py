@@ -3,6 +3,7 @@
 import sys
 sys.path.insert(0, '/home/hduser/workspace/MLS/P/')
 import os
+import time
 #import pathlib
 import config.config as cf
 import numpy as np
@@ -45,6 +46,22 @@ def fpgr(transactions):
         #print(" pattern2: "+ str(patte.value) +" "+ str(patte.count))
     return patterns
 
+def runFPtreeMerge(transactions)
+    startTime = time.time()
+    
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
+    return 0
+    
+def runBathcMerge(transactions)
+    startTime = time.time()
+    
+    endTime = time.time() - startTime
+    print("BathcMerge take total time: "+str(endTime))
+    return 0
+
+
+
 def linuxDataPath():
     return "/home/hduser/workspace/MLS/data/"
 def winDataPath():
@@ -73,6 +90,11 @@ if __name__ == "__main__":
                 [1, 2, 3, 5],
                 [1, 2, 3]]
     transactions2 = ior.read2RawData(path+"mushroom.dat",0, 500, 100)
+    
+    runBathcMerge(transactions2)
+    
+    runFPtreeMerge(transactions2)
+    
     batch1 = fpgr(transactions2)
     transactions3 = ior.read2RawData(path+"mushroom.dat",150, 500, 50)
     batch2 = fpgr(transactions3)
