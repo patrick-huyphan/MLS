@@ -12,6 +12,7 @@ import dataProcess.dataIO.write as iow
 import dataProcess.ADMM as admm
 import dataProcess.ASCC as ascc
 import dataProcess.fpgrowth as fpg
+
 from numpy import arange,array,ones,linalg
 from pylab import plot,show
 from scipy import sparse
@@ -49,12 +50,23 @@ def fpgr(transactions):
 def runFPtreeMerge(transactions)
     startTime = time.time()
     
+    fpTree1_ = fpg.find_frequent_patterns(transactions, 2)
+    fpTree2_ = fpg.find_frequent_patterns(transactions, 2)
+    
+    fpTree2_ = fpg.mergeTree(fpTree1_ ,fpTree2_)
+    
     endTime = time.time() - startTime
     print("FPtreeMerge take total time: "+str(endTime))
     return 0
     
 def runBathcMerge(transactions)
     startTime = time.time()
+    
+    batch1 = fpg.find_frequent_patterns_batch(transactions, 2)
+    
+    batch2 = fpg.find_frequent_patterns_batch(transactions, 2)
+    
+    batch3 = fpg.mergeBatch(batch1, batch2)
     
     endTime = time.time() - startTime
     print("BathcMerge take total time: "+str(endTime))

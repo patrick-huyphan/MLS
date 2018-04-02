@@ -560,6 +560,10 @@ def mergeBatch(transactions1, transactions2):
         #print(" itemA: "+ str(itemA.value) +" "+ str(itemA.count))
         transactions1.insert_batch2(itemA.value, itemA.count)
     return transactions1
+    
+def mergeTree(transactions1, transactions2):
+    
+    return transactions1
 
 def generate_association_rules(patterns, confidence_threshold):
     """

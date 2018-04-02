@@ -513,6 +513,7 @@ def winDataPath():
     return "C:\\cygwin64\\home\\patrick_huy\\workspace\\allinOne\\data\\"
     
 if __name__ == "__main__":
+    #def parallel():
     conf = SparkConf().setAppName('MyFirstStandaloneApp')
     sc = SparkContext(conf=conf)
     path = ""
