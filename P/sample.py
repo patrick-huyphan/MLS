@@ -68,11 +68,18 @@ def runBathcMerge(transactions)
     
     batch3 = fpg.mergeBatch(batch1, batch2)
     
+    for patte in batch3.batch:
+        print(" batch3: "+ str(patte.value) +" "+ str(patte.count))
+
+
     endTime = time.time() - startTime
     print("BathcMerge take total time: "+str(endTime))
     return 0
 
-
+def runADMM()
+    mat = ior.rawData2matrix(path+"data_694_446.dat",0, 446, 696)
+        #print(mat[:, [0,2]]) # get column 0,2
+    ascc.ASCC(mat)
 
 def linuxDataPath():
     return "/home/hduser/workspace/MLS/data/"
@@ -107,24 +114,22 @@ if __name__ == "__main__":
     
     runFPtreeMerge(transactions2)
     
-    batch1 = fpgr(transactions2)
-    transactions3 = ior.read2RawData(path+"mushroom.dat",150, 500, 50)
-    batch2 = fpgr(transactions3)
+    #batch1 = fpgr(transactions2)
+    #transactions3 = ior.read2RawData(path+"mushroom.dat",150, 500, 50)
+    #batch2 = fpgr(transactions3)
     #for patte in batch1.batch:
     #    print(" pattern1: "+ str(patte.value) +" "+ str(patte.count))
     #for patte in batch2.batch:
     #    print(" pattern2: "+ str(patte.value) +" "+ str(patte.count))
     
-    batch3 = fpg.mergeBatch(batch1, batch2)
-    for patte in batch3.batch:
-        print(" batch3: "+ str(patte.value) +" "+ str(patte.count))
+    #batch3 = fpg.mergeBatch(batch1, batch2)
+    #for patte in batch3.batch:
+    #    print(" batch3: "+ str(patte.value) +" "+ str(patte.count))
         
     #if cf.get_platform() == "linux":
         #data = ior.read2SparseMatrix("/home/hduser/workspace/MLS/data/data_694_446.csv")
         #ior.saveSparseMatrix("/home/hduser/workspace/MLS/data/data_694_446.dat",data)
-    mat = ior.rawData2matrix(path+"data_694_446.dat",0, 446, 696)
-        #print(mat[:, [0,2]]) # get column 0,2
-    ascc.ASCC(mat)
+
     current_dir = os.getcwd() #pathlib.Path("/../../data/data_694_446.dat").parent
     print(current_dir)
     #current_file = pathlib.Path(__file__)
