@@ -474,8 +474,7 @@ class FPTree(object):
         for i in range(1, len(items) + 1):
             for subset in itertools.combinations(items, i):
                 pattern = tuple(sorted(list(subset) + suffix_value))
-                patterns[pattern] = \
-                    min([self.frequent[x] for x in subset])
+                patterns[pattern] =  min([self.frequent[x] for x in subset])
 
         return patterns
 

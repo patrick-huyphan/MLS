@@ -30,36 +30,37 @@ def lnr():
     show()
 
 def fpgr(transactions):
-    '''
-    for tran in transactions:
-        print(" transaction: "+ str(tran))
-    
-    patterns = fpg.find_frequent_patterns(transactions, 2)
-    for patte in patterns:
-        print(" pattern: "+ str(patte))
-        
-    rules = fpg.generate_association_rules(patterns, 0.7)
-    for rule in rules:
-        print(" rule: " + str(rule))
-    '''
+
     patterns = fpg.find_frequent_patterns_batch(transactions, 2)
     #for patte in patterns.batch:
         #print(" pattern2: "+ str(patte.value) +" "+ str(patte.count))
     return patterns
 
-def runFPtreeMerge(transactions)
+def runFPtreeMerge(transactions):
+
     startTime = time.time()
+
+    #for tran in transactions:
+    #    print(" transaction: "+ str(tran))
     
-    fpTree1_ = fpg.find_frequent_patterns(transactions, 2)
-    fpTree2_ = fpg.find_frequent_patterns(transactions, 2)
+    patterns1 = fpg.find_frequent_patterns(transactions, 2)
+    for patte in patterns:
+        print(" pattern: "+ str(patte))
+        
+    rules = fpg.generate_association_rules(patterns1, 0.7)
+    for rule in rules:
+        print(" rule: " + str(rule))
     
-    fpTree2_ = fpg.mergeTree(fpTree1_ ,fpTree2_)
+    #fpTree1_ = fpg.find_frequent_patterns(transactions, 2)
+    patterns2 = fpg.find_frequent_patterns(transactions, 2)
+    
+    patterns3 = fpg.mergeTree(patterns1 ,patterns2)
     
     endTime = time.time() - startTime
     print("FPtreeMerge take total time: "+str(endTime))
     return 0
     
-def runBathcMerge(transactions)
+def runBathcMerge(transactions):
     startTime = time.time()
     
     batch1 = fpg.find_frequent_patterns_batch(transactions, 2)
@@ -76,7 +77,7 @@ def runBathcMerge(transactions)
     print("BathcMerge take total time: "+str(endTime))
     return 0
 
-def runADMM()
+def runADMM():
     mat = ior.rawData2matrix(path+"data_694_446.dat",0, 446, 696)
         #print(mat[:, [0,2]]) # get column 0,2
     ascc.ASCC(mat)
