@@ -107,10 +107,11 @@ class Batch(object):
     '''
     def insert_batch(self, item, count):
         #print("insert_batch")
-        count = False
+        #count = 0
+        #idx=0
         flag1 = False
         flag2 = False
-        idx=0
+
         #print("item "+str(item))
         mBatch = []
         for pattern in self.batch:
@@ -167,7 +168,7 @@ class Batch(object):
 
     def insert_batch2(self, item, count):
         #print("insert_batch")
-        count = False
+        #count = False
         flag1 = False
         flag2 = False
         idx=0
