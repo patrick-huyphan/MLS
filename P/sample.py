@@ -29,12 +29,6 @@ def lnr():
     plot(xi,line,'r-',xi,y,'o')
     show()
 
-def fpgr(transactions):
-
-    patterns = fpg.find_frequent_patterns_batch(transactions, 2)
-    #for patte in patterns.batch:
-        #print(" pattern2: "+ str(patte.value) +" "+ str(patte.count))
-    return patterns
 
 def runFPtreeMerge(transactions):
 
@@ -115,18 +109,6 @@ if __name__ == "__main__":
     
     runFPtreeMerge(transactions2)
     
-    #batch1 = fpgr(transactions2)
-    #transactions3 = ior.read2RawData(path+"mushroom.dat",150, 500, 50)
-    #batch2 = fpgr(transactions3)
-    #for patte in batch1.batch:
-    #    print(" pattern1: "+ str(patte.value) +" "+ str(patte.count))
-    #for patte in batch2.batch:
-    #    print(" pattern2: "+ str(patte.value) +" "+ str(patte.count))
-    
-    #batch3 = fpg.mergeBatch(batch1, batch2)
-    #for patte in batch3.batch:
-    #    print(" batch3: "+ str(patte.value) +" "+ str(patte.count))
-        
     #if cf.get_platform() == "linux":
         #data = ior.read2SparseMatrix("/home/hduser/workspace/MLS/data/data_694_446.csv")
         #ior.saveSparseMatrix("/home/hduser/workspace/MLS/data/data_694_446.dat",data)
