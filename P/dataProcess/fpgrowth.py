@@ -545,15 +545,26 @@ class FPTree(object):
 
         return patterns
     """
+	self.frequent: all node with frequency
+	self.header: list of root
+	self.root: list of node in header, include link to child
     - update frequency list
     - rebuild vector
-    - merge vector into FP tree
+	- merge header: self.header + other.header
+    - merge other tree into FP tree: self
     """
     def mergeTree(self, other):
-        newTree ={}
+        #newTree ={}
+		for item1 in self.frequency:
+			for item2 in other.frequency:
+				
+		
+		#first = items[0]
+        #child = node.get_child(first)
+		
         #for(patt in self.value):
         #    newTree.append(patt)
-        return newTree
+        return 0
 
 def find_frequent_patterns(transactions, support_threshold):
     """
