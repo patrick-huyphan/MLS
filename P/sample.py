@@ -30,14 +30,23 @@ def lnr():
     show()
 
 
-def runFPtreeMerge(transactions):
+def runFPtreeMerge(transactions1,transactions2):
 
     startTime = time.time()
 
     #for tran in transactions:
     #    print(" transaction: "+ str(tran))
     
-    patterns1 = fpg.find_frequent_patterns(transactions, 2)
+    tree1 = fpg.buildFPTree(transactions1, 2)
+    
+    tree2 = fpg.buildFPTree(transactions2, 2)
+    
+    tree3 = tree1.mergeTree(tree2)
+    
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime)) 
+    
+    patterns1 = find_frequent_patterns(tree3, 2)
     for patte in patterns:
         print(" pattern: "+ str(patte))
         
@@ -54,14 +63,17 @@ def runFPtreeMerge(transactions):
     print("FPtreeMerge take total time: "+str(endTime))
     return 0
     
-def runBathcMerge(transactions):
+def runBathcMerge(transactions1,transactions2):
     startTime = time.time()
     
-    batch1 = fpg.find_frequent_patterns_batch(transactions, 2)
+    batch1 = fpg.find_frequent_patterns_batch(transactions1, 2)
     
-    batch2 = fpg.find_frequent_patterns_batch(transactions, 2)
+    batch2 = fpg.find_frequent_patterns_batch(transactions2, 2)
     
     batch3 = fpg.mergeBatch(batch1, batch2)
+    
+    endTime = time.time() - startTime
+    print("BathcMerge take total time: "+str(endTime))
     
     for patte in batch3.batch:
         print(" batch3: "+ str(patte.value) +" "+ str(patte.count))
@@ -108,9 +120,9 @@ if __name__ == "__main__":
     '''
     transactions2 = ior.read2RawData(path+"mushroom.dat",0, 500, 100)
     
-    runBathcMerge(transactions2)
+    runBathcMerge(transactions2, transactions2)
     
-    #runFPtreeMerge(transactions2)
+    #runFPtreeMerge(transactions2, transactions2)
     
     #if cf.get_platform() == "linux":
         #data = ior.read2SparseMatrix("/home/hduser/workspace/MLS/data/data_694_446.csv")

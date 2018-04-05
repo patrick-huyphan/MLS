@@ -27,7 +27,7 @@ def read2RawData(fileName, fromx, tox, maxcol):
         llist = []
         for s in line.split():
             llist.append(s)
-            if(int(s) > maxcol):
+            if(maxcol>0) and (int(s) > maxcol):
                 break
             #print(s)
         #print(llist)

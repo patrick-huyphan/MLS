@@ -462,6 +462,7 @@ class FPTree(object):
         Append suffix to patterns in dictionary if
         we are in a conditional FP tree.
         """
+        print("zip_patterns")
         suffix = self.root.value
 
         if suffix is not None:
@@ -478,6 +479,7 @@ class FPTree(object):
         """
         Generate a list of patterns with support counts.
         """
+        print("generate_pattern_list")
         patterns = {}
         items = self.frequent.keys()
 
@@ -500,9 +502,13 @@ class FPTree(object):
         """
         Generate subtrees and mine them for patterns.
         """
+        
+        
         patterns = {}
         mining_order = sorted(self.frequent.keys(),
                               key=lambda x: self.frequent[x])
+        
+        print("mine_sub_trees "+str(mining_order))
 
         # Get items in tree in reverse order of occurrences.
         for item in mining_order:
@@ -515,7 +521,7 @@ class FPTree(object):
             while node is not None:
                 suffixes.append(node)
                 node = node.link
-
+            print(str(item)+", suffixes: "+str(suffixes))
             # For each occurrence of the item, 
             # trace the path back to the root node.
             for suffix in suffixes:
@@ -545,33 +551,40 @@ class FPTree(object):
 
         return patterns
     """
-	self.frequent: all node with frequency
-	self.header: list of root
-	self.root: list of node in header, include link to child
+    self.frequent: all node with frequency
+    self.header: list of root
+    self.root: list of node in header, include link to child
     - update frequency list
     - rebuild vector
-	- merge header: self.header + other.header
+    - merge header: self.header + other.header
     - merge other tree into FP tree: self
     """
     def mergeTree(self, other):
         #newTree ={}
-		for item1 in self.frequency:
-			for item2 in other.frequency:
-				
-		
-		#first = items[0]
+        #update frequency
+        #for item1 in self.frequency:
+            #for item2 in other.frequency:
+                
+        #update header
+        
+        #merge tree
+        
+        #first = items[0]
         #child = node.get_child(first)
-		
+        
         #for(patt in self.value):
         #    newTree.append(patt)
         return 0
 
-def find_frequent_patterns(transactions, support_threshold):
+def buildFPTree(transactions, support_threshold):
+    return FPTree(transactions, support_threshold, None, None)
+
+def find_frequent_patterns(tree, support_threshold):
     """
     Given a set of transactions, find the patterns in it
     over the specified support threshold.
     """
-    tree = FPTree(transactions, support_threshold, None, None)
+    #tree = FPTree(transactions, support_threshold, None, None)
     return tree.mine_patterns(support_threshold)
 
 
@@ -589,9 +602,6 @@ def mergeBatch(transactions1, transactions2):
         transactions1.insert_batch2(itemA.value, itemA.count)
     return transactions1
     
-def mergeTree(transactions1, transactions2):
-    
-    return transactions1
 
 def generate_association_rules(patterns, confidence_threshold):
     """

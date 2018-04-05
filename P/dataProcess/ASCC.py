@@ -304,6 +304,7 @@ def ASCC(data):
         R=Ai-Ak-Bik
         S=(Bik-Bik) - (Bki-Bki)  
         '''
+        print("Time loop "+str(loop))
         #if loop > 0 :
         X0 = backpData(X)
         U0 = backpData(U)
@@ -322,7 +323,7 @@ def ASCC(data):
             print(" SCC STOP at " + loop)
             break
 
-        loop = loop+1
+        loop += 1
         napl = napl*1.01
     
     getCluster(edge, X)
@@ -358,6 +359,7 @@ def FASCC(data):
     alpha1 = 0.8
     
     while(loop< maxloop):
+        print("Time "+str(loop))
         #if loop > 0 :
         X0 = backpData(X)
         U0 = backpData(U)
@@ -383,7 +385,7 @@ def FASCC(data):
                 alpha1 = 1
                 restartV()
             
-        loop = loop+1
+        loop += 1
         napl = napl*1.01
     
     getCluster(edge, X)
