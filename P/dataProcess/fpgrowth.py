@@ -1,5 +1,5 @@
 import itertools
-
+import dataProcess.Node as node
 
 class FPNode(object):
     """
@@ -55,7 +55,24 @@ class FPNode(object):
     def isContained(self, other):
         return other.value.issubset(self.value)
     
+class PatternNode(object):
+    def __init__(self, value, count):
+        """
+        Create the node.
+        """
+        self.value = value
+        self.count = count
 
+    def intercept(self, other):
+        value = sorted(set(other.value) & set(self.value), key = self.value.index)
+        return PatternNode(value,self.count + other.count)
+        
+    def isZero(self):
+        return self.value.length>0
+    
+    def isContained(self, other):
+        return other.value.issubset(self.value)
+        
 class Batch(object):
     def __init__(self, transactions, threshold):
         """
@@ -120,7 +137,7 @@ class Batch(object):
             sb = set(item)
             c = sa.intersection(sb)
             #d = c
-            newNode = FPNode(sorted(c), pattern.count+count, None)
+            newNode = PatternNode(sorted(c), pattern.count+count)
             if len(c)>0:
                 #print("intersection "+str(c)+" "+ str(newNode.count))
                 if(sa.issubset(c)):
@@ -159,7 +176,7 @@ class Batch(object):
                         
         if flag1==False:
             #print("add new node "+str(item))
-            self.batch.append(FPNode(item, count, None))
+            self.batch.append(PatternNode(item, count))
         #print(len(batch))
         for node in mBatch:
             self.batch.append(node)
@@ -180,7 +197,7 @@ class Batch(object):
             sb = set(item)
             c = sa.intersection(sb)
             #d = c
-            newNode = FPNode(sorted(c), pattern.count+count, None)
+            newNode = PatternNode(sorted(c), pattern.count+count)
             if len(c)>0:
                 #print("intersection "+str(c)+" "+ str(newNode.count))
                 if(sa.issubset(c)):
@@ -219,7 +236,7 @@ class Batch(object):
                         
         if flag1==False:
             #print("add new node "+str(item))
-            self.batch.append(FPNode(item, count, None))
+            self.batch.append(PatternNode(item, count))
         #print(len(batch))
         for node in mBatch:
             self.batch.append(node)
