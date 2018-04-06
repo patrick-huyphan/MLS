@@ -38,11 +38,14 @@ def runFPtreeMerge(transactions1,transactions2):
     #    print(" transaction: "+ str(tran))
     
     tree1 = fpg.buildFPTree(transactions1, 2)
-    
+    tree1.printTree()
+	
     tree2 = fpg.buildFPTree(transactions2, 2)
-    
+    tree2.printTree()
+	
     tree3 = tree1.mergeTree(tree2)
-    
+    tree3.printTree()
+	
     endTime = time.time() - startTime
     print("FPtreeMerge take total time: "+str(endTime)) 
     
