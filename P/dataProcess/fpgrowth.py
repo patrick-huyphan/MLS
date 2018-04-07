@@ -345,10 +345,10 @@ class Batch(object):
             self.insert(itemA, self.batch)
             #for itemB in self.batch:
         #return newbatch 
-		
+
     def printBatch(self):
-		for pattern in seft.batch:
-			print(str(pattern.count)+ " "+str(pattern.value))
+        for pattern in seft.batch:
+            print(str(pattern.count)+ " "+str(pattern.value))
 
 
 class FPTree(object):
@@ -402,6 +402,7 @@ class FPTree(object):
         """
         Build the FP tree and return the root node.
         """
+        
         root = FPNode(root_value, root_count, None)
 
         for transaction in transactions:
@@ -409,13 +410,16 @@ class FPTree(object):
             sorted_items.sort(key=lambda x: frequent[x], reverse=True)
             if len(sorted_items) > 0:
                 self.insert_tree(sorted_items, root, headers)
-
+        print("build_fptree "+str(root.value) +" "+ str(root_value))
+        print("frequent "+str(frequent.keys()))
+        print("headers " +str(headers.keys()))
         return root
 
     def insert_tree(self, items, node, headers):
         """
         Recursively grow FP tree.
         """
+        #print("insert_tree "+ str(items))
         first = items[0]
         child = node.get_child(first)
         if child is not None:
@@ -505,8 +509,6 @@ class FPTree(object):
         """
         Generate subtrees and mine them for patterns.
         """
-        
-        
         patterns = {}
         mining_order = sorted(self.frequent.keys(),
                               key=lambda x: self.frequent[x])
@@ -563,64 +565,109 @@ class FPTree(object):
     """
     def mergeTree(self, other):
         #newTree ={}
-        #update frequency    	
+        #update frequency
+        tmp1 = []
+        for i in self.frequent.keys():
+            notmp = self.root.get_child(i)
+            if notmp is not None:
+                tmp1.append(notmp)
+        tmp2 = []
+        for i in other.frequent.keys():
+            notmp = other.root.get_child(i)
+            if notmp is not None:
+                tmp2.append(notmp)
+
+        print("Child srft: " + str(tmp1))
+        print("Child other: " + str(tmp2))
         print("mergeTree self: "+str(self.root.value))
         print("mergeTree other: "+str(other.root.value))
-        items1 = list(self.frequency.keys())
-        items2 = list(other.frequency.keys())
-        print("mergeTree self: "+str(items1))
-        print("mergeTree other: "+str(items2))
+        print("mergeTree self frequent: "+str(self.frequent))
+        print("mergeTree other frequent : "+str(other.frequent))
         
+        items1 = list(self.frequent.keys())
+        items2 = list(other.frequent.keys())
+        '''
         for item1 in items1:
-            if item1 in items2
-                self.frequency[item1] = self.frequency[item1] + other.frequency[item2]
+            if item1 in items2:
+                self.frequent[item1] = self.frequent[item1] + other.frequent[item1]
         for item2 in items2:
-            if item2 not in items1
-                self.frequency[item2]  = other.frequency[item2]
+            if item2 not in items1:
+                self.frequent[item2]  = other.frequent[item2]
+        '''
+        
+        mining_order1 = sorted(self.frequent.keys(), key=lambda x: self.frequent[x])
+        print("mergeTree frequent "+str(self.frequent))
 
-        mining_order = sorted(self.frequent.keys(), key=lambda x: self.frequent[x])
-        print("mergeTree "+str(mining_order))
+        mining_order2 = sorted(other.frequent.keys(), key=lambda x: other.frequent[x])
+        print("mergeTree frequent "+str(other.frequent))
         
         #print("mine_sub_trees "+str(mining_order))
         #update header
-        hitems1 = list(self.header.keys())
-        hitems2 = list(other.header.keys())
-        print("mergeTree self: "+str(hitems1))
-        print("mergeTree other: "+str(hitems2))
+        hitems1 = list(self.headers.keys())
+        hitems2 = list(other.headers.keys())
+        tmp3 = {}
+        for h in hitems1:
+            tmp3[h] = self.headers[h].value
+        tmp4 = {}
+        for h in hitems2:
+            tmp4[h] = other.headers[h].value
+
+        print("mergeTree self headers:  "+str(tmp3))
+        print("mergeTree other headers: "+str(tmp4))
+        '''
         for item1 in hitems1:
-            if item1 in items2
-                self.header[item1] = self.header[item1] + other.header[item2]
+            if item1 in items2:
+                self.header[item1] = self.headers[item1] + other.headers[item1]
         for item2 in hitems2:
-            if item2 not in items1
-                self.header[item2]  = other.header[item2]
+            if item2 not in items1:
+                self.header[item2]  = other.headers[item2]
         
-        print("mergeTree "+str(self.header.keys()))
-
-        #merge tree	
-        for item in mining_order:
+        print("mergeTree "+str(self.headers.keys()))
+        '''
+        '''
+        merge tree
+        erch node in tree2, find in tree1 and update tree1:
+        get node in tree2
+        find it position in tree1 from parent to children
+        '''
+        for item in mining_order2:
+            node = other.headers[item]
             suffixes = []
-            conditional_tree_input = []
-            node = self.headers[item]
-
+            suffixesV = []
             while node is not None:
                 suffixes.append(node)
+                #print(node.value)
+                suffixesV.append(node.value)
                 node = node.link
 
-            print(str(item)+", suffixes: "+ str(suffixes))
-
-            for suffix in suffixes:
-                frequency = suffix.count
-                path = []
-                parent = suffix.parent
-
-                while parent.parent is not None:
-                    path.append(parent.value)
-                    parent = parent.parent
-
-                for i in range(frequency):
-                    conditional_tree_input.append(path)
+            print(str(item)+", suffixes2: "+ str(suffixesV))
             
-            print("conditional_tree_input: "+ str(conditional_tree_input))
+            for item2 in mining_order1:
+                suffixes2 = []
+                conditional_tree_input = []
+                node2 = self.headers[item2]
+                suffixesV2 = []
+                while node2 is not None:
+                    suffixes2.append(node2)
+                    #print(node.value)
+                    #suffixesV2.append(node2.value)
+                    node2 = node2.link
+
+                #print(str(item2)+", suffixes: "+ str(suffixesV2))
+
+                for suffix2 in suffixes2:
+                    frequency = suffix2.count
+                    path = []
+                    parent = suffix2.parent
+                    
+                    while parent.parent is not None:
+                        path.append(parent.value)
+                        parent = parent.parent
+                    
+                    for i in range(frequency):
+                        conditional_tree_input.append(path)
+                    
+                #print("conditional_tree_input: "+ str(conditional_tree_input))
             
 
         #first = items[0]
@@ -630,20 +677,43 @@ class FPTree(object):
         #    newTree.append(patt)
         return self
     def printTree(self):
+        mining_order = sorted(self.frequent.keys(),
+                              key=lambda x: self.frequent[x])
+        listNode = []
         node = self.root
         listNode.append(node)
         listViss = []
-        print("root: "+ node)
+        print("root: "+ str(node.value))
+        print(list(mining_order))
+        #print(list(self.headers.keys()))
+        
+        for item in mining_order:
+            suffixes = []
+            suffixesNode = []
+            conditional_tree_input = []
+            node = self.headers[item]
+            while node is not None:
+                suffixes.append(node)
+                suffixesNode.append(node.value)
+                node = node.link
+                
+                
+            #print(str(item)+", suffixes: "+str(suffixesNode))
+
+        '''
         while listNode is not None:
             currentNode = listNode.pop()
             for tmp in currentNode.children:
                 if(tmp not in listNode):
                     listNode.append(tmp)
             listViss.append(currentNode)
-
+        '''
+        
 def buildFPTree(transactions, support_threshold):
-    return FPTree(transactions, support_threshold, None, None)
-
+    rootTree = FPTree(transactions, support_threshold, None, None)
+    print("buildFPTree "+str(rootTree.root.value))
+    return rootTree
+    
 def find_frequent_patterns(tree, support_threshold):
     """
     Given a set of transactions, find the patterns in it
