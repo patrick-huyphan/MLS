@@ -761,3 +761,62 @@ def generate_association_rules(patterns, confidence_threshold):
                         rules[antecedent] = (consequent, confidence)
 
     return rules
+
+
+def runFPtreeMerge(transactions1,transactions2):
+
+    startTime = time.time()
+
+    #for tran in transactions:
+    #    print(" transaction: "+ str(tran))
+    
+    rootTree1 = buildFPTree(transactions1, 2)
+    
+    rootTree1.printTree()
+    
+    rootTree2 = buildFPTree(transactions2, 2)
+    rootTree2.printTree()
+    
+    rootTree3 = rootTree1.mergeTree(rootTree2)
+    rootTree3.printTree()
+    
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime)) 
+    '''
+    patterns1 = find_frequent_patterns(tree3, 2)
+    for patte in patterns:
+        print(" pattern: "+ str(patte))
+        
+    rules = fpg.generate_association_rules(patterns1, 0.7)
+    for rule in rules:
+        print(" rule: " + str(rule))
+    
+    #fpTree1_ = fpg.find_frequent_patterns(transactions, 2)
+    #patterns2 = fpg.find_frequent_patterns(transactions, 2)
+    
+    #patterns3 = fpg.mergeTree(patterns1 ,patterns2)
+    
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
+    '''
+    return 0
+    
+def runBathcMerge(transactions1,transactions2):
+    startTime = time.time()
+    
+    batch1 = find_frequent_patterns_batch(transactions1, 2)
+    
+    batch2 = find_frequent_patterns_batch(transactions2, 2)
+    
+    batch3 = mergeBatch(batch1, batch2)
+    
+    endTime = time.time() - startTime
+    print("BathcMerge take total time: "+str(endTime))
+    
+    for patte in batch3.batch:
+        print(" batch3: "+ str(patte.value) +" "+ str(patte.count))
+
+
+    endTime = time.time() - startTime
+    print("BathcMerge take total time: "+str(endTime))
+    return 0
