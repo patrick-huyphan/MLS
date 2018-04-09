@@ -594,14 +594,14 @@ class FPTree(object):
         
         items1 = list(self.frequent.keys())
         items2 = list(other.frequent.keys())
-        '''
+        
         for item1 in items1:
             if item1 in items2:
                 self.frequent[item1] = self.frequent[item1] + other.frequent[item1]
         for item2 in items2:
             if item2 not in items1:
                 self.frequent[item2]  = other.frequent[item2]
-        '''
+        
         
         mining_order1 = sorted(self.frequent.keys(), key=lambda x: self.frequent[x])
         #print("mergeTree frequent "+str(self.frequent))
@@ -640,60 +640,59 @@ class FPTree(object):
         get node in tree2
         find it position in tree1 from parent to children
         '''
-        for item in mining_order2:
-            for item2 in mining_order1:
+        for item in mining_order1:
+            for item2 in mining_order2:
                 if item == item2:
-                node = other.headers[item]
-                suffixes = []
-                #suffixesV = []
-                while node is not None:
-                    suffixes.append(node)
-                    #print(node.value)
-                    #suffixesV.append(node.value)
-                    node = node.link
+                    node = other.headers[item]
+                    suffixes = []
+                    #suffixesV = []
+                    while node is not None:
+                        suffixes.append(node)
+                        #print(node.value)
+                        #suffixesV.append(node.value)
+                        node = node.link
 
-                #print(str(item)+", suffixes2: "+ str(suffixesV))
-            
-                for suffix in suffixes:
-                    frequency = suffix.count
-                    path = []
-                    parent = suffix.parent
+                    #print(str(item)+", suffixes2: "+ str(suffixesV))
                 
-                    while parent.parent is not None:
-                        path.append(parent.value)
-                        parent = parent.parent
+                    for suffix in suffixes:
+                        frequency = suffix.count
+                        path = []
+                        parent = suffix.parent
+                    
+                        while parent.parent is not None:
+                            path.append(parent.value)
+                            parent = parent.parent
+                    
+                        print(str(item)+" "+str(suffix.parent.value) +" ("+ str(frequency) +" "+ str(len(suffix.children)) +") "+ str(suffix.value) +" \t path: "+ str(path))
+                 
+                    suffixes2 = []
+                    #conditional_tree_input = []
+                    node2 = self.headers[item2]
+                    #suffixesV2 = []
+                    while node2 is not None:
+                        suffixes2.append(node2)
+                        node2 = node2.link
+
+                    #print(str(item2)+", suffixes: "+ str(suffixesV2))
+
+                    for suffix2 in suffixes2:
+                        frequency2 = suffix2.count
+                        path2 = []
+                        parent2 = suffix2.parent
+                        
+                        while parent2.parent is not None:
+                            path2.append(parent2.value)
+                            parent2 = parent2.parent
+                        
+                        #print(str(suffix2.value) +" "+ str(suffix2.count) +" "+ str(len(suffix2.children)) +" "+ str(suffix2.parent.value) +" "+ str(path))
+                        
+                        #for i in range(frequency):
+                        #    conditional_tree_input.append(path)
+                        
+                    #print("conditional_tree_input: "+ str(conditional_tree_input))
                 
-                    print(str(item)+" "+str(suffix.parent.value) +" ("+ str(frequency) +" "+ str(len(suffix.children)) +") "+ str(suffix.value) +" \t path: "+ str(path))
-            
-            #for item2 in mining_order1:
-            #    if item == item2: 
-                suffixes2 = []
-                #conditional_tree_input = []
-                node2 = self.headers[item2]
-                #suffixesV2 = []
-                while node2 is not None:
-                    suffixes2.append(node2)
-                    node2 = node2.link
-
-                #print(str(item2)+", suffixes: "+ str(suffixesV2))
-
-                for suffix2 in suffixes2:
-                    frequency2 = suffix2.count
-                    path2 = []
-                    parent2 = suffix2.parent
-                    
-                    while parent2.parent is not None:
-                        path2.append(parent2.value)
-                        parent2 = parent2.parent
-                    
-                    #print(str(suffix2.value) +" "+ str(suffix2.count) +" "+ str(len(suffix2.children)) +" "+ str(suffix2.parent.value) +" "+ str(path))
-                    
-                    #for i in range(frequency):
-                    #    conditional_tree_input.append(path)
-                    
-                #print("conditional_tree_input: "+ str(conditional_tree_input))
-            
-
+                else:
+                    print("new node")
         #first = items[0]
         #child = node.get_child(first)
         
@@ -812,7 +811,7 @@ def runFPtreeMerge(transactions1,transactions2):
     #rootTree1.printTree()
     
     rootTree2 = FPTree(transactions2, 2, None, None)
-    rootTree2.printTree()
+    #rootTree2.printTree()
     
     rootTree3 = rootTree1.mergeTree(rootTree2)
     #rootTree3.printTree()
