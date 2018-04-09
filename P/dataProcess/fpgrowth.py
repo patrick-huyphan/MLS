@@ -548,9 +548,10 @@ class FPTree(object):
 
             # Now we have the input for a subtree,
             # so construct it and grab the patterns.
-            subtree = FPTree(conditional_tree_input, threshold,
+            if conditional_tree_input is not None:
+                subtree = FPTree(conditional_tree_input, threshold,
                              item, self.frequent[item])
-            subtree_patterns = subtree.mine_patterns(threshold)
+                subtree_patterns = subtree.mine_patterns(threshold)
 
             # Insert subtree patterns into main patterns dictionary.
             for pattern in subtree_patterns.keys():
@@ -706,7 +707,7 @@ class FPTree(object):
         
         for item in mining_order:
             suffixes = []
-            #conditional_tree_input = []
+            conditional_tree_input = []
             node = self.headers[item]
             while node is not None:
                 suffixes.append(node)
@@ -723,7 +724,12 @@ class FPTree(object):
                     parent = parent.parent
                 
                 print("Parent: "+str(suffix.parent.value) +" ("+ str(frequency) +" "+ str(len(suffix.children)) +") node: "+ str(suffix.value) +"  \t path: "+ str(path))
-
+                
+                for i in range(frequency):
+                    conditional_tree_input.append(path)
+            if conditional_tree_input is not None:
+                subtree = FPTree(conditional_tree_input, 2, item, self.frequent[item])
+                subtree.printTree()
         '''
         while listNode is not None:
             currentNode = listNode.pop()
