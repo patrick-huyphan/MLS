@@ -498,8 +498,11 @@ def combOp(acc1, acc2):
     print(" combOp a2 "+str(acc2))
     ret = reducePattern2(acc1, acc2) 
     return ret #[acc1, acc2]
-    
-def useAgree(trans):        
+
+'''
+#TODO:
+'''
+def useAggregate(trans):        
     trans2 = trans.aggregate(([], []),seqOp, combOp)
     #((1, 0),
     #(lambda acc, value: (acc[0] + value, acc[1] + 1)),
@@ -511,14 +514,19 @@ def useAgree(trans):
         
 def sampleFun2(sc, dataName):
     data = sc.textFile(dataName)
+    
+    data2 = sc.textFile(dataName)
+    
+    data3 = data.union(data2)
+    
     print(data.getNumPartitions())
     
-    trans = data.map(lambda line : (splitLine2(line),1))
+    trans = data3.map(lambda line : (splitLine2(line),1))
     
     #for kv in trans.collect():
     #    print(str(kv)+ "---")
     
-    #useAgree(trans)
+    #useAggregate(trans)
     
     useReduce(trans)
 
