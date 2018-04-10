@@ -591,10 +591,11 @@ class FPTree(object):
         #print("mergeTree other: "+str(other.root.value))
         #print("mergeTree self frequent: "+str(self.frequent))
         #print("mergeTree other frequent : "+str(other.frequent))
+        '''
         
         items1 = list(self.frequent.keys())
         items2 = list(other.frequent.keys())
-        '''
+
         for item1 in items1:
             if item1 in items2:
                 self.frequent[item1] = self.frequent[item1] + other.frequent[item1]
@@ -611,9 +612,10 @@ class FPTree(object):
         
         #print("mine_sub_trees "+str(mining_order))
         #update header
+        '''
         hitems1 = list(self.headers.keys())
         hitems2 = list(other.headers.keys())
-        '''
+        
         tmp3 = {}
         for h in hitems1:
             tmp3[h] = self.headers[h].value
