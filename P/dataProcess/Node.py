@@ -51,7 +51,35 @@ class FPNode(object):
     
     def isContained(self, other):
         return other.value.issubset(self.value)
-    
+
+    def mergeNode(self, node2):
+        print("merge")
+        self.count += node2.count
+        subNode1 = self.children
+        subNode2 = node2.children
+        listTmp = {}
+        
+        i = 0
+        for node in subNode1:
+            listTmp[node.value] = [i,node.count]
+            i +=1
+        listTmp2 = {}
+        
+        i = 0
+        for node in subNode2:
+            listTmp2[node.value] = [i,node.count]
+            i +=1
+        print(listTmp)
+        print(listTmp2)
+
+        for node in subNode2:
+            if node.value in listTmp.keys():
+                print("merge")
+                self.children[listTmp[node.value][0]].mergeNode(node)
+            else:
+                print("add")
+                self.children.append(node)    
+
 class PatternNode(object):
     def __init__(self, value, count):
         """
