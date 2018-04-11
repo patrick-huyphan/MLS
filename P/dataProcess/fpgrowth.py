@@ -569,7 +569,7 @@ class FPTree(object):
     - merge header: self.header + other.header
     - merge other tree into FP tree: self + other, from root of self compare with root of other, update count of node, loop in subtree
     """
-    def mergeNode(self,node1, node2):
+    def mergeNode(self, node1, node2):
         print("merge")
         node1.count += node2.count
         subNode1 = node1.children
@@ -592,11 +592,11 @@ class FPTree(object):
         for node in subNode2:
             if node.value in listTmp.keys():
                 print("merge")
-                self.mergeNode(node2.children[listTmp[node.value][0]],node)
+                self.mergeNode(node1.children[listTmp[node.value][0]],node)
             else:
                 print("add")
                 node1.children.append(node)
-        return node1
+        #return node1
     def mergeTree(self, other):
         print("ROOT1: "+str(self.root.value)+"\t child of root: "+str(len(self.root.children)))
         listParrent1 = self.root.children
