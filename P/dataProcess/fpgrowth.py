@@ -200,7 +200,7 @@ class Batch(object):
             sb = set(item)
             c = sa.intersection(sb)
             #d = c
-            newNode = PatternNode(sorted(c), pattern.count+count)
+            newNode = Node.PatternNode(sorted(c), pattern.count+count)
             if len(c)>0:
                 #print("intersection "+str(c)+" "+ str(newNode.count))
                 if(sa.issubset(c)):
@@ -239,7 +239,7 @@ class Batch(object):
                         
         if flag1==False:
             #print("add new node "+str(item))
-            self.batch.append(PatternNode(item, count))
+            self.batch.append(Node.PatternNode(item, count))
         #print(len(batch))
         for node in mBatch:
             self.batch.append(node)
@@ -588,8 +588,8 @@ class FPTree(object):
             else:
                 print("add node")
                 self.root.children.append(node)
-        print("ROOT1: "+str(self.root.value)+"\t child of root: "+str(len(self.root.children)))
-        return self
+        print("ROOT: "+str(self.root.value)+"\t child of root: "+str(len(self.root.children)))
+        #return self
 
     def mergeTree2(self, other):
         
@@ -854,8 +854,8 @@ def runFPtreeMerge(transactions1,transactions2):
     rootTree2 = FPTree(transactions2, 2, None, None)
     #rootTree2.printTree()
     
-    rootTree3 = rootTree1.mergeTree(rootTree2)
-    rootTree3.printTree()
+    rootTree1.mergeTree(rootTree2)
+    rootTree1.printTree()
     
     endTime = time.time() - startTime
     print("FPtreeMerge take total time: "+str(endTime)) 
@@ -885,12 +885,13 @@ def runBathcMerge(transactions1,transactions2):
     
     batch2 = Batch(transactions2, 2)
     
-    batch3 = mergeBatch(batch1, batch2)
+    #batch3 = 
+    batch1.mergeBatch(batch2)
     
     endTime = time.time() - startTime
     print("BathcMerge take total time: "+str(endTime))
     
-    for patte in batch3.batch:
+    for patte in batch1.batch:
         print(" batch3: "+ str(patte.value) +" "+ str(patte.count))
 
 

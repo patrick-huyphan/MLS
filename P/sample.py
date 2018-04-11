@@ -67,9 +67,9 @@ if __name__ == "__main__":
                 [1, 2, 3, 5],
                 [1, 2, 3]]
     '''
-    transactions1 = ior.read2RawData(path+"mushroom.dat",0, 100, 100)
-    transactions2 = ior.read2RawData(path+"mushroom.dat",100, 200, 100)
-    #fpg.runBathcMerge(transactions2, transactions2)
+    transactions1 = ior.read2RawData(path+"mushroom.dat",0, 200, 150)
+    transactions2 = ior.read2RawData(path+"mushroom.dat",200, 570, 150)
+    fpg.runBathcMerge(transactions2, transactions2)
     
     fpg.runFPtreeMerge(transactions1, transactions2)
     
