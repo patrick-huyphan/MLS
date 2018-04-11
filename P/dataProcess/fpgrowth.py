@@ -569,14 +569,78 @@ class FPTree(object):
     - merge header: self.header + other.header
     - merge other tree into FP tree: self + other, from root of self compare with root of other, update count of node, loop in subtree
     """
+    def mergeNode(self,node1, node2):
+        print("merge")
+        node1.count += node2.count
+        subNode1 = node1.children
+        subNode2 = node2.children
+        listTmp = {}
+        
+        i = 0
+        for node in subNode1:
+            listTmp[node.value] = [i,node.count]
+            i +=1
+        listTmp2 = {}
+        
+        i = 0
+        for node in subNode2:
+            listTmp2[node.value] = [i,node.count]
+            i +=1
+        print(listTmp)
+        print(listTmp2)
+
+        for node in subNode2:
+            if node.value in listTmp.keys():
+                print("merge")
+                self.mergeNode(node2.children[listTmp[node.value][0]],node)
+            else:
+                print("add")
+                node1.children.append(node)
+        return node1
     def mergeTree(self, other):
+        print("ROOT1: "+str(self.root.value)+"\t child of root: "+str(len(self.root.children)))
+        listParrent1 = self.root.children
+        print("ROOT2: "+str(other.root.value)+"\t child of root: "+str(len(other.root.children)))
+        listParrent2 = other.root.children
+        listtmp={}
+        i=0
+        for node in listParrent1:
+            listtmp[node.value] = i
+            i+=1
+        print(listtmp)
+        for node in listParrent2:
+            print(node.value)
+            if node.value in listtmp.keys():
+                print("meger node")
+                self.mergeNode(self.root.children[listtmp[node.value]],node)
+            else:
+                print("add node")
+                self.root.children.append(node)
+        print("ROOT1: "+str(self.root.value)+"\t child of root: "+str(len(self.root.children)))
+        '''
+        listParrent1 = self.root.children
+        trace = {}
+        while len(listParrent1)>0:
+            node = listParrent1.pop()
+            #print("Num of pa: "+str(len(listParrent)))
+            cnode = []
+            for nod in node.children:
+                cnode.append(nod.value)
+            print("0P:"+str(node.parent.value) +"\t N "+str(node.value)+" \t C:"+ str(node.count)+"\t nc:"+str(len(node.children))+"\t"+str(cnode))
+            #print(self.headers[node].children)
+            #trace[node.value] = node.count
+            if(len(node.children)>0):
+                listParrent1.extend(node.children)
+        '''
+        return self
+
+    def mergeTree2(self, other):
         
         mining_order1 = sorted(self.frequent.keys(), key=lambda x: self.frequent[x])
         #print("mergeTree frequent "+str(self.frequent))
 
         mining_order2 = sorted(other.frequent.keys(), key=lambda x: other.frequent[x])
         #print("mergeTree frequent "+str(other.frequent))
-        
         '''
         merge tree
         erch node in tree2, find in tree1 and update tree1:
@@ -700,7 +764,11 @@ class FPTree(object):
         #for(patt in self.value):
         #    newTree.append(patt)
         return self
-
+    '''
+    from root, add root to stack, get all child and add to stack
+    get last stack element, get chill and push to stack until child is 0, print path
+    pop stack check chils of node if path of child is set, remove from stack
+    '''
     def printTree(self):
         #print("root: "+ str(node.value))
         print("ROOT: "+str(self.root.value)+"\t child of root: "+str(len(self.root.children)))
@@ -709,7 +777,10 @@ class FPTree(object):
         while len(listParrent)>0:
             node = listParrent.pop()
             #print("Num of pa: "+str(len(listParrent)))
-            print("Pa:"+str(node.parent.value) +"\t Node "+str(node.value)+" \t c:"+ str(node.count)+"\t num of c:"+str(len(node.children)))
+            cnode = []
+            for nod in node.children:
+                cnode.append(nod.value)
+            print("P:"+str(node.parent.value) +"\t N "+str(node.value)+" \t C:"+ str(node.count)+"\t nc:"+str(len(node.children))+"\t"+str(cnode))
             #print(self.headers[node].children)
             #trace[node.value] = node.count
             if(len(node.children)>0):
