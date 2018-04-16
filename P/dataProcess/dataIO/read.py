@@ -17,11 +17,11 @@ def read2RawData(fileName, fromx, tox, maxcol):
     f = open(fileName, 'r')
     mat = []
     count = 0
-    print("read2RawData")
+    #print("read2RawData")
     for line in f:
         
         if((fromx>0 and count< fromx) or (tox>0 and count>tox)):
-            print(str(count))
+            #print(str(count))
             count += 1
             continue
         #print("MAX in line: "+str(max))
@@ -31,7 +31,7 @@ def read2RawData(fileName, fromx, tox, maxcol):
             if(maxcol>0) and (int(s) > maxcol):
                 break
             #print(s)
-        print(llist)
+        #print(llist)
         mat.append(llist)
         count += 1
         #if(maxrow>0):

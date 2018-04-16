@@ -204,10 +204,8 @@ class Batch(object):
             if len(c)>0:
                 #print("intersection "+str(c)+" "+ str(newNode.count))
                 if(sa.issubset(c)):
-                    #print("c in pat " + str(idx))
-                    #node =  self.batch[idx]
                     self.batch.remove(pattern)
-                    print(" remove "+str(sorted(pattern.value)) + " "+ str(pattern.count))
+                    #print(" remove "+str(sorted(pattern.value)) + " "+ str(pattern.count))
                 if(sb.issubset(c)):
                     flag1 = True
                     #print("flag1 = True")
@@ -216,8 +214,7 @@ class Batch(object):
                     ms = set(mx.value)
                     if(ms.issubset(c)):
                         mBatch.remove(mx)
-                        print(" remove mx "+str(sorted(mx.value)) + " "+ str(mx.count))
-                        #print("mBatch.remove(mx)") 
+                        #print(" remove mx "+str(sorted(mx.value)) + " "+ str(mx.count))
                     if(c.issubset(ms)):
                         flag2 = True
                         #print(":") 
@@ -785,12 +782,12 @@ class FPTree(object):
                     listNode.append(tmp)
             listViss.append(currentNode)
         '''
-        
+
 def buildFPTree(transactions, support_threshold):
     rootTree = FPTree(transactions, support_threshold, None, None)
     print("buildFPTree "+str(rootTree.root.value))
     return rootTree
-    
+
 def find_frequent_patterns(tree, support_threshold):
     """
     Given a set of transactions, find the patterns in it
@@ -798,7 +795,6 @@ def find_frequent_patterns(tree, support_threshold):
     """
     #tree = FPTree(transactions, support_threshold, None, None)
     return tree.mine_patterns(support_threshold)
-
 
 def find_frequent_patterns_batch(transactions, support_threshold):
     """
@@ -808,12 +804,13 @@ def find_frequent_patterns_batch(transactions, support_threshold):
     return Batch(transactions, support_threshold)
     #return batch #.mine_patterns(support_threshold)
 
+'''
 def mergeBatch(transactions1, transactions2):
     for itemA in transactions2.batch:
         #print(" itemA: "+ str(itemA.value) +" "+ str(itemA.count))
         transactions1.insert_batch2(itemA.value, itemA.count)
     return transactions1
-    
+'''
 
 def generate_association_rules(patterns, confidence_threshold):
     """
@@ -878,7 +875,7 @@ def runFPtreeMerge(transactions1,transactions2):
     '''
     return 0
     
-def runBathcMerge(transactions1,transactions2):
+def runBatchMerge(transactions1,transactions2):
     startTime = time.time()
     
     batch1 = Batch(transactions1, 2)
