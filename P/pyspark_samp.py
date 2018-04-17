@@ -512,10 +512,20 @@ def useAggregate(trans):
         print(str(count)+"---2: "+str(kv[-1])+"---" +str(kv))
         count +=1
         
-def sampleFun2(sc, dataName):
+'''
+build frequence
+
+Case 1: from original data
+    read 2 pattern
+    merge pattern
+Case 2: from batch
+    read batch
+    merge pattern
+'''
+def sampleFun(sc, dataName1, dataName2):
     data = sc.textFile(dataName)
     
-    data2 = sc.textFile(dataName)
+    data2 = sc.textFile(dataName2)
     
     data3 = data.union(data2)
     
@@ -552,7 +562,7 @@ if __name__ == "__main__":
     #fggrowth(sc,"/home/hduser/workspace/MLS/data/mushroom.dat")
     dataName = ["mushroom.dat","mushroom_.dat"]
     startTime = time.time()
-    sampleFun2(sc,path + "mushroom_.dat") #str(dataName[sys.argv[0]]))#
+    sampleFun(sc,path + "mushroom_.dat", path + "mushroom_.dat") #str(dataName[sys.argv[0]]))#
     endTime = time.time() - startTime
     print("total time: "+str(endTime))
 
