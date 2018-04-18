@@ -200,7 +200,8 @@ class SparkADMM:
                 rdd = sc.textFile(input_filename,minPartitions=self.N_parts).mapPartitionsWithIndex(lambda key,iterator: SparkADMM.generateBatches(self.solver,key,iterator) ).cache()
                 # (partition_id, (data, stats, Ul, Zl, local_primal_residual,localObj))
                 
-                keyPartitionIndex = rdd.mapValues(lambda (data, stats, Ul, Zl, local_primal_residual,localObj): Ul.keys()).flatMapValues(lambda x : list(x)).map(lambda x: (x[1],x[0])).partitionBy(self.key_parts).cache() # x[1] is a nested tuple, an element of Ul.keys(), i.e., feat ; x[0] = partition_id from sc.textFile()
+                keyPartitionIndex = rdd.mapValues(lambda (data, stats, Ul, Zl, local_primal_residual,localObj): Ul.keys()).flatMapValues(lambda x : list(x)).map(lambda x: (x[1],x[0])).PartitionBy(self.key_parts).cache()
+                # x[1] is a nested tuple, an element of Ul.keys(), i.e., feat ; x[0] = partition_id from sc.textFile()
                 # output =  feat_partition (hidden) -> (feature, partition_id)
 
                 master_Z = keyPartitionIndex.mapValues(lambda x: 0.0).cache()   # (feat_part, feature, feat_value)

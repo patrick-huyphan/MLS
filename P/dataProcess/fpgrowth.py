@@ -587,7 +587,14 @@ class FPTree(object):
                 self.root.children.append(node)
         print("ROOT: "+str(self.root.value)+"\t child of root: "+str(len(self.root.children)))
         #return self
-
+    '''
+    rebuild frequency header and tree
+    for rebuild tree:
+        case1: same root
+    
+        case2: dif root, should find posible position to merge
+    
+    '''
     def mergeTree2(self, other):
         
         mining_order1 = sorted(self.frequent.keys(), key=lambda x: self.frequent[x])
