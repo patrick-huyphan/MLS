@@ -21,7 +21,7 @@ import time
 import random
 num_samples = 100000000
 
-'''
+
 class FPNode(object):
     """
     A node in the FP tree.
@@ -76,6 +76,20 @@ class FPNode(object):
     def isContained(self, other):
         return other.value.issubset(self.value)
 '''
+TODO:
+'''
+class FPTree(object):
+    def __init__(self, transactions, threshold):
+        return 0
+
+    def buildTree(self):
+        return 0
+        
+    def insertPattern(self):
+        return 0
+        
+    def mergeTree(self):
+        return 0
 
 class PatternNode(object):
     def __init__(self, value, count):
