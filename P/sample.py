@@ -12,6 +12,7 @@ import dataProcess.dataIO.write as iow
 import dataProcess.ADMM as admm
 import dataProcess.ASCC as ascc
 import dataProcess.fpgrowth as fpg
+import dataProcess.batchFP as bfg
 
 from numpy import arange,array,ones,linalg
 from pylab import plot,show
@@ -70,7 +71,7 @@ if __name__ == "__main__":
     transactions1 = ior.read2RawData(path+"mushroom.dat",0, 200, 150)
     transactions2 = ior.read2RawData(path+"mushroom.dat",200, 570, 150)
     
-    fpg.runBatchMerge(transactions2, transactions2)
+    bfg.runBatchMerge(transactions2, transactions2)
     
     fpg.runFPtreeMerge(transactions1, transactions2)
     

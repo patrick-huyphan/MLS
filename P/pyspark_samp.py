@@ -21,7 +21,7 @@ import time
 import random
 num_samples = 100000000
 
-
+'''
 class FPNode(object):
     """
     A node in the FP tree.
@@ -75,7 +75,8 @@ class FPNode(object):
     
     def isContained(self, other):
         return other.value.issubset(self.value)
-    
+'''
+
 class PatternNode(object):
     def __init__(self, value, count):
         """
@@ -109,7 +110,7 @@ class Batch(object):
             #sorted(sorted_items)
             #print(str(count) +" sorted_items "+str(_tmp))
             #newNode = FPNode(_tmp, count, None)
-            self.batch.append(FPNode(transaction[:-1], transaction[-1], None))
+            self.batch.append(PatternNode(transaction[:-1], transaction[-1], None))
         #print("batch end")
 
     @staticmethod
