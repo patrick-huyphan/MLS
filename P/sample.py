@@ -12,25 +12,12 @@ import dataProcess.dataIO.write as iow
 import dataProcess.ADMM as admm
 import dataProcess.ASCC as ascc
 import dataProcess.fpgrowth as fpg
+import dataProcess.batchFP as bfg
+import dataProcess.linearRegresion as linear
 
 from numpy import arange,array,ones,linalg
 from pylab import plot,show
 from scipy import sparse
-
-def lnr():
-    xi = arange(0,9)
-    A = array([ xi, ones(9)])
-    # linearly generated sequence
-    y = [19, 20, 20.5, 21.5, 22, 23, 23, 25.5, 24]
-    w = linalg.lstsq(A.T,y)[0] # obtaining the parameters
-
-    # plotting the line
-    line = w[0]*xi+w[1] # regression line
-    plot(xi,line,'r-',xi,y,'o')
-    show()
-
-
-
 
 def runADMM():
     mat = ior.rawData2matrix(path+"data_694_446.dat",0, 446, 696)
@@ -55,7 +42,7 @@ if __name__ == "__main__":
     else:
         path = winDataPath()
     
-    #lnr()
+    #linear.lnr()
     '''
     transactions = [[1, 2, 5],
                 [2, 4],
@@ -70,7 +57,7 @@ if __name__ == "__main__":
     transactions1 = ior.read2RawData(path+"mushroom.dat",0, 200, 150)
     transactions2 = ior.read2RawData(path+"mushroom.dat",200, 570, 150)
     
-    fpg.runBatchMerge(transactions2, transactions2)
+    bfg.runBatchMerge(transactions2, transactions2)
     
     fpg.runFPtreeMerge(transactions1, transactions2)
     
