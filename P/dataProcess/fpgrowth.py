@@ -400,7 +400,7 @@ class FPTree(object):
             if(len(node.children)>0):
                 listParrent.extend(node.children)
         
-    def printTree1(self):
+    def printPattern(self):
         mining_order = sorted(self.frequent.keys(),
                               key=lambda x: self.frequent[x])
         
