@@ -267,6 +267,9 @@ class Batch(object):
             
     """
     def mergeBatch(self, other):
+        print("self.frequent: "+str(self.frequent))
+        print("other.frequent: "+str(other.frequent))
+
         for itemA in other.batch:
             self.insert_batch2(itemA.value, itemA.count)
 

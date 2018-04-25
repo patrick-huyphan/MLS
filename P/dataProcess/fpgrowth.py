@@ -226,6 +226,19 @@ class FPTree(object):
         listParrent2 = other.root.children
         listtmp={}
         i=0
+        # merge frequent
+        print("self.frequent: "+str(self.frequent))
+        print("other.frequent: "+str(other.frequent))
+        
+        z = self.frequent.copy()
+        
+        print("merge.frequent: "+str(z.update(other.frequent)))
+        
+        # merge header
+        print("self.header: "+str(self.headers))
+        print("other.header: "+str(other.headers))
+        
+        # merge root
         for node in listParrent1:
             listtmp[node.value] = i
             i+=1
@@ -489,6 +502,7 @@ def runFPtreeMerge(transactions1,transactions2):
     #rootTree2.printTree()
     
     rootTree1.mergeTree(rootTree2)
+    
     rootTree1.printTree()
     
     endTime = time.time() - startTime

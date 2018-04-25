@@ -19,7 +19,6 @@ from scipy import sparse
 import time
 
 import random
-num_samples = 100000000
 
 
 class FPNode(object):
@@ -315,6 +314,7 @@ def mergeBatchLocal(transactions1, transactions2):
 """
 build tree in parallelize
 """
+'''
 def buildTree(sContext, trans):
     step1 = sContext.parallelize(trans)
     step2 = step1.map()
@@ -322,7 +322,8 @@ def buildTree(sContext, trans):
 
 def mergeFPTree(sContext, tree_1, tree_2):
     return ret
-    
+'''
+
 """
 Merge tree in parallelize
 - map all data to spark
@@ -331,15 +332,17 @@ Merge tree in parallelize
 - save tree.
 - merge with other tree
 """    
+'''
 def fptree(sContext, trans_1, trans_2):
     tree1= buildTree(trans_1)
     tree2= buildTree(trans_2)
     ret = mergeFPTree(sContext, tree1, tree2);
     return ret
-
+'''
 """
 build batch in parallelize
 """    
+'''
 def buildBathc(sContext, trans):
     step1 = sContext.parallelize(trans)
     step2 = step1.map(lambda x:(x,1))
@@ -348,6 +351,7 @@ def buildBathc(sContext, trans):
 
 def mergeBatch(sContext, bathc_1, batch_2):
     return ret
+'''
 """
 mege batch in parallelize
 - map all data to spark
@@ -356,12 +360,16 @@ mege batch in parallelize
 - save batch.
 - merge with other batch
 """
+def buildFreqSequences(trans):
+    return 0
+    
+'''
 def batch(sContext, trans_1, trans_2):  
     batch1= buildBathc(sContext, trans_1) 
     bathc2= buildBathc(sContext, trans_2)
     ret = mergeBatch(sContext, batch1, bathc2)
     return ret
-
+'''
 def fggrowth(sc, dataName):
     # $example on$
     data = sc.textFile(dataName)
@@ -383,6 +391,8 @@ def splitLine2(line):
 '''
 the last element is the count of pattern
 '''
+
+'''
 def getLine2List(line):
     ret = []
     #print("inline "+str(line))
@@ -399,6 +409,7 @@ def getLine2List(line):
                 #t1.append(1)
                 ret.append(t1)
     return ret
+'''
 
 '''
 from list data, build batch and merge 2 batch
@@ -440,7 +451,7 @@ def mergebatch(p1, p2):
     #print("b2: "+str(batch5))
     
     return ret
-
+'''
 def reducePattern(l1, l2):
     tmp1 = getLine2List(l1)
     tmp2 = getLine2List(l2)
@@ -449,6 +460,7 @@ def reducePattern(l1, l2):
     #ret.append(tmp1)
     #ret.append(tmp2)
     return mergebatch(tmp1, tmp2)
+'''
 
 def reducePattern2(l1, l2):
     tmp1 = []
@@ -528,7 +540,7 @@ def useAggregate(trans):
         count +=1
         
 '''
-build frequence
+rebuild frequence and broadcash
 
 Case 1: from original data
     read 2 pattern
@@ -537,14 +549,20 @@ Case 2: from batch
     read batch
     merge pattern
 '''
-def sampleFun(sc, dataName1, dataName2):
+def spMergeBatchFun(sc, dataName1, dataName2):
     data = sc.textFile(dataName)
+    
+    f1 = data.map(buildFreqSequences())
     
     data2 = sc.textFile(dataName2)
     
+    f2 = data2.map(buildFreqSequences())
+    
+    f = f1.union(f2)
+    
     data3 = data.union(data2)
     
-    print(data.getNumPartitions())
+    #print(data.getNumPartitions())
     
     trans = data3.map(lambda line : (splitLine2(line),1))
     
@@ -555,30 +573,56 @@ def sampleFun(sc, dataName1, dataName2):
     
     useReduce(trans)
 
+def spMergeFPTreeFun(sc, dataName1, dataName2):
+    data = sc.textFile(dataName)
     
+    f1 = data.map(buildFreqSequences())
     
+    data2 = sc.textFile(dataName2)
+    
+    f2 = data2.map(buildFreqSequences())
+    
+    f = f1.union(f2)
+    
+    data3 = data.union(data2)
+    
+    #print(data.getNumPartitions())
+    
+    trans = data3.map(lambda line : (splitLine2(line),1))
+    
+    #for kv in trans.collect():
+    #    print(str(kv)+ "---")
+    
+    #useAggregate(trans)
+    
+    useReduce(trans)
+
+'''
 def linuxDataPath():
     return "/home/hduser/workspace/MLS/data/"
 
 def winDataPath():
     return "C:\\cygwin64\\home\\patrick_huy\\workspace\\allinOne\\data\\"
-    
+'''
+
 if __name__ == "__main__":
     #def parallel():
     conf = SparkConf().setAppName('MyFirstStandaloneApp')
     sc = SparkContext(conf=conf)
     path = ""
     if cf.get_platform() == "linux":
-        path = linuxDataPath()
+        path = "/home/hduser/workspace/MLS/data/"
     else:
-        path = winDataPath()
+        path = "C:\\cygwin64\\home\\patrick_huy\\workspace\\allinOne\\data\\"
 #   mat = ior.read2Matrix("C:\Users\patrick_huy\OneDrive\Documents\long prj\FPC\_DataSets\mushroom.dat")
     
     #fggrowth(sc,"/home/hduser/workspace/MLS/data/mushroom.dat")
     dataName = ["mushroom.dat","mushroom_.dat"]
     startTime = time.time()
-    sampleFun(sc,path + "mushroom_.dat", path + "mushroom_.dat") #str(dataName[sys.argv[0]]))#
+    spMergeBatchFun(sc,path + "mushroom_.dat", path + "mushroom_.dat") #str(dataName[sys.argv[0]]))#
     endTime = time.time() - startTime
     print("total time: "+str(endTime))
 
+    #spMergeFPTreeFun(sc,path + "mushroom_.dat", path + "mushroom_.dat")
+    
     sc.stop()
