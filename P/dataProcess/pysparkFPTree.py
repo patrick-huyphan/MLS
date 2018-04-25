@@ -90,226 +90,6 @@ class FPTree(object):
     def mergeTree(self):
         return 0
 
-class PatternNode(object):
-    def __init__(self, value, count):
-        """
-        Create the node.
-        """
-        self.value = value
-        self.count = count
-
-    def intercept(self, other):
-        value = sorted(set(other.value) & set(self.value), key = self.value.index)
-        return PatternNode(value,self.count + other.count)
-        
-    def isZero(self):
-        return self.value.length>0
-    
-    def isContained(self, other):
-        return other.value.issubset(self.value)
-
-class Batch(object):
-    def __init__(self, transactions, threshold):
-        """
-        Initialize the batch.
-        """
-        self.batch = []
-        #print("batch start")
-        #self.frequent = self.find_frequent_items(transactions, threshold)
-        #self.batch = self.build_batchPa(transactions, self.frequent)
-        for transaction in transactions:
-            #_tmp = transaction[:-1]
-            #count = transaction[-1]
-            #sorted(sorted_items)
-            #print(str(count) +" sorted_items "+str(_tmp))
-            #newNode = FPNode(_tmp, count, None)
-            self.batch.append(PatternNode(transaction[:-1], transaction[-1], None))
-        #print("batch end")
-
-    @staticmethod
-    def find_frequent_items(transactions, threshold):
-        """
-        Create a dictionary of items with occurrences above the threshold.
-        """
-        items = {}
-
-        for transaction in transactions:
-            _tmp = transaction[0:-1]
-            for item in _tmp:
-                if item in items:
-                    items[item] += 1
-                else:
-                    items[item] = 1
-
-        for key in list(items.keys()):
-            if items[key] < threshold:
-                del items[key]
-        #print(str(items))
-        return items
-        
-    def build_batch(self, transactions, frequent):
-        """
-        Build patern.
-        """
-        for transaction in transactions:
-            _tmp = transaction[0:-1]
-            sorted_items = [x for x in _tmp if x in frequent]
-            #sorted_items.sort(key=lambda x: frequent[x], reverse=True)
-            sorted(sorted_items)
-            #print("sorted_items "+str(sorted_items))
-            
-            if len(sorted_items) > 0:
-                self.insert_batch(sorted_items, 1)
-            
-            #newNode = FPNode(sorted_items, 1, None)
-            #self.batch.append(newNode)
-            
-        #print(len(batch))        
-        return self.batch
-    '''
-    check in current batch: if true -> continue
-    check in update batch: if true -> continue, else add to update.
-    merge update into current
-    '''
-    def insert_batch(self, item, count):
-        #print("insert_batch")
-        count = False
-        flag1 = False
-        flag2 = False
-        idx=0
-        #print("item "+str(item))
-        mBatch = []
-        for pattern in self.batch:
-            #print("--"+str(sorted(pattern.value)) + " "+ str(pattern.count))
-            sa = set(pattern.value)
-            sb = set(item)
-            c = sa.intersection(sb)
-            #d = c
-            newNode = PatternNode(sorted(c), pattern.count+1)
-            if len(c)>0:
-                #print("intersection "+str(c)+" "+ str(newNode.count))
-                if(sa.issubset(c)):
-                    #print("c in pat " + str(idx))
-                    #node =  self.batch[idx]
-                    self.batch.remove(pattern)
-                    #print(" remove "+str(sorted(pattern.value)) + " "+ str(pattern.count))
-                if(sb.issubset(c)):
-                    flag1 = True
-                    #print("flag1 = True")
-                    #print("c in item " + str(idx))                    
-                for mx in mBatch:
-                    ms = set(mx.value)
-                    if(ms.issubset(c)):
-                        mBatch.remove(mx)
-                        #print(" remove mx "+str(sorted(mx.value)) + " "+ str(mx.count))
-                        #print("mBatch.remove(mx)") 
-                    if(c.issubset(ms)):
-                        flag2 = True
-                        #print(":") 
-            else:
-                flag2 = True
-                
-            if(flag2 == False):
-                #print("add node "+str(newNode.value) +" "+str(newNode.count))
-                mBatch.append(newNode)
-            #else:
-            #    print("not add node "+str(newNode.value) +" "+str(newNode.count))
-            flag2 = False
-            
-            #if(pattern.value == item):
-                #print(str(idx))
-            #    count = True
-            #    batch[idx].count = batch[idx].count+1
-            #idx = idx +1
-                        
-        if count==False:
-            #print("add new node "+str(item))
-            self.batch.append(PatternNode(item, 1))
-        #print(len(batch))
-        for node in mBatch:
-            self.batch.append(node)
-        #return batch
-        #print("------------------------------------------")
-
-    def insert_batch2(self, item, count):
-        #print("insert_batch")
-        #count = False
-        flag1 = False
-        flag2 = False
-        idx=0
-        #print("item "+str(item))
-        mBatch = []
-        for pattern in self.batch:
-            #print("--"+str(sorted(pattern.value)) + " "+ str(pattern.count))
-            sa = set(pattern.value)
-            sb = set(item)
-            c = sa.intersection(sb)
-
-            newNode = PatternNode(sorted(c), pattern.count+count)
-            if len(c)>0:
-                #print("intersection "+str(c)+" "+ str(newNode.count))
-                if(sa.issubset(c)):
-                    #print("c in pat " + str(idx))
-                    #node =  self.batch[idx]
-                    self.batch.remove(pattern)
-                    #print(" remove "+str(sorted(pattern.value)) + " "+ str(pattern.count))
-                if(sb.issubset(c)):
-                    flag1 = True
-                    #print("flag1 = True, c in item " + str(idx))                    
-                for mx in mBatch:
-                    ms = set(mx.value)
-                    if(ms.issubset(c)):
-                        mBatch.remove(mx)
-                        #print(" remove mx "+str(sorted(mx.value)) + " "+ str(mx.count))
-                    if(c.issubset(ms)):
-                        flag2 = True
-                        #print(":") 
-            else:
-                flag2 = True
-                
-            if(flag2 == False):
-                #print("add node "+str(newNode.value) +" "+str(newNode.count))
-                mBatch.append(newNode)
-            #else:
-            #    print("not add node "+str(newNode.value) +" "+str(newNode.count))
-            flag2 = False            
-                        
-        if flag1==False:
-            #print("add new node "+str(item))
-            self.batch.append(PatternNode(item, count))
-        #print(len(batch))
-        for node in mBatch:
-            self.batch.append(node)
-        #return batch
-        #print("------------------------------------------")        
-
-    """
-    merge batch A and B:
-    - for each itemA in A:
-        for each itemB in B:
-            q= itemA intersec itemB
-            if(q != 0):
-            if itema is child(Q): A\itemA
-            if....
-            
-            A = A U C
-            
-    """
-    def mergeBatch(self, other):
-        for itemA in other.batch:
-            self.insert(itemA, self.batch)
-            #for itemB in self.batch:
-        #return newbatch        
-
-
-def mergeBatchLocal(transactions1, transactions2):
-    for itemA in transactions2.batch:
-        #print(" itemA: "+ str(itemA.value) +" "+ str(itemA.count))
-        transactions1.insert_batch2(itemA.value, itemA.count)
-#    for itemA in transactions1.batch:
-#        print(" itemA: "+ str(itemA.value) +" "+ str(itemA.count))
-    return transactions1
-
 
 """
 build tree in parallelize
@@ -549,29 +329,6 @@ Case 2: from batch
     read batch
     merge pattern
 '''
-def spMergeBatchFun(sc, dataName1, dataName2):
-    data = sc.textFile(dataName)
-    
-    f1 = data.map(buildFreqSequences())
-    
-    data2 = sc.textFile(dataName2)
-    
-    f2 = data2.map(buildFreqSequences())
-    
-    f = f1.union(f2)
-    
-    data3 = data.union(data2)
-    
-    #print(data.getNumPartitions())
-    
-    trans = data3.map(lambda line : (splitLine2(line),1))
-    
-    #for kv in trans.collect():
-    #    print(str(kv)+ "---")
-    
-    #useAggregate(trans)
-    
-    useReduce(trans)
 
 def spMergeFPTreeFun(sc, dataName1, dataName2):
     data = sc.textFile(dataName)
@@ -604,25 +361,27 @@ def linuxDataPath():
 def winDataPath():
     return "C:\\cygwin64\\home\\patrick_huy\\workspace\\allinOne\\data\\"
 '''
-
-if __name__ == "__main__":
+'''
+spark-submit --py-files 'SparkADMM.py,LogisticRegressionSolver.py,ADMMDataFrames.py,AbstractSolver.py' driver.py
+'''
+def runSparkFPTree(sc, data1, data2):
     #def parallel():
-    conf = SparkConf().setAppName('MyFirstStandaloneApp')
-    sc = SparkContext(conf=conf)
-    path = ""
-    if cf.get_platform() == "linux":
-        path = "/home/hduser/workspace/MLS/data/"
-    else:
-        path = "C:\\cygwin64\\home\\patrick_huy\\workspace\\allinOne\\data\\"
+    #conf = SparkConf().setAppName('MyFirstStandaloneApp')
+    #sc = SparkContext(conf=conf)
+    #path = ""
+    #if cf.get_platform() == "linux":
+    #    path = "/home/hduser/workspace/MLS/data/"
+    #else:
+    #    path = "C:\\cygwin64\\home\\patrick_huy\\workspace\\allinOne\\data\\"
 #   mat = ior.read2Matrix("C:\Users\patrick_huy\OneDrive\Documents\long prj\FPC\_DataSets\mushroom.dat")
     
     #fggrowth(sc,"/home/hduser/workspace/MLS/data/mushroom.dat")
-    dataName = ["mushroom.dat","mushroom_.dat"]
+    #dataName = ["mushroom.dat","mushroom_.dat"]
     startTime = time.time()
-    spMergeBatchFun(sc,path + "mushroom_.dat", path + "mushroom_.dat") #str(dataName[sys.argv[0]]))#
+    spMergeBatchFun(sc,data1, data2)  #path + "mushroom_.dat", path + "mushroom_.dat") #str(dataName[sys.argv[0]]))#
     endTime = time.time() - startTime
     print("total time: "+str(endTime))
 
     #spMergeFPTreeFun(sc,path + "mushroom_.dat", path + "mushroom_.dat")
     
-    sc.stop()
+    #sc.stop()

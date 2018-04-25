@@ -14,6 +14,15 @@ import dataProcess.ASCC as ascc
 import dataProcess.fpgrowth as fpg
 import dataProcess.batchFP as bfg
 import dataProcess.linearRegresion as linear
+import dataProcess.pysparkFPTree as pspTree
+import dataProcess.pysparkBatch as pspB
+
+import dataProcess.Node as node
+from pyspark import SparkContext, SparkConf
+from pyspark.mllib.fpm import FPGrowth
+from operator import add
+
+
 
 from numpy import arange,array,ones,linalg
 from pylab import plot,show
@@ -24,6 +33,34 @@ def runADMM():
         #print(mat[:, [0,2]]) # get column 0,2
     ascc.ASCC(mat)
 
+def runSpark():
+    #def parallel():
+    conf = SparkConf().setAppName('MyFirstStandaloneApp')
+    sc = SparkContext(conf=conf)
+    path = ""
+    if cf.get_platform() == "linux":
+        path = "/home/hduser/workspace/MLS/data/"
+    else:
+        path = "C:\\cygwin64\\home\\patrick_huy\\workspace\\allinOne\\data\\"
+#   mat = ior.read2Matrix("C:\Users\patrick_huy\OneDrive\Documents\long prj\FPC\_DataSets\mushroom.dat")
+    
+    #fggrowth(sc,"/home/hduser/workspace/MLS/data/mushroom.dat")
+    dataName = ["mushroom.dat","mushroom_.dat"]
+    #startTime = time.time()
+    #pspB.spMergeBatchFun(sc,path + "mushroom_.dat", path + "mushroom_.dat") #str(dataName[sys.argv[0]]))#
+    
+    pspB.runSparkBatch(sc,path + "mushroom_.dat", path + "mushroom_.dat")
+    
+    pspTree.runSparkFPTree(sc,path + "mushroom_.dat", path + "mushroom_.dat")
+    
+    endTime = time.time() - startTime
+    #print("total time: "+str(endTime))
+
+    #spMergeFPTreeFun(sc,path + "mushroom_.dat", path + "mushroom_.dat")
+    
+    sc.stop()
+
+
 def linuxDataPath():
     return "/home/hduser/workspace/MLS/data/"
 def winDataPath():
@@ -32,6 +69,8 @@ def winDataPath():
 if __name__ == "__main__":
     print("main start")
 
+    runSpark()
+    
     iow.write("test write")
     ior.read("test read")
     admm.run("ADMM")
