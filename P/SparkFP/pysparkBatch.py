@@ -242,34 +242,6 @@ def mergeBatchLocal(transactions1, transactions2):
 
 
 """
-build tree in parallelize
-"""
-'''
-def buildTree(sContext, trans):
-    step1 = sContext.parallelize(trans)
-    step2 = step1.map()
-    return ret
-
-def mergeFPTree(sContext, tree_1, tree_2):
-    return ret
-'''
-
-"""
-Merge tree in parallelize
-- map all data to spark
-- build tree parallel: each node
-- reduce: merge all tree
-- save tree.
-- merge with other tree
-"""    
-'''
-def fptree(sContext, trans_1, trans_2):
-    tree1= buildTree(trans_1)
-    tree2= buildTree(trans_2)
-    ret = mergeFPTree(sContext, tree1, tree2);
-    return ret
-'''
-"""
 build batch in parallelize
 """    
 '''
@@ -300,15 +272,6 @@ def batch(sContext, trans_1, trans_2):
     ret = mergeBatch(sContext, batch1, bathc2)
     return ret
 '''
-def fggrowth(sc, dataName):
-    # $example on$
-    data = sc.textFile(dataName)
-    transactions = data.map(lambda line: line.strip().split(' '))
-    model = FPGrowth.train(transactions, minSupport=0.2, numPartitions=10)
-    result = model.freqItemsets().collect()
-    for fi in result:
-        print(fi)
-           
     
 def splitLine2(line):
     kv= []
@@ -343,6 +306,7 @@ def getLine2List(line):
 
 '''
 from list data, build batch and merge 2 batch
+'''
 '''
 def mergebatch(p1, p2):
     ret=[]
@@ -381,7 +345,7 @@ def mergebatch(p1, p2):
     #print("b2: "+str(batch5))
     
     return ret
-'''
+
 def reducePattern(l1, l2):
     tmp1 = getLine2List(l1)
     tmp2 = getLine2List(l2)
@@ -392,7 +356,7 @@ def reducePattern(l1, l2):
     return mergebatch(tmp1, tmp2)
 '''
 
-def reducePattern2(l1, l2):
+def reducePattern(l1, l2):
     tmp1 = []
     tmp2 = []
     
@@ -435,7 +399,7 @@ map trans to pair(trans,count)
 reduce: mergeTrans, list of tran and count
 '''
 def useReduce(trans):
-    trans2 = trans.reduce(reducePattern2)
+    trans2 = trans.reduce(reducePattern)
     count= 0
     for kv in trans2:#.collect():
         print(str(count)+"---2: "+str(kv[-1])+"---" +str(kv))
@@ -514,23 +478,7 @@ def winDataPath():
 spark-submit --py-files 'SparkADMM.py,LogisticRegressionSolver.py,ADMMDataFrames.py,AbstractSolver.py' driver.py
 '''
 def runSparkBatch(sc,data1, data2):
-    #def parallel():
-    #conf = SparkConf().setAppName('MyFirstStandaloneApp')
-    #sc = SparkContext(conf=conf)
-    #path = ""
-    #if cf.get_platform() == "linux":
-    #    path = "/home/hduser/workspace/MLS/data/"
-    #else:
-    #    path = "C:\\cygwin64\\home\\patrick_huy\\workspace\\allinOne\\data\\"
-#   mat = ior.read2Matrix("C:\Users\patrick_huy\OneDrive\Documents\long prj\FPC\_DataSets\mushroom.dat")
-    
-    #fggrowth(sc,"/home/hduser/workspace/MLS/data/mushroom.dat")
-    #dataName = ["mushroom.dat","mushroom_.dat"]
     startTime = time.time()
-    spMergeBatchFun(sc,data1, data2)#sc,path + "mushroom_.dat", path + "mushroom_.dat") #str(dataName[sys.argv[0]]))#
+    spMergeBatchFun(sc,data1, data2)
     endTime = time.time() - startTime
     print("total time: "+str(endTime))
-
-    #spMergeFPTreeFun(sc,path + "mushroom_.dat", path + "mushroom_.dat")
-    
-    #sc.stop()

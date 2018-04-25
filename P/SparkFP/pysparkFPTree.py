@@ -119,37 +119,11 @@ def fptree(sContext, trans_1, trans_2):
     ret = mergeFPTree(sContext, tree1, tree2);
     return ret
 '''
-"""
-build batch in parallelize
-"""    
-'''
-def buildBathc(sContext, trans):
-    step1 = sContext.parallelize(trans)
-    step2 = step1.map(lambda x:(x,1))
-    step3 = step2.flatmat
-    return ret
 
-def mergeBatch(sContext, bathc_1, batch_2):
-    return ret
-'''
-"""
-mege batch in parallelize
-- map all data to spark
-- build batch parallel: each node
-- reduce: merge all bathc
-- save batch.
-- merge with other batch
-"""
 def buildFreqSequences(trans):
     return 0
     
-'''
-def batch(sContext, trans_1, trans_2):  
-    batch1= buildBathc(sContext, trans_1) 
-    bathc2= buildBathc(sContext, trans_2)
-    ret = mergeBatch(sContext, batch1, bathc2)
-    return ret
-'''
+
 def fggrowth(sc, dataName):
     # $example on$
     data = sc.textFile(dataName)
@@ -159,7 +133,6 @@ def fggrowth(sc, dataName):
     for fi in result:
         print(fi)
            
-    
 def splitLine2(line):
     kv= []
     tmp = line.strip().split(' ')
@@ -172,77 +145,7 @@ def splitLine2(line):
 the last element is the count of pattern
 '''
 
-'''
-def getLine2List(line):
-    ret = []
-    #print("inline "+str(line))
-    for t1 in line:
-        if type(t1) is list:
-            #tmp1.append(t1)
-            islist = 0
-            for tmp in t1:
-                if type(tmp) is list:
-                    islist += 1
-                    #tmp.append(islist)
-                    ret.append(tmp)#.append(3))
-            if islist == 0:
-                #t1.append(1)
-                ret.append(t1)
-    return ret
-'''
-
-'''
-from list data, build batch and merge 2 batch
-'''
-def mergebatch(p1, p2):
-    ret=[]
-
-    batch1 = Batch(p1,0)
-    batch2 = Batch(p2,0)
-    batch3 = mergeBatchLocal(batch1, batch2).batch
-
-    batch4 = []
-    batch5 = []
-
-    #print("p1: "+str(p1))
-    #print("p2: "+str(p2))
-
-    l = len(batch3)
-    count =0
-    for itemA in batch3:
-        itemA.value.append(itemA.count)
-        if count > l/2:
-            batch5.append(itemA.value)
-            #print(" item5 add: "+ str(itemA.value))
-        else:
-            batch4.append(itemA.value)
-            #print(" item4 add: "+ str(itemA.value))
-        count += 1
-
-    #if len(batch4) == 0:
-    #    ret.append(p1)
-    #    ret.append(p2)
-    #else:
-    #ret.append(batch4)
-    #ret.append(batch5)
-    ret.append(batch3)
-    
-    #print("b1: "+str(batch4))
-    #print("b2: "+str(batch5))
-    
-    return ret
-'''
 def reducePattern(l1, l2):
-    tmp1 = getLine2List(l1)
-    tmp2 = getLine2List(l2)
-    #print(" l1 "+str(l1))
-    #print(" l2 "+str(l2))
-    #ret.append(tmp1)
-    #ret.append(tmp2)
-    return mergebatch(tmp1, tmp2)
-'''
-
-def reducePattern2(l1, l2):
     tmp1 = []
     tmp2 = []
     
@@ -285,7 +188,7 @@ map trans to pair(trans,count)
 reduce: mergeTrans, list of tran and count
 '''
 def useReduce(trans):
-    trans2 = trans.reduce(reducePattern2)
+    trans2 = trans.reduce(reducePattern)
     count= 0
     for kv in trans2:#.collect():
         print(str(count)+"---2: "+str(kv[-1])+"---" +str(kv))
@@ -365,23 +268,7 @@ def winDataPath():
 spark-submit --py-files 'SparkADMM.py,LogisticRegressionSolver.py,ADMMDataFrames.py,AbstractSolver.py' driver.py
 '''
 def runSparkFPTree(sc, data1, data2):
-    #def parallel():
-    #conf = SparkConf().setAppName('MyFirstStandaloneApp')
-    #sc = SparkContext(conf=conf)
-    #path = ""
-    #if cf.get_platform() == "linux":
-    #    path = "/home/hduser/workspace/MLS/data/"
-    #else:
-    #    path = "C:\\cygwin64\\home\\patrick_huy\\workspace\\allinOne\\data\\"
-#   mat = ior.read2Matrix("C:\Users\patrick_huy\OneDrive\Documents\long prj\FPC\_DataSets\mushroom.dat")
-    
-    #fggrowth(sc,"/home/hduser/workspace/MLS/data/mushroom.dat")
-    #dataName = ["mushroom.dat","mushroom_.dat"]
     startTime = time.time()
-    spMergeBatchFun(sc,data1, data2)  #path + "mushroom_.dat", path + "mushroom_.dat") #str(dataName[sys.argv[0]]))#
+    spMergeBatchFun(sc,data1, data2)
     endTime = time.time() - startTime
     print("total time: "+str(endTime))
-
-    #spMergeFPTreeFun(sc,path + "mushroom_.dat", path + "mushroom_.dat")
-    
-    #sc.stop()

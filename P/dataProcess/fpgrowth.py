@@ -192,7 +192,7 @@ class FPTree(object):
                 
                 print(str(suffix.parent.value) +" ("+ str(frequency) +" "+ str(len(suffix.children)) +") "+ str(suffix.value) +" \t path: "+ str(path))
                 
-                if len(path)>1:
+                if len(path)>0:
                     for i in range(frequency):
                         conditional_tree_input.append(path)
 
@@ -218,6 +218,12 @@ class FPTree(object):
     - update frequency list
     - merge header: self.header + other.header
     - merge other tree into FP tree: self + other, from root of self compare with root of other, update count of node, loop in subtree
+    
+    rebuild frequency header and tree
+    for rebuild tree:
+        case1: same root
+    
+        case2: dif root, should find posible position to merge
     """
     def mergeTree(self, other):
         print("ROOT1: "+str(self.root.value)+"\t child of root: "+str(len(self.root.children)))
@@ -237,31 +243,6 @@ class FPTree(object):
         # merge header
         print("self.header: "+str(self.headers))
         print("other.header: "+str(other.headers))
-        
-        # merge root
-        for node in listParrent1:
-            listtmp[node.value] = i
-            i+=1
-        print(listtmp)
-        for node in listParrent2:
-            print(node.value)
-            if node.value in listtmp.keys():
-                print("meger node")
-                self.root.children[listtmp[node.value]].mergeNode(node)
-            else:
-                print("add node")
-                self.root.children.append(node)
-        print("ROOT: "+str(self.root.value)+"\t child of root: "+str(len(self.root.children)))
-        #return self
-    '''
-    rebuild frequency header and tree
-    for rebuild tree:
-        case1: same root
-    
-        case2: dif root, should find posible position to merge
-    
-    '''
-    def mergeTree2(self, other):
         
         mining_order1 = sorted(self.frequent.keys(), key=lambda x: self.frequent[x])
         #print("mergeTree frequent "+str(self.frequent))
@@ -385,12 +366,22 @@ class FPTree(object):
                     
                     print("4: "+str(suffix.parent.value) +" ("+ str(suffix.count) +" "+ str(len(suffix.children)) +") "+ str(suffix.value) +" \t path: "+ str(path))
                     
-        #first = items[0]
-        #child = node.get_child(first)
-        
-        #for(patt in self.value):
-        #    newTree.append(patt)
-        return self
+        # merge root
+        for node in listParrent1:
+            listtmp[node.value] = i
+            i+=1
+        print(listtmp)
+        for node in listParrent2:
+            print(node.value)
+            if node.value in listtmp.keys():
+                print("meger node")
+                self.root.children[listtmp[node.value]].mergeNode(node)
+            else:
+                print("add node")
+                self.root.children.append(node)
+        print("ROOT: "+str(self.root.value)+"\t child of root: "+str(len(self.root.children)))
+        #return self
+
     '''
     from root, add root to stack, get all child and add to stack
     get last stack element, get chill and push to stack until child is 0, print path
