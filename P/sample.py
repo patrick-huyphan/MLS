@@ -31,7 +31,9 @@ from scipy import sparse
 def runADMM(data):
     #mat = ior.rawData2matrix(data,0, 446, 696)
         #print(mat[:, [0,2]]) # get column 0,2
+    admm.run("ADMM")
     ascc.ASCC(data)
+    
 
 def runSpark(data1, data2):
     #def parallel():
@@ -66,10 +68,9 @@ def winDataPath():
 if __name__ == "__main__":
     print("main start")
 
-    iow.write("test write")
-    ior.read("test read")
-    admm.run("ADMM")
-    
+    #iow.write("test write")
+    #ior.read("test read")
+
     path = ""
 
     if cf.get_platform() == "linux":
@@ -79,7 +80,7 @@ if __name__ == "__main__":
     
     typeR = cf.getRunningConfig(path+"config.txt")
     
-    cf.pythonVer()
+    #cf.pythonVer()
     
     #linear.lnr()
     '''
@@ -93,21 +94,21 @@ if __name__ == "__main__":
                 [1, 2, 3, 5],
                 [1, 2, 3]]
     '''
-    if int(typeR) ==0 or int(typeR) ==1:
+    if typeR ==0 or typeR ==1:
         transactions1 = ior.read2RawData(path+"mushroom.dat",0, 200, 150)
         transactions2 = ior.read2RawData(path+"mushroom.dat",200, 570, 150)
     
-    if int(typeR) ==0:   
+    if typeR == 0:   
         fpg.runFPtreeMerge(transactions1, transactions2, 2)
     
-    elif int(typeR) ==1:
+    elif typeR == 1:
         bfg.runBatchMerge(transactions2, transactions2, 2)
     
-    elif int(typeR) ==1:
+    elif typeR == 2:
         mat = ior.rawData2matrix(path+"data_694_446.dat",0, 446, 696)
         runADMM(mat)
     
-    elif int(typeR) ==2:
+    elif typeR == 3:
         runSpark(path+"mushroom.dat", path+"mushroom.dat")
     
     

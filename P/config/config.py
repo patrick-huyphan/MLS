@@ -4,6 +4,9 @@
 import sys
 
 def get_platform():
+    
+    print (sys.version)
+    
     platforms = {
         'linux1' : 'Linux',
         'linux2' : 'Linux',
@@ -19,10 +22,11 @@ def getRunningConfig(configFile):
     f = open(configFile, 'r')
     typeR = 0
     for line in f:
-        print("config \n"+line)
         kv= line.split(":")
+        print("config....................key: "+ kv[0]+"\t value: "+kv[1])
         if kv[0] == "type":
-            typeR=kv[1]
+            typeR=int(kv[1])
+
     f.close()
     return typeR
     
