@@ -63,8 +63,8 @@ def initEdge(data, d):
     '''
     return edge
 
-def init(data):
-    A = []
+def init(data, d):
+    A = np.array([1]*d[1])
     return A
     
 def initA(data, l2):
@@ -166,13 +166,13 @@ def updateUV(edge, U,V,X,d):
         u.update({setKey(e[0],e[1]) : proxN2_2(x1 - np.array(x2) - np.array(u1), e[2],d)}) 
         
     return u,v
-    
+'''    
 def updateV():
     return 0
     
 def updateU():
     return 0
-
+'''
 
 def primalResidual(edges, U):
     return 0
@@ -238,7 +238,7 @@ def SCC(data):
     '''
     init data: 
     '''
-    A = init(data)
+    A = init(data, d)
     V0 = {} # List of edge 
     U0 = {} # List of edge
     X = [[0 for x in range(d[0])] for y in range(d[1])] #C-R # matrix for get cluster
@@ -283,7 +283,7 @@ def ASCC(data):
     '''
     init data: 
     '''
-    A = init(data)
+    A = init(data, d)
     V0 = {} # List of edge 
     U0 = {} # List of edge
     X = [[0 for x in range(d[0])] for y in range(d[1])] #C-R # matrix for get cluster
@@ -343,7 +343,7 @@ def FASCC(data):
     '''
     init data: 
     '''
-    A = init(data)
+    A = init(data, d)
     V0 = {} # List of edge 
     U0 = {} # List of edge
     X = [[0 for x in range(d[0])] for y in range(d[1])] #C-R # matrix for get cluster
@@ -423,7 +423,7 @@ def FSCC(data):
     '''
     init data: 
     '''
-    A = init(data)
+    A = init(data, d)
     V0 = {} # List of edge 
     U0 = {} # List of edge
     X = [[0 for x in range(d[0])] for y in range(d[1])] #C-R # matrix for get cluster

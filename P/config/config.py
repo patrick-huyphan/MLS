@@ -14,3 +14,18 @@ def get_platform():
         return sys.platform
     
     return platforms[sys.platform]
+
+def getRunningConfig(configFile):
+    f = open(configFile, 'r')
+    typeR = 0
+    for line in f:
+        print("config \n"+line)
+        kv= line.split(":")
+        if kv[0] == "type":
+            typeR=kv[1]
+    f.close()
+    return typeR
+    
+def pythonVer():
+    print (sys.version)
+    return 0

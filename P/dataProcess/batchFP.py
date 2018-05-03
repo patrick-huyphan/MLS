@@ -8,10 +8,10 @@ class Batch(object):
         Initialize the batch.
         """
         self.batch = []
-        print("batch start")
+        #print("batch start")
         self.frequent = self.find_frequent_items(transactions, threshold)
         self.batch = self.build_batch(transactions, self.frequent)
-        print("batch end")
+        #print("batch end")
 
     @staticmethod
     def find_frequent_items(transactions, threshold):
@@ -112,6 +112,7 @@ class Batch(object):
         #return batch
         #print("------------------------------------------")
 
+    '''
     def insert_batch2(self, item, count):
         #print("insert_batch")
         #count = False
@@ -168,6 +169,8 @@ class Batch(object):
             self.batch.append(node)
         #return batch
         #print("------------------------------------------")        
+    '''
+
     def mine_Bpatterns(self, threshold):
         """
         Mine the constructed FP tree for frequent patterns.
@@ -271,7 +274,7 @@ class Batch(object):
         print("other.frequent: "+str(other.frequent))
 
         for itemA in other.batch:
-            self.insert_batch2(itemA.value, itemA.count)
+            self.insert_batch(itemA.value, itemA.count)
 
     def printBatch(self):
         for pattern in seft.batch:
@@ -286,21 +289,14 @@ def find_frequent_patterns_batch(transactions, support_threshold):
     return Batch(transactions, support_threshold)
     #return batch #.mine_patterns(support_threshold)
 
-'''
-def mergeBatch(transactions1, transactions2):
-    for itemA in transactions2.batch:
-        #print(" itemA: "+ str(itemA.value) +" "+ str(itemA.count))
-        transactions1.insert_batch2(itemA.value, itemA.count)
-    return transactions1
-'''
 
     
-def runBatchMerge(transactions1,transactions2):
+def runBatchMerge(transactions1,transactions2, threshold):
     startTime = time.time()
     
-    batch1 = Batch(transactions1, 2)
+    batch1 = Batch(transactions1, threshold)
     
-    batch2 = Batch(transactions2, 2)
+    batch2 = Batch(transactions2, threshold)
     
     #batch3 = 
     batch1.mergeBatch(batch2)

@@ -63,8 +63,8 @@ class FPTree(object):
             if len(sorted_items) > 0:
                 self.insert_tree(sorted_items, root, headers)
         
-        print("frequent "+str(frequent.keys()))
-        print("headers " +str(headers.keys()))
+        #print("frequent "+str(frequent.keys()))
+        #print("headers " +str(headers.keys()))
         return root
 
     def insert_tree(self, items, node, headers):
@@ -418,24 +418,25 @@ class FPTree(object):
             #print(str(item)+", suffixes: "+str(suffixesNode))
                             
             for suffix in suffixes:
-                frequency = suffix.count
+                #frequency = suffix.count
                 path = []
                 parent = suffix.parent
 
                 while parent.parent is not None:
                     path.append(parent.value)
                     parent = parent.parent
+                
                 if len(path)>0:
-                    print("Parent: "+str(suffix.parent.value) +"-> "+ str(suffix.value) +" ("+ str(frequency) +" "+ str(len(suffix.children)) +")  \t path: "+ str(path))
+                    print("Parent: "+str(suffix.parent.value) +"-> "+ str(suffix.value) +" ("+ str(len(suffix.children)) +")  \t path: "+ str(path))
+                    #for i in range(frequency):
+                    conditional_tree_input.append(path)
                 else:
-                    print("Parent: "+str(suffix.parent.value) +"-> "+ str(suffix.value) +" ("+ str(frequency) +" "+ str(len(suffix.children)) +")")
+                    print("Parent: "+str(suffix.parent.value) +"-> "+ str(suffix.value) +" ("+ str(len(suffix.children)) +")")
                     
-                if len(path)>1:
-                    for i in range(frequency):
-                        conditional_tree_input.append(path)
+
             if len(conditional_tree_input)>0:
-                subtree = FPTree(conditional_tree_input, 2, item, self.frequent[item])
-                subtree.printTree()
+                subtree = FPTree(conditional_tree_input, 0, item, self.frequent[item])
+                subtree.printPattern()
         
         
         '''
@@ -478,18 +479,18 @@ def generate_association_rules(patterns, confidence_threshold):
     return rules
 
 
-def runFPtreeMerge(transactions1,transactions2):
+def runFPtreeMerge(transactions1,transactions2, threshold):
 
     startTime = time.time()
 
     #for tran in transactions:
     #    print(" transaction: "+ str(tran))
     
-    rootTree1 = FPTree(transactions1, 2, None, None)
+    rootTree1 = FPTree(transactions1, threshold, None, None)
     
-    #rootTree1.printTree()
+    rootTree1.printPattern()
     
-    rootTree2 = FPTree(transactions2, 2, None, None)
+    rootTree2 = FPTree(transactions2, threshold, None, None)
     #rootTree2.printTree()
     
     rootTree1.mergeTree(rootTree2)

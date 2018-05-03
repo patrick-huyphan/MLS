@@ -28,15 +28,16 @@ from numpy import arange,array,ones,linalg
 from pylab import plot,show
 from scipy import sparse
 
-def runADMM():
-    mat = ior.rawData2matrix(path+"data_694_446.dat",0, 446, 696)
+def runADMM(data):
+    #mat = ior.rawData2matrix(data,0, 446, 696)
         #print(mat[:, [0,2]]) # get column 0,2
-    ascc.ASCC(mat)
+    ascc.ASCC(data)
 
-def runSpark():
+def runSpark(data1, data2):
     #def parallel():
     conf = SparkConf().setAppName('MyApp')
     sc = SparkContext(conf=conf)
+    '''
     path = ""
     if cf.get_platform() == "linux":
         path = "/home/hduser/workspace/MLS/data/"
@@ -44,22 +45,24 @@ def runSpark():
         path = "C:\\cygwin64\\home\\patrick_huy\\workspace\\allinOne\\data\\"
     
     dataName = ["mushroom.dat","mushroom_.dat"]
+    '''
      
-    pspB.runSparkBatch(sc,path + "mushroom_.dat", path + "mushroom_.dat")
+    pspB.runSparkBatch(sc, data1, data2)
     
-    pspTree.runSparkFPTree(sc,path + "mushroom_.dat", path + "mushroom_.dat")
+    pspTree.runSparkFPTree(sc, data1, data2)
     
     #endTime = time.time() - startTime
     #print("total time: "+str(endTime))
 
     sc.stop()
 
-
+'''
 def linuxDataPath():
-    return "/home/hduser/workspace/MLS/data/"
+    return 
 def winDataPath():
-    return "C:\\cygwin64\\home\\patrick_huy\\workspace\\allinOne\\data\\"
-    
+    return 
+'''
+
 if __name__ == "__main__":
     print("main start")
 
@@ -70,9 +73,13 @@ if __name__ == "__main__":
     path = ""
 
     if cf.get_platform() == "linux":
-        path = linuxDataPath()
+        path = "/home/hduser/workspace/MLS/data/"
     else:
-        path = winDataPath()
+        path = "C:\\cygwin64\\home\\patrick_huy\\workspace\\allinOne\\data\\"
+    
+    typeR = cf.getRunningConfig(path+"config.txt")
+    
+    cf.pythonVer()
     
     #linear.lnr()
     '''
@@ -86,25 +93,21 @@ if __name__ == "__main__":
                 [1, 2, 3, 5],
                 [1, 2, 3]]
     '''
-    transactions1 = ior.read2RawData(path+"mushroom.dat",0, 200, 150)
-    transactions2 = ior.read2RawData(path+"mushroom.dat",200, 570, 150)
+    if int(typeR) ==0 or int(typeR) ==1:
+        transactions1 = ior.read2RawData(path+"mushroom.dat",0, 200, 150)
+        transactions2 = ior.read2RawData(path+"mushroom.dat",200, 570, 150)
     
-    bfg.runBatchMerge(transactions2, transactions2)
+    if int(typeR) ==0:   
+        fpg.runFPtreeMerge(transactions1, transactions2, 2)
     
-    fpg.runFPtreeMerge(transactions1, transactions2)
+    elif int(typeR) ==1:
+        bfg.runBatchMerge(transactions2, transactions2, 2)
     
-    #if cf.get_platform() == "linux":
-        #data = ior.read2SparseMatrix("/home/hduser/workspace/MLS/data/data_694_446.csv")
-        #ior.saveSparseMatrix("/home/hduser/workspace/MLS/data/data_694_446.dat",data)
-
-    current_dir = os.getcwd() #pathlib.Path("/../../data/data_694_446.dat").parent
-    print(current_dir)
-    #current_file = pathlib.Path(__file__)
-    #print(current_file)
-        #sA = sparse.csr_matrix(mat)
-        #print(sA)
-        #sD = sparse.csr_matrix.todense(sA)
-        #print(sD)
-    #ior.read2Matrix("C:\Users\patrick_huy\OneDrive\Documents\long prj\FPC\_DataSets\mushroom.dat")
+    elif int(typeR) ==1:
+        mat = ior.rawData2matrix(path+"data_694_446.dat",0, 446, 696)
+        runADMM(mat)
     
-    runSpark()
+    elif int(typeR) ==2:
+        runSpark(path+"mushroom.dat", path+"mushroom.dat")
+    
+    
