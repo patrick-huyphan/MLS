@@ -1,6 +1,8 @@
 import itertools
 import dataProcess.Node as Node
 import time
+from itertools import chain
+from collections import defaultdict, Counter
 
 class FPTree(object):
     """
@@ -237,9 +239,8 @@ class FPTree(object):
         print("self.frequent: "+str(self.frequent))
         print("other.frequent: "+str(other.frequent))
         
-        z = self.frequent.copy()
-        
-        print("merge.frequent: "+str(z.update(other.frequent)))
+        d = dict(Counter(self.frequent) + Counter(other.frequent))
+        print("merge.frequent: "+str(d))
         
         # merge header
         print("self.header: "+str(self.headers))
@@ -247,9 +248,14 @@ class FPTree(object):
         
         mining_order1 = sorted(self.frequent.keys(), key=lambda x: self.frequent[x], reverse=True)
         #print("mergeTree frequent "+str(self.frequent))
-
+        print("mergeTree frequent "+str(mining_order1))
         mining_order2 = sorted(other.frequent.keys(), key=lambda x: other.frequent[x], reverse=True)
         #print("mergeTree frequent "+str(other.frequent))
+        print("mergeTree frequent "+str(mining_order2))
+        
+        mining_order = sorted(d.keys(), key=lambda x: d[x], reverse=True)
+        #print("mergeTree frequent "+str(self.frequent))
+        print("mergeTree frequent "+str(mining_order))
         '''
         merge tree
         erch node in tree2, find in tree1 and update tree1:

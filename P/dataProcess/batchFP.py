@@ -57,27 +57,28 @@ class Batch(object):
         #idx=0
         flag1 = False
         flag2 = False
-
+        sa = set(item)
         #print("item "+str(item))
         mBatch = []
         for pattern in self.batch:
             #print("--"+str(sorted(pattern.value)) + " "+ str(pattern.count))
-            sa = set(pattern.value)
-            sb = set(item)
+            #sb = set(item)
+            sb = set(pattern.value)
             c = sa.intersection(sb)
             #d = c
-            newNode = Node.PatternNode(sorted(c), pattern.count+count)
+            #newNode = Node.PatternNode(sorted(c), pattern.count+count)
             if len(c)>0:
                 #print("intersection "+str(c)+" "+ str(newNode.count))
                 if(sa.issubset(c)):
+                    flag1 = True
+                    #print("flag1 = True")
+                    #print("c in item " + str(idx))
+                if(sb.issubset(c)):
                     #print("c in pat " + str(idx))
                     #node =  self.batch[idx]
                     self.batch.remove(pattern)
                     #print(" remove "+str(sorted(pattern.value)) + " "+ str(pattern.count))
-                if(sb.issubset(c)):
-                    flag1 = True
-                    #print("flag1 = True")
-                    #print("c in item " + str(idx))                    
+                    
                 for mx in mBatch:
                     ms = set(mx.value)
                     if(ms.issubset(c)):
@@ -92,6 +93,7 @@ class Batch(object):
                 
             if(flag2 == False):
                 #print("add node "+str(newNode.value) +" "+str(newNode.count))
+                newNode = Node.PatternNode(sorted(c), pattern.count+count)
                 mBatch.append(newNode)
             #else:
             #    print("not add node "+str(newNode.value) +" "+str(newNode.count))
@@ -273,8 +275,8 @@ class Batch(object):
         print("self.frequent: "+str(self.frequent))
         print("other.frequent: "+str(other.frequent))
 
-        for itemA in other.batch:
-            self.insert_batch(itemA.value, itemA.count)
+        for item in other.batch:
+            self.insert_batch(item.value, item.count)
 
     def printBatch(self):
         for pattern in seft.batch:
