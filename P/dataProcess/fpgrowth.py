@@ -214,6 +214,53 @@ class FPTree(object):
                     patterns[pattern] = subtree_patterns[pattern]
 
         return patterns
+    '''
+    flow of paper:
+    '''
+    def readItemSets(self, gOrder):
+        return 0
+
+    def v2Tree(self,v):
+        return self
+        
+    def mergeV2T(self, vOther):
+        return self
+        
+    def BIT_FPGrowth(self, other):
+        print("ROOT1: "+str(self.root.value)+"\t child of root: "+str(len(self.root.children)))
+        listParrent1 = self.root.children
+        print("ROOT2: "+str(other.root.value)+"\t child of root: "+str(len(other.root.children)))
+        listParrent2 = other.root.children
+        listtmp={}
+        i=0
+        # merge frequent
+        print("self.frequent: "+str(self.frequent))
+        print("other.frequent: "+str(other.frequent))
+        
+        d = dict(Counter(self.frequent) + Counter(other.frequent))
+        print("merge.frequent: "+str(d))
+                
+        mining_order1 = sorted(self.frequent.keys(), key=lambda x: self.frequent[x], reverse=True)
+        #print("mergeTree frequent "+str(self.frequent))
+        print("mergeTree frequent "+str(mining_order1))
+        mining_order2 = sorted(other.frequent.keys(), key=lambda x: other.frequent[x], reverse=True)
+        #print("mergeTree frequent "+str(other.frequent))
+        print("mergeTree frequent "+str(mining_order2))
+        
+        mining_order = sorted(d.keys(), key=lambda x: d[x], reverse=True)
+        #print("mergeTree frequent "+str(self.frequent))
+        print("mergeTree frequent "+str(mining_order))
+        
+        # merge header
+        print("self.header: "+str(self.headers))
+        print("other.header: "+str(other.headers))
+        
+        v1 = self.readItemSets(mining_order)
+        newTree = self.v2Tree(v1)
+        
+        v2 = other.readItemSets()
+        
+        return newTree.mergeV2T(v2)
     """
     self.frequent: all node with frequency
     self.header: list of root
@@ -241,11 +288,7 @@ class FPTree(object):
         
         d = dict(Counter(self.frequent) + Counter(other.frequent))
         print("merge.frequent: "+str(d))
-        
-        # merge header
-        print("self.header: "+str(self.headers))
-        print("other.header: "+str(other.headers))
-        
+                
         mining_order1 = sorted(self.frequent.keys(), key=lambda x: self.frequent[x], reverse=True)
         #print("mergeTree frequent "+str(self.frequent))
         print("mergeTree frequent "+str(mining_order1))
@@ -256,12 +299,52 @@ class FPTree(object):
         mining_order = sorted(d.keys(), key=lambda x: d[x], reverse=True)
         #print("mergeTree frequent "+str(self.frequent))
         print("mergeTree frequent "+str(mining_order))
+        
+        # merge header
+        print("self.header: "+str(self.headers))
+        print("other.header: "+str(other.headers))
         '''
         merge tree
         erch node in tree2, find in tree1 and update tree1:
         get node in tree2
         find it position in tree1 from parent to children
         '''
+        for item in mining_order:
+            if item in mining_order1:
+                node = self.headers[item]
+                suffixesV0 = []
+                while node is not None:
+                    suffixesV0.append(node)
+                    node = node.link
+                #print("*************************** 1:\t"+str(item) +"\t"+str(suffixesV0))
+                for suffix in suffixesV0:
+                    path = [suffix.value]
+                    parent = suffix.parent
+                
+                    while parent.parent is not None:
+                        path.append(parent.value)
+                        parent = parent.parent
+                
+                    print("---------- 1:  ("+ str(len(suffix.children)) +") "+ " \t path: "+ str(path))
+                    
+            if item in mining_order2:
+                node = other.headers[item]
+                suffixesV0 = []
+                while node is not None:
+                    suffixesV0.append(node)
+                    node = node.link
+                #print("*************************** 2:\t"+str(item) +"\t"+str(suffixesV0))
+                
+                for suffix in suffixesV0:
+                    path = [suffix.value]
+                    parent = suffix.parent
+                
+                    while parent.parent is not None:
+                        path.append(parent.value)
+                        parent = parent.parent
+                
+                    print("--         2:  ("+ str(len(suffix.children)) +") "+ " \t path: "+ str(path))
+                        
         for item2 in mining_order2:
             print("***************************:\t"+str(item2)+"   "+str(item2))
             if item2 in mining_order1: # (item == item2):
@@ -378,6 +461,7 @@ class FPTree(object):
             listtmp[node.value] = i
             i+=1
         print(listtmp)
+        
         for node in listParrent2:
             print(node.value)
             if node.value in listtmp.keys():
