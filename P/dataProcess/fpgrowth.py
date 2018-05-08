@@ -217,23 +217,25 @@ class FPTree(object):
     '''
     flow of paper:
     '''
+    # read itemSet to vector and arange with gOrder
     def readItemSets(self, gOrder):
-        return 0
-
-    def v2Tree(self,v):
+        vItemSet = []
+        
+        return vItemSet
+    
+    #rebuild tree with new vector of itemSet
+    def v2Tree(self,itemSet):
+        newTree = 0
+        
         return self
         
+    #merge vector itemset to tree
     def mergeV2T(self, vOther):
         return self
         
     def BIT_FPGrowth(self, other):
-        print("ROOT1: "+str(self.root.value)+"\t child of root: "+str(len(self.root.children)))
-        listParrent1 = self.root.children
-        print("ROOT2: "+str(other.root.value)+"\t child of root: "+str(len(other.root.children)))
-        listParrent2 = other.root.children
-        listtmp={}
-        i=0
         # merge frequent
+        print("BIT_FPGrowth")
         print("self.frequent: "+str(self.frequent))
         print("other.frequent: "+str(other.frequent))
         
@@ -251,16 +253,13 @@ class FPTree(object):
         #print("mergeTree frequent "+str(self.frequent))
         print("mergeTree frequent "+str(mining_order))
         
-        # merge header
-        print("self.header: "+str(self.headers))
-        print("other.header: "+str(other.headers))
+        vItemSet1 = self.readItemSets(mining_order)
         
-        v1 = self.readItemSets(mining_order)
-        newTree = self.v2Tree(v1)
+        newTree = self.v2Tree(vItemSet1)
         
-        v2 = other.readItemSets()
+        vItemSet2 = other.readItemSets(mining_order)
         
-        return newTree.mergeV2T(v2)
+        return newTree.mergeV2T(vItemSet2)
     """
     self.frequent: all node with frequency
     self.header: list of root
@@ -595,8 +594,11 @@ def runFPtreeMerge(transactions1,transactions2, threshold):
     #rootTree1.printTree()
     rootTree1.printPattern()
     
+    rootTree1.BIT_FPGrowth(rootTree2)
+    
     endTime = time.time() - startTime
     print("FPtreeMerge take total time: "+str(endTime)) 
+    
     '''
     patterns1 = find_frequent_patterns(tree3, 2)
     for patte in patterns:
