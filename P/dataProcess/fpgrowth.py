@@ -217,20 +217,68 @@ class FPTree(object):
     '''
     flow of paper:
     '''
+    def sortWithOrder(self, path,gOrder):
+        pathdatatmp = path[::-1]
+        
+        return pathdatatmp
     # read itemSet to vector and arange with gOrder
     def readItemSets(self, gOrder):
+        print("readItemSets")
         vItemSet = []
+        #self.printTree()
+        mining_order1 = sorted(self.frequent.keys(), key=lambda x: self.frequent[x], reverse=True)
+        print("gOrder frequent \t"+str(gOrder))
+        print("mergeTree frequent \t"+str(mining_order1))
         
+        for item in mining_order1:
+            #if item in mining_order1:
+            node = self.headers[item]
+            suffixesV0 = []
+            
+            while node is not None:
+                suffixesV0.append(node)
+                node = node.link
+
+            for suffix in suffixesV0:
+                pathNode = [suffix]
+                path = [suffix.value]
+                parent = suffix.parent
+
+                while parent.parent is not None:
+                    pathNode.append(parent)
+                    path.append(parent.value)
+                    parent = parent.parent
+            
+                print("---------- 1:\t path: "+ str(path))
+                
+                vItemSet.append(pathNode)
+        '''
+        for path in vItemSet:
+            pathdata = []
+            for item in path:
+        '''
+        for path in vItemSet:
+            pathdata = []
+            for item in path:
+                pathdata.append([item.value,item.count])
+            pathdatatmp = self.sortWithOrder(pathdata, gOrder)
+            print("Path "+ str(pathdatatmp))
         return vItemSet
     
     #rebuild tree with new vector of itemSet
     def v2Tree(self,itemSet):
+        print("v2Tree")
         newTree = 0
-        
+        for path in itemSet:
+            print("root of new path:\t"+ str(path[-1].value))
+            
         return self
         
     #merge vector itemset to tree
     def mergeV2T(self, vOther):
+        print("mergeV2T")
+        for path in vOther:
+            print("root of path:\t"+ str(path[-1].value))
         return self
         
     def BIT_FPGrowth(self, other):
@@ -241,17 +289,9 @@ class FPTree(object):
         
         d = dict(Counter(self.frequent) + Counter(other.frequent))
         print("merge.frequent: "+str(d))
-                
-        mining_order1 = sorted(self.frequent.keys(), key=lambda x: self.frequent[x], reverse=True)
-        #print("mergeTree frequent "+str(self.frequent))
-        print("mergeTree frequent "+str(mining_order1))
-        mining_order2 = sorted(other.frequent.keys(), key=lambda x: other.frequent[x], reverse=True)
-        #print("mergeTree frequent "+str(other.frequent))
-        print("mergeTree frequent "+str(mining_order2))
         
         mining_order = sorted(d.keys(), key=lambda x: d[x], reverse=True)
-        #print("mergeTree frequent "+str(self.frequent))
-        print("mergeTree frequent "+str(mining_order))
+        #print("mergeTree frequent "+str(mining_order))
         
         vItemSet1 = self.readItemSets(mining_order)
         
@@ -479,7 +519,7 @@ class FPTree(object):
     '''
     def printTree(self):
         #print("root: "+ str(node.value))
-        print("ROOT: "+str(self.root.value)+"\t child of root: "+str(len(self.root.children)))
+        print("ROOT: "+str(self.root.value)+"\t SubTree of root: "+str(len(self.root.children)))
         listParrent = self.root.children
         trace = {}
         while len(listParrent)>0:
