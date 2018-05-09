@@ -551,7 +551,7 @@ class FPTree(object):
                             
             for suffix in suffixes:
                 #frequency = suffix.count
-                path = []
+                path = [suffix.values]
                 parent = suffix.parent
                 childs = []
                 for v in suffix.children:
@@ -562,11 +562,11 @@ class FPTree(object):
                     parent = parent.parent
                 
                 if len(path)>0:
-                    print("item:\t"+str(suffix.value)+"\t count: "+str(suffix.count) +"\tParent: "+str(suffix.parent.value) +"\t-> (childs: "+str(len(suffix.children))+":" +str(childs)+")  \t path: "+ str(path))
+                    print("item:\t count: "+str(suffix.count) +"\t-> (childs: "+str(len(suffix.children))+":" +str(childs)+")  \t path: "+ str(path))
                     #for i in range(frequency):
                     #    conditional_tree_input.append(path)
                 else:
-                    print("item:\t"+str(suffix.value)+"\t count: "+str(suffix.count) +"\tParent: "+str(suffix.parent.value) +"\t-> (childs: "+str(len(suffix.children))+":" +str(childs)+")" )
+                    print("item:\t count: "+str(suffix.count) +"\t-> (childs: "+str(len(suffix.children))+":" +str(childs)+")" )
                     
             '''
             if len(conditional_tree_input)>0:
