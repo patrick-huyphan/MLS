@@ -56,11 +56,12 @@ class Batch(object):
         #count = 0
         #idx=0
         flag1 = False
-        flag2 = False
+        #flag2 = False
         sa = set(item)
         #print("item "+str(item))
         mBatch = []
         for pattern in self.batch:
+            flag2 = False
             #print("--"+str(sorted(pattern.value)) + " "+ str(pattern.count))
             #sb = set(item)
             sb = set(pattern.value)
@@ -78,7 +79,7 @@ class Batch(object):
                     #node =  self.batch[idx]
                     self.batch.remove(pattern)
                     #print(" remove "+str(sorted(pattern.value)) + " "+ str(pattern.count))
-                    
+
                 for mx in mBatch:
                     ms = set(mx.value)
                     if(ms.issubset(c)):
@@ -87,7 +88,7 @@ class Batch(object):
                         #print("mBatch.remove(mx)") 
                     if(c.issubset(ms)):
                         flag2 = True
-                        #print(":") 
+                        #print("2") 
             else:
                 flag2 = True
                 
@@ -95,9 +96,10 @@ class Batch(object):
                 #print("add node "+str(newNode.value) +" "+str(newNode.count))
                 newNode = Node.PatternNode(sorted(c), pattern.count+count)
                 mBatch.append(newNode)
+                #print("add 2")
             #else:
             #    print("not add node "+str(newNode.value) +" "+str(newNode.count))
-            flag2 = False
+            #flag2 = False
             
             #if(pattern.value == item):
                 #print(str(idx))
@@ -108,9 +110,10 @@ class Batch(object):
         if flag1==False:
             #print("add new node "+str(item))
             self.batch.append(Node.PatternNode(item, count))
+            #print("add 1")
         #print(len(batch))
-        for node in mBatch:
-            self.batch.append(node)
+        for batch in mBatch:
+            self.batch.append(batch)
         #return batch
         #print("------------------------------------------")
 
@@ -277,6 +280,8 @@ class Batch(object):
 
         for item in other.batch:
             self.insert_batch(item.value, item.count)
+            
+        print("merge.frequent: "+str(self.frequent))
 
     def printBatch(self):
         for pattern in seft.batch:
@@ -306,8 +311,37 @@ def runBatchMerge(transactions1,transactions2, threshold):
     endTime = time.time() - startTime
     print("BathcMerge take total time: "+str(endTime))
     
-    for patte in batch1.batch:
-        print(" batch3: "+ str(patte.value) +" "+ str(patte.count))
+    for pattern in batch1.batch:
+        print(" batch3: "+ str(pattern.value) +" "+ str(pattern.count))
+
+
+    endTime = time.time() - startTime
+    print("BathcMerge take total time: "+str(endTime))
+    return 0
+
+def test(transactions1,transactions2, threshold):
+    startTime = time.time()
+    
+    batch1 = Batch(transactions1, threshold)
+    
+    batch2 = Batch(transactions2, threshold)
+    
+    batch3 = Batch(transactions1, threshold)
+    
+    batch4 = Batch(transactions2, threshold)
+    
+    batch5 = Batch(transactions1, threshold)
+    
+    batch6 = Batch(transactions2, threshold)
+    
+    #batch3 = 
+    batch1.mergeBatch(batch2)
+    
+    endTime = time.time() - startTime
+    print("BathcMerge take total time: "+str(endTime))
+    
+    for pattern in batch1.batch:
+        print(" batch3: "+ str(pattern.value) +" "+ str(pattern.count))
 
 
     endTime = time.time() - startTime
