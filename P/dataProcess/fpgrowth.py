@@ -285,9 +285,33 @@ class FPTree(object):
     flow of paper:
     '''
     def sortWithOrder(self, path,gOrder):
-        pathdatatmp = path[::-1]
+        pathTmp = path[::-1]
+        pathdata = []
+        #cmin = 0;
+        for item in pathTmp:
+            #a = pathTmp.index(item)
+            b = gOrder.index(item.value)
+            pathdata.append([item.value, b])
+        print("Path 0"+ str(pathdata))
+                
+        for item in pathTmp:
+            a = pathTmp.index(item)
+            c = gOrder.index(item.value)
+            pathTmp2 = pathTmp[a:-1]
+            for item2 in pathTmp2:
+                b = pathTmp2.index(item2)
+                d = gOrder.index(item2.value)
+                if d < c:
+                    print(str(item.value)+" "+str(item2.value)+" swap "+str(a)+" "+str(b)+" "+str(c)+" "+str(d)  )
+                    pathTmp[a], pathTmp[b] = pathTmp[b], pathTmp[a]
+        pathdata2 = []
+        for item in pathTmp:
+            #a = pathTmp.index(item)
+            b = gOrder.index(item.value)
+            pathdata2.append([item.value, b])
+        print("Path 1"+ str(pathdata2))
+        return pathdata2
         
-        return pathdatatmp
     # read itemSet to vector and arange with gOrder
     def readItemSets(self, gOrder):
         print("readItemSets")
@@ -306,8 +330,8 @@ class FPTree(object):
                 header.append([node.value, node.count])
                 suffixesV0.append(node)
                 node = node.link
-            print(str(item)+" Header: "+ str(header))
-            count = 0
+            #print(str(item)+" Header: "+ str(header))
+            #count = 0
             for suffix in suffixesV0:
                 #if suffix.children is not None:
                 #    print(str(suffix.value)+" have child "+str(len(suffix.children)))
@@ -331,7 +355,7 @@ class FPTree(object):
                         parent = parent.parent
                     
                     #print("----------"+ str(count)+":\t path: "+ str(path))
-                    count +=1
+                    #count +=1
                     vItemSet.append(pathNode)
                     '''
                     pathdata = []
@@ -347,12 +371,8 @@ class FPTree(object):
         '''
         
         for path in vItemSet:
-            pathdata = []
-            for item in path:
-                pathdata.append([item.value,item.count])
-            pathdatatmp = self.sortWithOrder(pathdata, gOrder)
-            print("Path "+ str(pathdatatmp))
-        
+            pathdatatmp = self.sortWithOrder(path, gOrder)
+
         for item in gOrder:
             if item not in self.headers.keys():
                 print("add key "+str(item))
@@ -736,7 +756,7 @@ def runFPtreeMerge(transactions1,transactions2, threshold):
     
     rootTree1.BIT_FPGrowth(rootTree2)
     
-    #rootTree1.printPattern()
+    rootTree1.printPattern()
     
     endTime = time.time() - startTime
     print("FPtreeMerge take total time: "+str(endTime)) 
