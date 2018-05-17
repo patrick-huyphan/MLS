@@ -98,11 +98,11 @@ if __name__ == "__main__":
         transactions1 = ior.read2RawData(path+"mushroom.dat",0, 200, 150)
         transactions2 = ior.read2RawData(path+"mushroom.dat",200, 570, 150)
     
-    if typeR == 0:   
+    if typeR == 1:   
         fpg.runFPtreeMerge(transactions1, transactions2, 2)
     
-    elif typeR == 1:
-        bfg.runBatchMerge(transactions2, transactions2, 2)
+    elif typeR == 0:
+        bfg.runBatchMerge(transactions1, transactions2, 2)
     
     elif typeR == 2:
         mat = ior.rawData2matrix(path+"data_694_446.dat",0, 446, 696)

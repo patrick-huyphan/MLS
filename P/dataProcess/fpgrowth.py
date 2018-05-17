@@ -235,7 +235,7 @@ class FPTree(object):
             while node is not None:
                 suffixes.append(node)
                 node = node.link
-            print(str(item)+", suffixes: "+str(suffixes))
+            #print(str(item)+", suffixes: "+str(suffixes))
             # For each occurrence of the item, 
             # trace the path back to the root node.
             for suffix in suffixes:
@@ -246,8 +246,8 @@ class FPTree(object):
                 while parent.parent is not None:
                     path.append(parent.value)
                     parent = parent.parent
-                
-                print(str(suffix.parent.value) +" ("+ str(frequency) +" "+ str(len(suffix.children)) +") "+ str(suffix.value) +" \t path: "+ str(path))
+                if len(path)>0:
+                    print(str(suffix.parent.value) +" ("+ str(frequency) +" "+ str(len(suffix.children)) +") "+ str(suffix.value) +" \t path: "+ str(path))
                 
                 if len(path)>0:
                     for i in range(frequency):
@@ -260,12 +260,12 @@ class FPTree(object):
                              item, self.frequent[item])
                 subtree_patterns = subtree.mine_patterns(threshold)
 
-            # Insert subtree patterns into main patterns dictionary.
-            for pattern in subtree_patterns.keys():
-                if pattern in patterns:
-                    patterns[pattern] += subtree_patterns[pattern]
-                else:
-                    patterns[pattern] = subtree_patterns[pattern]
+                # Insert subtree patterns into main patterns dictionary.
+                for pattern in subtree_patterns.keys():
+                    if pattern in patterns:
+                        patterns[pattern] += subtree_patterns[pattern]
+                    else:
+                        patterns[pattern] = subtree_patterns[pattern]
 
         return patterns
     '''
@@ -295,12 +295,13 @@ class FPTree(object):
                     pathdata.append(item2)
                     aMax = aMin
                     break
-                    
+        '''            
         pathdata2 = []
         for item in pathdata:
             b = gOrder.index(item.value)
             pathdata2.append([item.value, item.count,b])
         print("Path 1"+ str(pathdata2))
+        '''
         return pathdata
         
     # read itemSet to vector and arange with gOrder
@@ -687,11 +688,11 @@ class FPTree(object):
                     parent = parent.parent
                 
                 if len(path)>0:
-                    print("item:\t count: "+str(suffix.count) +"\t-> (childs: "+str(len(suffix.children))+":" +str(childs)+")  \t path: "+ str(path[::-1]))
+                    print("path: "+ str(path[::-1])+" \t count: "+str(suffix.count) +"\t-> (childs: "+str(len(suffix.children))+":" +str(childs)+")")
                     #for i in range(frequency):
                     #    conditional_tree_input.append(path)
                 else:
-                    print("item:\t count: "+str(suffix.count) +"\t-> (childs: "+str(len(suffix.children))+":" +str(childs)+")" )
+                    print("item without path\t count: "+str(suffix.count) +"\t-> (childs: "+str(len(suffix.children))+":" +str(childs)+")" )
                     
             '''
             if len(conditional_tree_input)>0:
@@ -713,7 +714,13 @@ def buildFPTree(transactions, support_threshold):
     print("buildFPTree "+str(rootTree.root.value))
     return rootTree
 
-
+def find_frequent_patterns(tree, support_threshold):
+    """
+    Given a set of transactions, find the patterns in it
+    over the specified support threshold.
+    """
+    return tree.mine_patterns(support_threshold)
+    
 def generate_association_rules(patterns, confidence_threshold):
     """
     Given a set of frequent itemsets, return a dict
@@ -753,12 +760,7 @@ def runFPtreeMerge(transactions1,transactions2, threshold):
     rootTree2 = FPTree(transactions2, threshold, None, None)
     #rootTree2.printTree()
     #rootTree2.printPattern()
-    
-    #rootTree1.mergeTree(rootTree2)
-    
-    #rootTree1.printTree()
-    #rootTree1.printPattern()
-    
+        
     rootTree1.BIT_FPGrowth(rootTree2)
     
     #rootTree1.printPattern()
@@ -766,12 +768,12 @@ def runFPtreeMerge(transactions1,transactions2, threshold):
     endTime = time.time() - startTime
     print("FPtreeMerge take total time: "+str(endTime)) 
     
-    '''
-    patterns1 = find_frequent_patterns(tree3, 2)
+    
+    patterns1 = find_frequent_patterns(rootTree1, 2)
     for patte in patterns:
         print(" pattern: "+ str(patte))
         
-    rules = fpg.generate_association_rules(patterns1, 0.7)
+    rules = generate_association_rules(patterns1, 0.7)
     for rule in rules:
         print(" rule: " + str(rule))
     
@@ -782,7 +784,7 @@ def runFPtreeMerge(transactions1,transactions2, threshold):
     
     endTime = time.time() - startTime
     print("FPtreeMerge take total time: "+str(endTime))
-    '''
+
     return 0
     
     

@@ -1,6 +1,7 @@
 import itertools
 import dataProcess.Node as Node
 import time
+import copy
 
 class Batch(object):
     def __init__(self, transactions, threshold):
@@ -51,52 +52,51 @@ class Batch(object):
     check in update batch: if true -> continue, else add to update.
     merge update into current
     '''
+    
+
     def insert_batch(self, item, count):
         #print("insert_batch")
         #count = 0
         #idx=0
         flag1 = False
-        #flag2 = False
+        
         sa = set(item)
-        #print("item "+str(item))
+        #print("item sa2 "+str(sa))
         mBatch = []
         for pattern in self.batch:
             flag2 = False
             #print("--"+str(sorted(pattern.value)) + " "+ str(pattern.count))
-            #sb = set(item)
             sb = set(pattern.value)
-            c = sa.intersection(sb)
-            #d = c
+            sc = sa.intersection(sb)
             #newNode = Node.PatternNode(sorted(c), pattern.count+count)
-            if len(c)>0:
+            
+            if len(sc)>0:
                 #print("intersection "+str(c)+" "+ str(newNode.count))
-                if(sa.issubset(c)):
+                if(sc.issubset(sa)):
                     flag1 = True
-                    #print("flag1 = True")
-                    #print("c in item " + str(idx))
-                if(sb.issubset(c)):
-                    #print("c in pat " + str(idx))
-                    #node =  self.batch[idx]
-                    self.batch.remove(pattern)
-                    #print(" remove "+str(sorted(pattern.value)) + " "+ str(pattern.count))
+                    #print("flag1 = True, c in item " + str(idx))
+                #if(sc.issubset(sb)):
+                    #self.batch.remove(pattern)
+                    #print(" \tremove 1 \t"+ str(pattern.count) + " "+str(sorted(pattern.value)))
 
                 for mx in mBatch:
                     ms = set(mx.value)
-                    if(ms.issubset(c)):
-                        mBatch.remove(mx)
-                        #print(" remove mx "+str(sorted(mx.value)) + " "+ str(mx.count))
-                        #print("mBatch.remove(mx)") 
-                    if(c.issubset(ms)):
+                    #if(sc.issubset(ms)):
+                        #mBatch.remove(mx)
+                        #print(" \tremove 2 \t"+ str(mx.count)+ " "+str(sorted(ms, key = lambda x: int(x))))
+
+                    if(ms.issubset(sc)):
                         flag2 = True
                         #print("2") 
             else:
                 flag2 = True
-                
+            #print(str(flag1)+" "+str(flag2))
             if(flag2 == False):
-                #print("add node "+str(newNode.value) +" "+str(newNode.count))
-                newNode = Node.PatternNode(sorted(c), pattern.count+count)
+                ssc = sorted(sc, key = lambda x: int(x))
+                print("add node 2\t\t"+str(pattern.count)+" "+str(count)+" "+str(ssc))
+                newNode = Node.PatternNode(ssc, pattern.count+count)
                 mBatch.append(newNode)
-                #print("add 2")
+                
             #else:
             #    print("not add node "+str(newNode.value) +" "+str(newNode.count))
             #flag2 = False
@@ -108,7 +108,7 @@ class Batch(object):
             #idx = idx +1
                         
         if flag1==False:
-            #print("add new node "+str(item))
+            print("add new node \t"+str(count) +" "+str(item))
             self.batch.append(Node.PatternNode(item, count))
             #print("add 1")
         #print(len(batch))
@@ -279,6 +279,7 @@ class Batch(object):
         print("other.frequent: "+str(other.frequent))
 
         for item in other.batch:
+            print(str(other.batch.index(item)) + " "+ str(len(other.batch)))
             self.insert_batch(item.value, item.count)
             
         print("merge.frequent: "+str(self.frequent))
@@ -296,22 +297,32 @@ def find_frequent_patterns_batch(transactions, support_threshold):
     return Batch(transactions, support_threshold)
     #return batch #.mine_patterns(support_threshold)
 
-
+#def printBatch(batch)
     
 def runBatchMerge(transactions1,transactions2, threshold):
     startTime = time.time()
     
     batch1 = Batch(transactions1, threshold)
+
+    mining_order = sorted(batch1.batch, key=lambda x: x.count, reverse=True)
+    for pattern in mining_order:
+        print(" batch1: "+ str(pattern.value) +" "+ str(pattern.count))
+
     
     batch2 = Batch(transactions2, threshold)
+
+    mining_order = sorted(batch2.batch, key=lambda x: x.count, reverse=True)
+    for pattern in mining_order:
+        print(" batch2: "+ str(pattern.value) +" "+ str(pattern.count))
+
     
     #batch3 = 
     batch1.mergeBatch(batch2)
     
     endTime = time.time() - startTime
     print("BathcMerge take total time: "+str(endTime))
-    
-    for pattern in batch1.batch:
+    mining_order = sorted(batch1.batch, key=lambda x: x.count, reverse=True)
+    for pattern in mining_order:
         print(" batch3: "+ str(pattern.value) +" "+ str(pattern.count))
 
 
