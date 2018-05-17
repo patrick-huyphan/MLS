@@ -136,11 +136,11 @@ class FPTree(object):
         else:
             print("new tree")
         '''
-        first = path[-1].value
+        first = path[0].value
         child = root.get_child(first)
         if child is not None:
             #if newTree == False:
-            child.count += path[-1].count
+            child.count += path[0].count
                 #print(str(path[-1].value)+" update count 1: "+str(child.count))
             #else:
             #    if child.count < path[-1].count:
@@ -160,7 +160,7 @@ class FPTree(object):
                 current.link = child
 
         # Call function recursively.
-        remaining_items = path[:-1]
+        remaining_items = path[1:]
         if len(remaining_items) > 0:
             self.insert_path_tree(remaining_items, child, headers, newTree)
             
@@ -287,30 +287,34 @@ class FPTree(object):
     def sortWithOrder(self, path,gOrder):
         pathTmp = path[::-1]
         pathdata = []
-        #cmin = 0;
+
+        '''
         for item in pathTmp:
             #a = pathTmp.index(item)
             b = gOrder.index(item.value)
             pathdata.append([item.value, b])
         print("Path 0"+ str(pathdata))
-                
+        '''        
+        aMax = -1
         for item in pathTmp:
-            a = pathTmp.index(item)
-            c = gOrder.index(item.value)
-            pathTmp2 = pathTmp[a:-1]
-            for item2 in pathTmp2:
-                b = pathTmp2.index(item2)
+            aMin = 10000
+            for item2 in pathTmp:
                 d = gOrder.index(item2.value)
-                if d < c:
-                    print(str(item.value)+" "+str(item2.value)+" swap "+str(a)+" "+str(b)+" "+str(c)+" "+str(d)  )
-                    pathTmp[a], pathTmp[b] = pathTmp[b], pathTmp[a]
+                if  d >aMax and d < aMin:
+                    aMin = d
+            #print(str(d)+" "+str(aMin)+" "+str(aMax))
+            for item2 in pathTmp:
+                if item2.value == gOrder[aMin]:
+                    pathdata.append(item2)
+                    aMax = aMin
+                    break
+                    
         pathdata2 = []
-        for item in pathTmp:
-            #a = pathTmp.index(item)
+        for item in pathdata:
             b = gOrder.index(item.value)
-            pathdata2.append([item.value, b])
+            pathdata2.append([item.value, item.count,b])
         print("Path 1"+ str(pathdata2))
-        return pathdata2
+        return pathdata
         
     # read itemSet to vector and arange with gOrder
     def readItemSets(self, gOrder):
@@ -369,16 +373,17 @@ class FPTree(object):
             pathdata = []
             for item in path:
         '''
-        
+        rvItemSet = []
         for path in vItemSet:
             pathdatatmp = self.sortWithOrder(path, gOrder)
+            rvItemSet.append(pathdatatmp)
 
         for item in gOrder:
             if item not in self.headers.keys():
                 print("add key "+str(item))
                 self.headers[item] = None
                 
-        return vItemSet
+        return rvItemSet
     
     #rebuild tree with new vector of itemSet
     def v2Tree(self,itemSet):
