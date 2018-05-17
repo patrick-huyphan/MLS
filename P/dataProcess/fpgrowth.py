@@ -119,7 +119,7 @@ class FPTree(object):
             self.insert_tree(remaining_items, child, headers)
 
         
-    def insert_path_tree(self, path, root, headers, newTree = True):
+    def insert_path_tree(self, path, root, headers):
         """
         Recursively grow FP tree.
         """
@@ -128,13 +128,7 @@ class FPTree(object):
         paths = []
         for p in path:
             paths.append(p.value)
-        print("insert_tree "+ str(paths))
-        '''
-        '''
-        if newTree == False:
-            print("update tree")
-        else:
-            print("new tree")
+        print(str(root.value)+" insert_tree "+ str(paths))
         '''
         first = path[0].value
         child = root.get_child(first)
@@ -155,7 +149,7 @@ class FPTree(object):
         # Call function recursively.
         remaining_items = path[1:]
         if len(remaining_items) > 0:
-            self.insert_path_tree(remaining_items, child, headers, newTree)
+            self.insert_path_tree(remaining_items, child, headers)
             
     def tree_has_single_path(self, node):
         """
@@ -379,7 +373,7 @@ class FPTree(object):
         return rvItemSet
     
     #rebuild tree with new vector of itemSet
-    def v2Tree(self,itemSet):
+    def v2Tree(self,itemSet, frequence):
         print("v2Tree")
         #newTree = 0
         for key in self.headers.keys():
@@ -388,15 +382,20 @@ class FPTree(object):
         for path in itemSet:
             #print("root of new path:\t"+ str(path[-1].value))
             self.insert_path_tree(path,root, self.headers)
+            
+        self.frequent = frequence #self.find_frequent_items(transactions, threshold)
+        #self.headers = self.build_header_table(self.frequent)
+        self.root = root
+
         return self
         
     #merge vector itemset to tree
-    def mergeV2T(self, vOther):
+    def mergeV2T(self, itemSet):
         print("mergeV2T")
-        root = Node.FPNode(None, None, None)
-        for path in vOther:
+        #root = Node.FPNode(None, None, None)
+        for path in itemSet:
             #print("root of path:\t"+ str(path[-1].value))
-            self.insert_path_tree(path,root, self.headers, newTree = False)
+            self.insert_path_tree(path,self.root, self.headers)
         return self
         
     def BIT_FPGrowth(self, other):
@@ -413,7 +412,7 @@ class FPTree(object):
         
         vItemSet1 = self.readItemSets(mining_order)
         
-        newTree = self.v2Tree(vItemSet1)
+        newTree = self.v2Tree(vItemSet1, d)
         newTree.printPattern()
         
         vItemSet2 = other.readItemSets(mining_order)
@@ -660,7 +659,10 @@ class FPTree(object):
     def printPattern(self):
         mining_order = sorted(self.frequent.keys(),
                               key=lambda x: self.frequent[x], reverse=True)
-        
+        print("ROOT: "+str(self.root.value)+"\t SubTree of root: "+str(len(self.root.children)))
+        listParrent = self.root.children
+        for subRoot in listParrent:
+            print("Root "+ subRoot.value)
         for item in mining_order:
             suffixes = []
             suffixesNode = []
@@ -685,7 +687,7 @@ class FPTree(object):
                     parent = parent.parent
                 
                 if len(path)>0:
-                    print("item:\t count: "+str(suffix.count) +"\t-> (childs: "+str(len(suffix.children))+":" +str(childs)+")  \t path: "+ str(path))
+                    print("item:\t count: "+str(suffix.count) +"\t-> (childs: "+str(len(suffix.children))+":" +str(childs)+")  \t path: "+ str(path[::-1]))
                     #for i in range(frequency):
                     #    conditional_tree_input.append(path)
                 else:
