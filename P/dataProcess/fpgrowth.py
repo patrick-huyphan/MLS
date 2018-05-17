@@ -139,17 +139,10 @@ class FPTree(object):
         first = path[0].value
         child = root.get_child(first)
         if child is not None:
-            #if newTree == False:
             child.count += path[0].count
-                #print(str(path[-1].value)+" update count 1: "+str(child.count))
-            #else:
-            #    if child.count < path[-1].count:
-            #        child.count = path[-1].count
-                #print(str(path[-1].value)+" update count 2: "+str(child.count))
         else:
             # Add new child.
             child = root.add_child(first)
-
             # Link it to header structure.
             if headers[first] is None:
                 headers[first] = child
@@ -329,9 +322,9 @@ class FPTree(object):
             #if item in mining_order1:
             node = self.headers[item]
             suffixesV0 = []
-            header = []
+            #header = []
             while node is not None:
-                header.append([node.value, node.count])
+                #header.append([node.value, node.count])
                 suffixesV0.append(node)
                 node = node.link
             #print(str(item)+" Header: "+ str(header))
@@ -421,10 +414,15 @@ class FPTree(object):
         vItemSet1 = self.readItemSets(mining_order)
         
         newTree = self.v2Tree(vItemSet1)
+        newTree.printPattern()
         
         vItemSet2 = other.readItemSets(mining_order)
         
-        return newTree.mergeV2T(vItemSet2)
+        newTree.mergeV2T(vItemSet2)
+        
+        newTree.printPattern()
+        
+        return newTree
     """
     self.frequent: all node with frequency
     self.header: list of root
@@ -761,7 +759,7 @@ def runFPtreeMerge(transactions1,transactions2, threshold):
     
     rootTree1.BIT_FPGrowth(rootTree2)
     
-    rootTree1.printPattern()
+    #rootTree1.printPattern()
     
     endTime = time.time() - startTime
     print("FPtreeMerge take total time: "+str(endTime)) 
