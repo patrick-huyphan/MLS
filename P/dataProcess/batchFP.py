@@ -88,7 +88,7 @@ class Batch(object):
                 if(sb.issubset(sc)):
                     lt = str(len(self.batch))
                     self.batch.remove(pattern)
-                    print(lt+"-"+str(len(self.batch))+" \tremove 1 \t"+ str(pattern.count) + " "+str(sorted(pattern.value)))
+                    #print(lt+"-"+str(len(self.batch))+" \tremove 1 \t"+ str(pattern.count) + " "+str(sorted(pattern.value)))
                 
                 if(sa.issubset(sc)):
                     flag1 = True
@@ -96,12 +96,12 @@ class Batch(object):
                     
                 for mx in mBatch:
                     ms = set(mx.value)
-                    if(ms.issubset(sc)):
+                    if(ms.issubset(sc) and (mx.count  <= (pattern.count + count))):
                         lt= str(len(mBatch))
                         mBatch.remove(mx)
-                        print(lt+"-"+str(len(mBatch))+" \tremove 2 \t"+ str(mx.count)+ " "+str(sorted(ms, key = lambda x: int(x))))
+                        #print(lt+"-"+str(len(mBatch))+" \tremove 2 \t"+ str(mx.count)+ " "+str(sorted(ms, key = lambda x: int(x))))
                         break
-                    if(sc.issubset(ms)):
+                    if(sc.issubset(ms)and ((pattern.count + count) <= mx.count )):
                         flag2 = True
                         #print("2")
                         break 
@@ -110,13 +110,13 @@ class Batch(object):
             #print(str(flag1)+" "+str(flag2))
             if(flag2 == False):
                 ssc = sorted(sc, key = lambda x: int(x))
-                print("add node 2\t\t"+str(pattern.count)+" "+str(count)+" "+str(ssc))
+                #print("add node 2\t\t"+str(pattern.count)+" "+str(count)+" "+str(ssc))
                 newNode = Node.PatternNode(ssc, pattern.count+count)
                 mBatch.append(newNode)
             #flag2 = False
                         
         if flag1==False:
-            print("add new node \t"+str(count) +" "+str(item))
+            #print("add new node \t"+str(count) +" "+str(item))
             newNode = Node.PatternNode(item, count)
             self.batch.append(newNode)
             #mBatchTmp.append(newNode)
