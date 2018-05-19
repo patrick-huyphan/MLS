@@ -1,3 +1,9 @@
+'''
+implement algorithm for frequence pattern mining by bit chain of transaction
+implement algorithm to merge the batch of bitchain for incremental mining
+
+Author: huyphan.aj@gmail.com
+'''
 import itertools
 import dataProcess.Node as Node
 import time
@@ -63,13 +69,12 @@ class Batch(object):
     
 
     def insert_batch(self, item, count):
-        #print("insert_batch "+str(item))
+        print("\nInsert_batch "+str(item))
 
         flag1 = False        
         sa = set(item)
         #print("item sa2 "+str(sa))
         mBatch = []
-        mBatchTmp = []
         
         for pattern in self.batch:
             flag2 = False
@@ -81,9 +86,9 @@ class Batch(object):
             if len(sc)>0:
                 #print("intersection "+str(c)+" "+ str(newNode.count))
                 if(sb.issubset(sc)):
-                    #mBatchTmp.append(pattern)
+                    lt = str(len(self.batch))
                     self.batch.remove(pattern)
-                    print(" \tremove 1 \t"+ str(pattern.count) + " "+str(sorted(pattern.value)))
+                    print(lt+"-"+str(len(self.batch))+" \tremove 1 \t"+ str(pattern.count) + " "+str(sorted(pattern.value)))
                 
                 if(sa.issubset(sc)):
                     flag1 = True
@@ -92,33 +97,35 @@ class Batch(object):
                 for mx in mBatch:
                     ms = set(mx.value)
                     if(ms.issubset(sc)):
-                        #mBatchTmp.append(mx)
+                        lt= str(len(mBatch))
                         mBatch.remove(mx)
-                        print(" \tremove 2 \t"+ str(mx.count)+ " "+str(sorted(ms, key = lambda x: int(x))))
+                        print(lt+"-"+str(len(mBatch))+" \tremove 2 \t"+ str(mx.count)+ " "+str(sorted(ms, key = lambda x: int(x))))
+                        break
                     if(sc.issubset(ms)):
                         flag2 = True
-                        #print("2") 
+                        #print("2")
+                        break 
             else:
                 flag2 = True
             #print(str(flag1)+" "+str(flag2))
             if(flag2 == False):
                 ssc = sorted(sc, key = lambda x: int(x))
-                #print("add node 2\t\t"+str(pattern.count)+" "+str(count)+" "+str(ssc))
+                print("add node 2\t\t"+str(pattern.count)+" "+str(count)+" "+str(ssc))
                 newNode = Node.PatternNode(ssc, pattern.count+count)
                 mBatch.append(newNode)
-                #mBatchTmp.append(newNode)
             #flag2 = False
                         
         if flag1==False:
-            #print("add new node \t"+str(count) +" "+str(item))
+            print("add new node \t"+str(count) +" "+str(item))
             newNode = Node.PatternNode(item, count)
             self.batch.append(newNode)
             #mBatchTmp.append(newNode)
             #print("add 1")
         #print(len(batch))
+        lb = str(len(self.batch))
         for batch in mBatch:
             self.batch.append(batch)
-            
+        print(lb +" "+str(len(mBatch))+" "+str(len(self.batch)))
         #return mBatchTmp
         #print("------------------------------------------")
 
