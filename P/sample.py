@@ -98,10 +98,10 @@ if __name__ == "__main__":
         transactions1 = ior.read2RawData(path+"mushroom.dat",0, 100, 100)
         transactions2 = ior.read2RawData(path+"mushroom.dat",100, 270, 100) #200, 570, 150
     
-    if typeR == 1:   
-        fpg.runFPtreeMerge(transactions1, transactions2, 2)
+    if typeR == 0:   
+        #fpg.runFPtreeMerge(transactions1, transactions2, 2)
     
-    elif typeR == 0:
+    #elif typeR == 1:
         bfg.runBatchMerge(transactions1, transactions2, 2)
     
     elif typeR == 2:

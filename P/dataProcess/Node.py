@@ -45,7 +45,17 @@ class FPNode(object):
         child = FPNode(value, 1, self)
         self.children.append(child)
         return child
-    
+
+    def add_child_node(self, node):
+        """
+        Add a node as a child node.
+        """
+        #print("add_child_2")
+        #child = FPNode(value, 1, self)
+        node.parent = self
+        self.children.append(node)
+        return node
+            
     def isZero(self):
         return self.value.length>0
     
@@ -93,6 +103,7 @@ class PatternNode(object):
         """
         self.value = value
         self.count = count
+        self.sign = 0
 
     def intercept(self, other):
         value = sorted(set(other.value) & set(self.value), key = self.value.index)
