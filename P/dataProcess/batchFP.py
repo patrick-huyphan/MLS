@@ -73,8 +73,9 @@ class Batch(object):
         sa = set(item)
         #print("item sa2 "+str(sa))
         mBatch = []
+        tmpBtc = copy.copy(self.batch)
         
-        for pattern in self.batch:
+        for pattern in self.batch[:]:
             flag2 = False
             #print("--"+str(sorted(pattern.value)) + " "+ str(pattern.count))
             sb = set(pattern.value)
@@ -86,23 +87,26 @@ class Batch(object):
                 if(sb.issubset(sc) and pattern.count <= totalCount):
                     #lt = str(len(self.batch))
                     self.batch.remove(pattern)
+                    #tmpBtc.remove(pattern)
                     #print(lt+"-"+str(len(self.batch))+" \tremove 1 \t"+ str(pattern.count) + " "+str(sorted(pattern.value)))
                 
                 if(sa.issubset(sc)):
                     flag1 = True
                     #print("flag1 = True, c in item " + str(idx))
-                    
-                for mx in mBatch:
+                #mtmpBtc = copy.copy(mBatch)
+                for mx in mBatch[:]:
                     ms = set(mx.value)
                     if(ms.issubset(sc) and (mx.count  <= totalCount)):
                         #lt= str(len(mBatch))
                         mBatch.remove(mx)
+                        #mtmpBtc.remove(mx)
                         #print(lt+"-"+str(len(mBatch))+" \tremove 2 \t"+ str(mx.count)+ " "+str(sorted(ms, key = lambda x: int(x))))
                         break
                     if(sc.issubset(ms) and (totalCount <= mx.count )):
                         flag2 = True
                         #print("2")
-                        break 
+                        break
+                #mBatch = mtmpBtc
             else:
                 flag2 = True
             #print(str(flag1)+" "+str(flag2))
@@ -111,7 +115,7 @@ class Batch(object):
                 #print("add node 2\t\t"+str(pattern.count)+" "+str(count)+" "+str(ssc))
                 newNode = Node.PatternNode(list(ssc), totalCount)
                 mBatch.append(newNode)
-                        
+        #self.batch = tmpBtc
         if flag1==False:
             #print("add new node \t"+str(count) +" "+str(item))
             newNode = Node.PatternNode(item, count)
@@ -311,10 +315,12 @@ class Batch(object):
                     
                 if len(q) >0:
                     if sa.issubset(q):
+                         #print(str(item1.count)+" sa "+str(sa))
                          item1.sign = -1
                     if sb.issubset(q):
+                         #print(str(item2.count)+" sb "+str(sb))
                          item2.sign = -1
-                        
+
                     for item3 in mbatch:
                         sd = set(item3.value)
                         
@@ -331,22 +337,20 @@ class Batch(object):
                     #print("add "+str(counttotal)+" "+str(sc))
                     sq = sorted(q, key = lambda x: int(x))
                     mbatch.append(Node.PatternNode(sq,counttotal))
-                    
-        for item1 in self.batch:
+
+        for item1 in self.batch[:]:
             if item1.sign == -1:
-                print("remove item in batch "+ str(item1.count)+" \t"+str(item1.value))
+                #print("remove item in batch "+ str(item1.count)+" \t"+str(item1.value))
                 self.batch.remove(item1)
         
         for item1 in other.batch:
-            if item1 != -1:
-                print("add item in batch "+str(item1.count)+" \t"+str(item1.value))
+            if item1.sign != -1:
+                #print("add item in batch "+str(item1.count)+" \t"+str(item1.value))
                 self.batch.append(item1)
                 
         for item1 in mbatch:
-            print("add2 item in batch "+str(item1.count)+" \t"+str(item1.value))
+            #print("add2 item in batch "+str(item1.count)+" \t"+str(item1.value))
             self.batch.append(item1)
-        
-        #self.batch = batch
         
     def printBatch(self):
         for pattern in seft.batch:
