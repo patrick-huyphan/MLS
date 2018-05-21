@@ -95,8 +95,8 @@ if __name__ == "__main__":
                 [1, 2, 3]]
     '''
     if typeR ==0 or typeR ==1:
-        transactions1 = ior.read2RawData(path+"mushroom.dat",0, 100, 100)
-        transactions2 = ior.read2RawData(path+"mushroom.dat",100, 270, 100) #200, 570, 150
+        transactions1 = ior.read2RawData(path+"mushroom.dat",0, 50, 60)
+        transactions2 = ior.read2RawData(path+"mushroom.dat",200, 270, 60) #200, 570, 150
     
     if typeR == 0:   
         #fpg.runFPtreeMerge(transactions1, transactions2, 2)
