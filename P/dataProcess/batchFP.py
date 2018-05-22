@@ -73,7 +73,6 @@ class Batch(object):
         sa = set(item)
         #print("item sa2 "+str(sa))
         mBatch = []
-        #tmpBtc = copy.copy(self.batch)
         
         for pattern in self.batch[:]:
             flag2 = False
@@ -120,10 +119,10 @@ class Batch(object):
             self.batch.append(newNode)
             #print("add 1")
         #print(len(batch))
-        #lb = str(len(self.batch))
+        lb = str(len(self.batch))
         for batch in mBatch:
             self.batch.append(batch)
-        #print(lb +" "+str(len(mBatch))+" "+str(len(self.batch)))
+        print(lb +" + "+str(len(mBatch))+" = "+str(len(self.batch)))
 
         #print("------------------------------------------")
 

@@ -275,7 +275,8 @@ class FPTree(object):
                         patterns[pattern] += subtree_patterns[pattern]
                     else:
                         patterns[pattern] = subtree_patterns[pattern]
-
+        
+        print(len(patterns))
         return patterns
     '''
     flow of paper:
@@ -793,10 +794,12 @@ def runFPtreeMerge(transactions, threshold):
     #rootTree1.printPattern()
     
     patterns1 = rootTree1.mine_patterns(threshold)
-    for patte in patterns1:
-        print(" pattern: "+ str(patte))
-    
     endTime = time.time() - startTime
+    count  = 0
+    for patte in patterns1:
+        print(str(count)+"\t pattern: "+ str(patte))
+        count +=1
+    
     print("FPtreeMerge take total time: "+str(endTime)) 
     
     

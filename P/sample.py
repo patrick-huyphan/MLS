@@ -66,12 +66,41 @@ def FPG(transactions, threshold):
 
     endTime = time.time() - startTime
     print("FPtree take total time: "+str(endTime)) 
-        
+    
+    count = 0    
     for patte in patterns1:
-        print(" pattern: "+ str(patte))
-    
+        print(str(count) +"\t Pattern: "+ str(patte))
+        count +=1
+        
     return 0
+
+def FPG2(transactions1, transactions2, threshold):
     
+    startTime = time.time()
+
+    rootTree1 = fpg.FPTree(transactions1, threshold, None, None)
+    
+    #rootTree1.printPattern()
+
+    rootTree2 = fpg.FPTree(transactions2, threshold, None, None)
+
+    #startTime = time.time()
+        
+    rootTree1.BIT_FPGrowth(rootTree2)
+
+    #rootTree1.printPattern()
+
+    patterns1 = rootTree1.mine_patterns(threshold)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime)) 
+    
+    count = 0    
+    for patte in patterns1:
+        print(str(count) +"\t Pattern: "+ str(patte))
+        count +=1
+
+    return 0
+        
 def Batch(transactions, threshold):
     
     startTime = time.time()
@@ -87,6 +116,24 @@ def Batch(transactions, threshold):
         count +=1
     return 0
 
+def Batch2(transactions1, transactions2, threshold):
+    
+    startTime = time.time()
+    batch1 = bfg.Batch(transactions1, threshold)
+
+
+    batch2 = bfg.Batch(transactions2, threshold)
+
+    endTime = time.time() - startTime
+    print("Bit pattern take total time: "+str(endTime)) 
+    
+    mining_order = sorted(batch1.batch, key=lambda x: x.count, reverse=True)
+    count = 0
+    for pattern in mining_order:
+        print(str(count) +"\t"+ str(pattern.count)+"\tbatch1: "+ str(pattern.value))
+        count +=1
+    return 0
+    
 '''
 def linuxDataPath():
     return 
@@ -128,44 +175,44 @@ if __name__ == "__main__":
     
     #if typeR ==0 or typeR ==1:
     
-    if typeR == 0:
-        transactions1 = ior.read2RawData(path+"mushroom.dat",0, 250, 160)
-        data.append(transactions1)
-        transactions2 = ior.read2RawData(path+"mushroom.dat",250, 570, 160) #200, 570, 150
-        data.append(transactions2)
-        transactions3 = ior.read2RawData(path+"T10I4D100K.dat",0, 1000, 1000)
-        data.append(transactions3)
-        transactions4 = ior.read2RawData(path+"T10I4D100K.dat",1000, 2000, 1000)
-        data.append(transactions4)
-        transactions5 = ior.read2RawData(path+"T10I4D100K.dat",2000, 3000, 1000)
-        data.append(transactions5)
-        transactions6 = ior.read2RawData(path+"T10I4D100K.dat",3000, 4000, 1000)
-        data.append(transactions6)
-        transactions7 = ior.read2RawData(path+"T10I4D100K.dat",4000, 5000, 1000)
-        data.append(transactions7)
-        transactions8 = ior.read2RawData(path+"T10I4D100K.dat",5000, 6000, 1000)
-        data.append(transactions8)
-        transactions9 = ior.read2RawData(path+"T10I4D100K.dat",6000, 7000, 1000)
-        data.append(transactions9)
-        transactions10 = ior.read2RawData(path+"T10I4D100K.dat",7000, 8000, 1000)
-        data.append(transactions10)
-        transactions11 = ior.read2RawData(path+"T10I4D100K.dat",8000, 9000, 1000)
-        data.append(transactions11)
-        transactions12 = ior.read2RawData(path+"T10I4D100K.dat",9000, 10000, 1000)
-        data.append(transactions12)
+    if typeR == 1:
+        transactions1 = ior.read2RawData(path+"mushroom.dat",0, 550, 160)
+        data.append(transactions1[0:100])
+        data.append(transactions1[200:320])
+        
+        transactions3 = ior.read2RawData(path+"T10I4D100K.dat",0, 10000, 1000)
+        data.append(transactions3[0:1000])
+        data.append(transactions3[1001:2000])
+        data.append(transactions3[2001:3000])
+        data.append(transactions3[3001:4000])
+        data.append(transactions3[4001:5000])
+        data.append(transactions3[5001:6000])
+        data.append(transactions3[6001:7000])
+        data.append(transactions3[7001:8000])
+        data.append(transactions3[8001:9000])
+        data.append(transactions3[9001:10000])
     
        
         #fpg.runFPtreeMerge(data, 2)
     
         bfg.runBatchMerge(data, 2)
         
-    elif typeR == 1:
+    elif typeR == 0:
         transactions = ior.read2RawData(path+"T10I4D100K.dat",0, 10000,1000)
         
-        Batch(transactions, 2)
+        #Batch(transactions, 2)
         
-        FPG(transactions, 2)
+        #FPG(transactions, 2)
         
+        transactions3 = transactions[0:5000]#ior.read2RawData(path+"T10I4D100K.dat",0, 5000, 1000)
+        data.append(transactions3)
+        transactions4 = transactions[5001:10000]#ior.read2RawData(path+"T10I4D100K.dat",5000, 10000, 1000)
+        data.append(transactions4)
+        
+        fpg.runFPtreeMerge(data, 2)
+    
+        #bfg.runBatchMerge(data, 2)
+            
     elif typeR == 2:
         mat = ior.rawData2matrix(path+"data_694_446.dat",0, 446, 696)
         runADMM(mat)
