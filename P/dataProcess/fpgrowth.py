@@ -770,9 +770,10 @@ def generate_association_rules(patterns, confidence_threshold):
     return rules
 
 
-def runFPtreeMerge(transactions1,transactions2, threshold):
+def runFPtreeMerge(transactions, threshold):
 
-    startTime = time.time()
+    transactions1 = transactions[0]
+    transactions2 = transactions[1]
 
     #for tran in transactions:
     #    print(" transaction: "+ str(tran))
@@ -784,6 +785,8 @@ def runFPtreeMerge(transactions1,transactions2, threshold):
     rootTree2 = FPTree(transactions2, threshold, None, None)
     #rootTree2.printTree()
     #rootTree2.printPattern()
+    
+    startTime = time.time()
         
     rootTree1.BIT_FPGrowth(rootTree2)
     
@@ -812,8 +815,10 @@ def runFPtreeMerge(transactions1,transactions2, threshold):
     return 0
     
     
-def test(transactions1,transactions2, threshold):
+def test(transactions, threshold):
 
+    transactions1 = transactions[0]
+    transactions2 = transactions[1]
     startTime = time.time()
 
     #for tran in transactions:
