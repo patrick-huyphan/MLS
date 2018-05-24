@@ -119,10 +119,10 @@ class Batch(object):
             self.batch.append(newNode)
             #print("add 1")
         #print(len(batch))
-        lb = str(len(self.batch))
+        #lb = str(len(self.batch))
         for batch in mBatch:
             self.batch.append(batch)
-        print(lb +" + "+str(len(mBatch))+" = "+str(len(self.batch)))
+        #print(lb +" + "+str(len(mBatch))+" = "+str(len(self.batch)))
 
         #print("------------------------------------------")
 
@@ -283,22 +283,19 @@ class Batch(object):
             A = A U C
             
     """
-    def mergeBatch(self, other):
-        sortF1 = sorted(self.frequent, key =lambda x: self.frequent[x], reverse=True)
-        sortF2 = sorted(other.frequent, key =lambda x: other.frequent[x], reverse=True)
-        print("self.frequent: "+str(sortF1))
-        print("other.frequent: "+str(sortF2))
-        '''
-        for item in other.batch:
-            #print(str(other.batch.index(item)) + " "+ str(len(other.batch)))
-            self.insert_batch(item.value, item.count)
 
-        print("merge.frequent: "+str(self.frequent))
-        '''
+    def mergeBatch(self, other):
+        #sortF1 = sorted(self.frequent, key =lambda x: self.frequent[x], reverse=True)
+        #sortF2 = sorted(other.frequent, key =lambda x: other.frequent[x], reverse=True)
+        #print("self.frequent: "+str(sortF1))
+        #print("other.frequent: "+str(sortF2))
         
         mbatch = []
+        i = 1
         for item1 in self.batch:
             sa = set(item1.value)
+            j=1
+            #flag0 = False
             for item2 in other.batch:
                 flag0 = False
                 sb = set(item2.value)
@@ -311,18 +308,15 @@ class Batch(object):
                     print(sc)
                     print("-----")
                 '''
-                    
+                lb = str(len(mbatch))
                 if len(q) >0:
                     if sa.issubset(q):
-                         #print(str(item1.count)+" sa "+str(sa))
                          item1.sign = -1
                     if sb.issubset(q):
-                         #print(str(item2.count)+" sb "+str(sb))
                          item2.sign = -1
                     #print(len(mbatch))
                     for item3 in mbatch[:]:
                         sd = set(item3.value)
-                        #print("...")
                         if sd.issubset(q) and (item3.count <= counttotal):
                             mbatch.remove(item3)
                             break
@@ -332,12 +326,14 @@ class Batch(object):
                     #print(".....................")
                 else:
                     flag0 = True
-                    
+
                 if flag0 == False:
                     #print("add "+str(counttotal)+" "+str(sc))
                     sq = sorted(q, key = lambda x: int(x))
                     mbatch.append(Node.PatternNode(sq,counttotal))
-
+                #print(str(i)+"-"+str(j)+":\t"+lb+"-"+str(len(mbatch)))
+                j +=1
+            i +=1
         for item1 in self.batch[:]:
             if item1.sign == -1:
                 #print("remove item in batch "+ str(item1.count)+" \t"+str(item1.value))
@@ -354,7 +350,7 @@ class Batch(object):
         
     def printBatch(self):
         for pattern in seft.batch:
-            print(str(pattern.count)+ " "+str(pattern.value))
+            print(str(pattern.count)+ "\t"+str(pattern.value))
 
 
 def find_frequent_patterns_batch(transactions, support_threshold):
@@ -368,8 +364,8 @@ def find_frequent_patterns_batch(transactions, support_threshold):
 #def printBatch(batch)
     
 def runBatchMerge(transactions, threshold):
-    transactions1 = transactions[2]
-    transactions2 = transactions[3]
+    transactions1 = transactions[0]
+    transactions2 = transactions[1]
     batch1 = Batch(transactions1, threshold)
     
     mining_order = sorted(batch1.batch, key=lambda x: x.count, reverse=True)
@@ -406,29 +402,109 @@ def test(transactions, threshold):
     transactions2 = transactions[1]
 
     startTime = time.time()
+    batch1 = Batch(transactions[0], threshold)
+    endTime = time.time() - startTime
+    print("BathcMerge 0 take total time: "+str(endTime))
     
-    batch1 = Batch(transactions1, threshold)
+    startTime = time.time()
+    batch2 = Batch(transactions[1], threshold)
+    endTime = time.time() - startTime
+    print("BathcMerge 1 take total time: "+str(endTime))
     
-    batch2 = Batch(transactions2, threshold)
+    startTime = time.time()
+    batch3 = Batch(transactions[2], threshold)
+    endTime = time.time() - startTime
+    print("BathcMerge 2 take total time: "+str(endTime))
     
-    batch3 = Batch(transactions1, threshold)
+    startTime = time.time()
+    batch4 = Batch(transactions[3], threshold)
+    endTime = time.time() - startTime
+    print("BathcMerge 3 take total time: "+str(endTime))
     
-    batch4 = Batch(transactions2, threshold)
+    startTime = time.time()
+    batch5 = Batch(transactions[4], threshold)
+    endTime = time.time() - startTime
+    print("BathcMerge 4 take total time: "+str(endTime))
     
-    batch5 = Batch(transactions1, threshold)
+    startTime = time.time()
+    batch6 = Batch(transactions[5], threshold)
+    endTime = time.time() - startTime
+    print("BathcMerge 5 take total time: "+str(endTime))
     
-    batch6 = Batch(transactions2, threshold)
+    startTime = time.time()
+    batch7 = Batch(transactions[6], threshold)    
+    endTime = time.time() - startTime
+    print("BathcMerge 6 take total time: "+str(endTime))
+
+    startTime = time.time()
+    batch8 = Batch(transactions[7], threshold)
+    endTime = time.time() - startTime
+    print("BathcMerge 7 take total time: "+str(endTime))
     
+    startTime = time.time()
+    batch9 = Batch(transactions[8], threshold)
+    endTime = time.time() - startTime
+    print("BathcMerge 8 take total time: "+str(endTime))
+    
+    startTime = time.time()
+    batch10 = Batch(transactions[9], threshold)
+    endTime = time.time() - startTime
+    print("BathcMerge 9 take total time: "+str(endTime))
+    
+    startTime = time.time()
     #batch3 = 
     batch1.mergeBatch(batch2)
-    
     endTime = time.time() - startTime
     print("BathcMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    #batch3 = 
+    batch1.mergeBatch(batch3)
+    endTime = time.time() - startTime
+    print("BathcMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    #batch3 = 
+    batch1.mergeBatch(batch4)
+    endTime = time.time() - startTime
+    print("BathcMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    #batch3 = 
+    batch1.mergeBatch(batch5)
+    endTime = time.time() - startTime
+    print("BathcMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    #batch3 = 
+    batch1.mergeBatch(batch6)
+    endTime = time.time() - startTime
+    print("BathcMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    #batch3 = 
+    batch1.mergeBatch(batch7)
+    endTime = time.time() - startTime
+    print("BathcMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    #batch3 = 
+    batch1.mergeBatch(batch8)
+    endTime = time.time() - startTime
+    print("BathcMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    #batch3 = 
+    batch1.mergeBatch(batch9)
+    endTime = time.time() - startTime
+    print("BathcMerge take total time: "+str(endTime))
+    
     
     for pattern in batch1.batch:
         print(" batch3: "+ str(pattern.value) +" "+ str(pattern.count))
 
 
-    endTime = time.time() - startTime
-    print("BathcMerge take total time: "+str(endTime))
+    #endTime = time.time() - startTime
+    #print("BathcMerge take total time: "+str(endTime))
+    
     return 0

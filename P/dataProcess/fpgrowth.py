@@ -827,34 +827,116 @@ def test(transactions, threshold):
     #for tran in transactions:
     #    print(" transaction: "+ str(tran))
     
-    rootTree1 = FPTree(transactions1, threshold, None, None)
+    rootTree1 = FPTree(transactions[0], threshold, None, None)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
+    #rootTree1.printPattern()
     
-    rootTree1.printPattern()
-    
-    rootTree2 = FPTree(transactions2, threshold, None, None)
+    startTime = time.time()
+    rootTree2 = FPTree(transactions[1], threshold, None, None)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
     #rootTree2.printTree()
-    rootTree2.printPattern()
+    #rootTree2.printPattern()
     
-    rootTree3 = FPTree(transactions1, threshold, None, None)
+    startTime = time.time()
+    rootTree3 = FPTree(transactions[2], threshold, None, None)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
     
-    rootTree4 = FPTree(transactions2, threshold, None, None)
+    startTime = time.time()
+    rootTree4 = FPTree(transactions[3], threshold, None, None)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
     
-    rootTree5 = FPTree(transactions1, threshold, None, None)
+    startTime = time.time()
+    rootTree5 = FPTree(transactions[4], threshold, None, None)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
     
-    rootTree6 = FPTree(transactions2, threshold, None, None)
+    startTime = time.time()
+    rootTree6 = FPTree(transactions[5], threshold, None, None)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
     
+    startTime = time.time()
+    rootTree7 = FPTree(transactions[6], threshold, None, None)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
     
+    startTime = time.time()
+    rootTree8 = FPTree(transactions[7], threshold, None, None)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    rootTree9 = FPTree(transactions[8], threshold, None, None)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
+    '''
     rootTree1.mergeTree(rootTree2)
     
+    rootTree1.mergeTree(rootTree3)
+    
+    rootTree1.mergeTree(rootTree4)
+    
+    rootTree1.mergeTree(rootTree5)
+    
+    rootTree1.mergeTree(rootTree6)
+    
+    rootTree1.mergeTree(rootTree7)
+    
+    rootTree1.mergeTree(rootTree8)
+    
+    rootTree1.mergeTree(rootTree9)
+    '''
+    
     #rootTree1.printTree()
-    rootTree1.printPattern()
-    
+    #rootTree1.printPattern()
+    startTime = time.time()
     rootTree1.BIT_FPGrowth(rootTree2)
-    
-    #patterns1 = rootTree1.mine_patterns(threshold)
-    
     endTime = time.time() - startTime
-    print("FPtreeMerge take total time: "+str(endTime)) 
+    print("FPtreeMerge take total time: "+str(endTime))    
+    
+    startTime = time.time()
+    rootTree1.BIT_FPGrowth(rootTree3)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    rootTree1.BIT_FPGrowth(rootTree4)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    rootTree1.BIT_FPGrowth(rootTree5)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    rootTree1.BIT_FPGrowth(rootTree6)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    rootTree1.BIT_FPGrowth(rootTree7)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    rootTree1.BIT_FPGrowth(rootTree8)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    rootTree1.BIT_FPGrowth(rootTree9)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    patterns1 = rootTree1.mine_patterns(threshold)
+    endTime = time.time() - startTime
+    print("mine_patterns take total time: "+str(endTime))
     
     '''
     patterns1 = find_frequent_patterns(tree3, 2)
