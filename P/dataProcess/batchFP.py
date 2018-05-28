@@ -347,7 +347,108 @@ class Batch(object):
         for item1 in mbatch:
             #print("add2 item in batch "+str(item1.count)+" \t"+str(item1.value))
             self.batch.append(item1)
+            
+    def HMergeBatch(self, other):        
+        mbatch = []
+        mbatch2 = []
+        i = 1
+        for item1 in self.batch:
+            sa = set(item1.value)
+            j=1
+            for item2 in other.batch:
+                sb = set(item2.value)
+                q = sa.intersection(sb)
+                counttotal = item1.count+ item2.count
+                lb = str(len(mbatch))
+                if len(q) >0:
+                    #print("add "+str(counttotal)+" "+str(sc))
+                    sq = sorted(q, key = lambda x: int(x))
+                    mbatch.append(Node.PatternNode(sq,counttotal))                    
+                #print(str(i)+"-"+str(j)+":\t"+lb+"-"+str(len(mbatch)))
+                j +=1
+            i +=1
+
+        print(len(mbatch))
+        #R = copy.copy(mbatch)
+        for item1 in range(len(mbatch)-1):
+            if mbatch[item1].sign ==True:
+                print("continue1\t"+str(item1))
+                continue
+                
+            sa = sorted(mbatch[item1].value)
+            for item2 in range(item1+1,len(mbatch)-1):
+                if mbatch[item2].sign ==True:
+                    continue
+                #print("000000 " + str(item1)+" "+str(item2))
+                sb = sorted(mbatch[item2].value)
+                if sa == sb:
+                    if mbatch[item1].count <= mbatch[item2].count and mbatch[item1].sign == False:
+                        mbatch[item1].sign = True
+                        #print("111111 " + str(item1)+" "+str(item2))
+                    elif mbatch[item2].count <= mbatch[item1].count and mbatch[item2].sign == False:
+                        mbatch[item2].sign = True
+                        #print("222222 " + str(item1)+" "+str(item2))
+
         
+        for item in mbatch[:]:
+            if item.sign == True:
+                mbatch.remove(item)
+            else:
+                print(str(item.count)+" \t"+str(item.value))
+        print(len(mbatch))
+        
+        #R1 = copy.copy(self.batch)
+        for item1 in self.batch[:]:
+            sa = sorted(item1.value)
+            for item2 in mbatch:
+                sb = sorted(item2.value)
+                if sa == sb and item1.count <= item2.count:
+                    print("..."+str(item2.value))
+                    self.batch.remove(item1)
+
+        print(len(self.batch))
+        
+        R2 = copy.copy(other.batch)
+        for item1 in other.batch:
+            sa = sorted(item1.value)
+            for item2 in mbatch:
+                sb = sorted(item2.value)
+                if sa == sb and item1.count <= item2.count:
+                    R2.remove(item1)
+        
+        print(len(R2))
+        self.batch.extend(R2)
+        self.batch.extend(mbatch)
+        print(len(self.batch))
+        
+    def VMergeBatch(self, other):
+        Q=[]
+        Q1=[]
+        Q2=[]
+        
+        for item1 in self.batch:
+            print(".")
+        
+        for item1 in other.batch:
+            print(".")
+        
+        for item1 in self.batch:
+            for item1 in other.batch:
+                print(".")
+        
+        for item1 in Q:
+            for item1 in Q:
+                print(".")
+        
+        for item1 in Q:
+            for item1 in Q1:
+                print(".")
+        
+        for item1 in Q:
+            for item1 in Q2:
+                print(".")
+        return 0
+                
     def printBatch(self):
         for pattern in seft.batch:
             print(str(pattern.count)+ "\t"+str(pattern.value))
@@ -364,9 +465,7 @@ def find_frequent_patterns_batch(transactions, support_threshold):
 #def printBatch(batch)
     
 def runBatchMerge(transactions, threshold):
-    transactions1 = transactions[0]
-    transactions2 = transactions[1]
-    batch1 = Batch(transactions1, threshold)
+    batch1 = Batch(transactions[0], threshold)
     
     mining_order = sorted(batch1.batch, key=lambda x: x.count, reverse=True)
     count = 0
@@ -374,7 +473,7 @@ def runBatchMerge(transactions, threshold):
         print(str(count) +"\t"+ str(pattern.count)+"\tbatch1: "+ str(pattern.value))
         count +=1
     
-    batch2 = Batch(transactions2, threshold)
+    batch2 = Batch(transactions[1], threshold)
     
     mining_order = sorted(batch2.batch, key=lambda x: x.count, reverse=True)
     count = 0
@@ -383,7 +482,7 @@ def runBatchMerge(transactions, threshold):
         count +=1
     startTime = time.time()
     
-    batch1.mergeBatch(batch2)
+    batch1.HMergeBatch(batch2)
     
     endTime = time.time() - startTime
     print("BathcMerge take total time: "+str(endTime))
@@ -398,9 +497,6 @@ def runBatchMerge(transactions, threshold):
     return 0
 
 def test(transactions, threshold):
-    transactions1 = transactions[0]
-    transactions2 = transactions[1]
-
     startTime = time.time()
     batch1 = Batch(transactions[0], threshold)
     endTime = time.time() - startTime
@@ -459,46 +555,51 @@ def test(transactions, threshold):
     
     startTime = time.time()
     #batch3 = 
-    batch1.mergeBatch(batch3)
+    batch4.HMergeBatch(batch3)
     endTime = time.time() - startTime
     print("BathcMerge take total time: "+str(endTime))
     
     startTime = time.time()
     #batch3 = 
-    batch1.mergeBatch(batch4)
+    batch6.HMergeBatch(batch5)
     endTime = time.time() - startTime
     print("BathcMerge take total time: "+str(endTime))
     
     startTime = time.time()
     #batch3 = 
-    batch1.mergeBatch(batch5)
+    batch8.HMergeBatch(batch7)
     endTime = time.time() - startTime
     print("BathcMerge take total time: "+str(endTime))
     
     startTime = time.time()
     #batch3 = 
-    batch1.mergeBatch(batch6)
+    batch10.HMergeBatch(batch9)
     endTime = time.time() - startTime
     print("BathcMerge take total time: "+str(endTime))
     
     startTime = time.time()
     #batch3 = 
-    batch1.mergeBatch(batch7)
+    batch1.HMergeBatch(batch4)
     endTime = time.time() - startTime
     print("BathcMerge take total time: "+str(endTime))
     
     startTime = time.time()
     #batch3 = 
-    batch1.mergeBatch(batch8)
+    batch6.HMergeBatch(batch8)
     endTime = time.time() - startTime
     print("BathcMerge take total time: "+str(endTime))
     
     startTime = time.time()
     #batch3 = 
-    batch1.mergeBatch(batch9)
+    batch1.HMergeBatch(batch6)
     endTime = time.time() - startTime
     print("BathcMerge take total time: "+str(endTime))
     
+    startTime = time.time()
+    #batch3 = 
+    batch1.HMergeBatch(batch10)
+    endTime = time.time() - startTime
+    print("BathcMerge take total time: "+str(endTime))
     
     for pattern in batch1.batch:
         print(" batch3: "+ str(pattern.value) +" "+ str(pattern.count))

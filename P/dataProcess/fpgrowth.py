@@ -62,7 +62,7 @@ class FPTree(object):
         """
         Build the FP tree and return the root node.
         """
-        print("build_fptree: \t root: "+str(root_value) +" \t count: "+ str(root_count))
+        #print("build_fptree: \t root: "+str(root_value) +" \t count: "+ str(root_count))
         #print("frequent "+str(frequent))
         
         root = Node.FPNode(root_value, root_count, None)
@@ -185,7 +185,7 @@ class FPTree(object):
         Append suffix to patterns in dictionary if
         we are in a conditional FP tree.
         """
-        print("zip_patterns")
+        #print("zip_patterns")
         suffix = self.root.value
 
         if suffix is not None:
@@ -202,7 +202,7 @@ class FPTree(object):
         """
         Generate a list of patterns with support counts.
         """
-        print("generate_pattern_list")
+        #print("generate_pattern_list")
         patterns = {}
         items = self.frequent.keys()
 
@@ -229,7 +229,7 @@ class FPTree(object):
         mining_order = sorted(self.frequent.keys(),
                               key=lambda x: self.frequent[x], reverse=True)
         
-        print("mine_sub_trees "+str(mining_order))
+        #print("mine_sub_trees "+str(mining_order))
 
         # Get items in tree in reverse order of occurrences.
         for item in mining_order:
@@ -276,7 +276,7 @@ class FPTree(object):
                     else:
                         patterns[pattern] = subtree_patterns[pattern]
         
-        print(len(patterns))
+        #print(len(patterns))
         return patterns
     '''
     flow of paper:
@@ -324,8 +324,8 @@ class FPTree(object):
         vItemSet = []
         #self.printTree()
         mining_order = sorted(self.frequent.keys(), key=lambda x: self.frequent[x], reverse=False)
-        print("gOrder frequent \t"+str(gOrder))
-        print("mergeTree frequent \t"+str(mining_order))
+        #print("gOrder frequent \t"+str(gOrder))
+        #print("mergeTree frequent \t"+str(mining_order))
         
         for item in mining_order:
             node = self.headers[item]
@@ -391,7 +391,7 @@ class FPTree(object):
     
     #rebuild tree with new vector of itemSet
     def v2Tree(self,itemSet, frequence):
-        print("\n V2Tree")
+        #print("\n V2Tree")
         for key in self.headers.keys():
             self.headers[key] = None
 
@@ -407,7 +407,7 @@ class FPTree(object):
         
     #merge vector itemset to tree
     def mergeV2T(self, itemSets):
-        print("\n MergeV2T")
+        #print("\n MergeV2T")
         for path in itemSets:
             #print("root of path:\t"+ str(path[-1].value))
             self.insert_path_tree(path,self.root, self.headers)
@@ -416,12 +416,12 @@ class FPTree(object):
     def BIT_FPGrowth(self, other):
         # merge frequent
         print("\n BIT_FPGrowth")
-        print("self.frequent: "+str(self.frequent))
-        print("other.frequent: "+str(other.frequent))
+        #print("self.frequent: "+str(self.frequent))
+        #print("other.frequent: "+str(other.frequent))
         
         #Merge frequent
         newFrequent = dict(Counter(self.frequent) + Counter(other.frequent))
-        print("merge.frequent: "+str(newFrequent))
+        #print("merge.frequent: "+str(newFrequent))
         
         #Sort and update frequent
         mining_order = sorted(newFrequent.keys(), key=lambda x: newFrequent[x], reverse=True)
@@ -432,7 +432,7 @@ class FPTree(object):
         
         # rebuild FPtree with new order
         newTree = self.v2Tree(vItemSet1, newFrequent)
-        newTree.printPattern()
+        #newTree.printPattern()
         
         # read other tree to itemset
         vItemSet2 = other.readItemSets(mining_order)
@@ -440,7 +440,7 @@ class FPTree(object):
         # Add other itemset to new FPtree
         newTree.mergeV2T(vItemSet2)
         
-        newTree.printPattern()
+        #newTree.printPattern()
         # return new FP tree
         return newTree
 
@@ -893,13 +893,30 @@ def test(transactions, threshold):
     
     #rootTree1.printTree()
     #rootTree1.printPattern()
+    
+    
     startTime = time.time()
     rootTree1.BIT_FPGrowth(rootTree2)
     endTime = time.time() - startTime
     print("FPtreeMerge take total time: "+str(endTime))    
     
     startTime = time.time()
-    rootTree1.BIT_FPGrowth(rootTree3)
+    rootTree4.BIT_FPGrowth(rootTree3)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
+        
+    startTime = time.time()
+    rootTree6.BIT_FPGrowth(rootTree5)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    rootTree8.BIT_FPGrowth(rootTree7)
+    endTime = time.time() - startTime
+    print("FPtreeMerge take total time: "+str(endTime))
+    
+    startTime = time.time()
+    rootTree10.BIT_FPGrowth(rootTree9)
     endTime = time.time() - startTime
     print("FPtreeMerge take total time: "+str(endTime))
     
@@ -909,30 +926,21 @@ def test(transactions, threshold):
     print("FPtreeMerge take total time: "+str(endTime))
     
     startTime = time.time()
-    rootTree1.BIT_FPGrowth(rootTree5)
+    rootTree8.BIT_FPGrowth(rootTree6)
     endTime = time.time() - startTime
     print("FPtreeMerge take total time: "+str(endTime))
-    
-    startTime = time.time()
-    rootTree1.BIT_FPGrowth(rootTree6)
-    endTime = time.time() - startTime
-    print("FPtreeMerge take total time: "+str(endTime))
-    
-    startTime = time.time()
-    rootTree1.BIT_FPGrowth(rootTree7)
-    endTime = time.time() - startTime
-    print("FPtreeMerge take total time: "+str(endTime))
-    
+
     startTime = time.time()
     rootTree1.BIT_FPGrowth(rootTree8)
     endTime = time.time() - startTime
     print("FPtreeMerge take total time: "+str(endTime))
-    
+
     startTime = time.time()
-    rootTree1.BIT_FPGrowth(rootTree9)
+    rootTree1.BIT_FPGrowth(rootTree10)
     endTime = time.time() - startTime
     print("FPtreeMerge take total time: "+str(endTime))
     
+        
     startTime = time.time()
     patterns1 = rootTree1.mine_patterns(threshold)
     endTime = time.time() - startTime

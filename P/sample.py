@@ -217,10 +217,10 @@ if __name__ == "__main__":
        
         #fpg.runFPtreeMerge(data, 2)
     
-        #bfg.runBatchMerge(data, 2)
+        bfg.runBatchMerge(data, 2)
         
-        bfg.test(data, 2)
-        
+        #bfg.test(data, 2)
+        #fpg.test(data, 2)
     elif typeR == 1:
         transactions = ior.read2RawData(path+"T10I4D100K.dat",0, 10000,1000)
         
