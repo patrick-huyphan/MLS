@@ -193,16 +193,17 @@ if __name__ == "__main__":
     #if typeR ==0 or typeR ==1:
     
     if typeR == 0:
-        transactions1 = ior.read2RawData(path+dataName[4],0, 550, 160) #8124
+        #transactions1 = ior.read2RawData(path+dataName[4],0, 550, 160) #8124
         #data.append(transactions1[0:100])
         #data.append(transactions1[200:320])
+        
         nRecord = dataSize[0][0]
         nItem = dataSize[0][1]
         runData = path+dataName[0]
+        blockSize = int(nRecord/50)
+        
         transactions3 = ior.read2RawData(runData,0, nRecord, nItem)
         
-        blockSize = int(nRecord/10)
-        print(blockSize)
         data.append(transactions3[0:blockSize])
         data.append(transactions3[(blockSize)+1:(blockSize)*2])
         data.append(transactions3[(blockSize)*2+1:(blockSize)*3])

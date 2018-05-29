@@ -103,7 +103,7 @@ class PatternNode(object):
         """
         self.value = value
         self.count = count
-        self.sign = 0
+        self.sign = False
 
     def intercept(self, other):
         value = sorted(set(other.value) & set(self.value), key = self.value.index)

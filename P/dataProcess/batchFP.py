@@ -72,9 +72,10 @@ class Batch(object):
         flag1 = False        
         sa = set(item)
         #print("item sa2 "+str(sa))
+        
         mBatch = []
         
-        for pattern in self.batch[:]:
+        for pattern in self.batch:
             flag2 = False
             #print("--"+str(sorted(pattern.value)) + " "+ str(pattern.count))
             sb = set(pattern.value)
@@ -85,7 +86,8 @@ class Batch(object):
                 #print("intersection "+str(c)+" "+ str(newNode.count))
                 if(sb.issubset(sc)):
                     #lt = str(len(self.batch))
-                    self.batch.remove(pattern)
+                    #self.batch.remove(pattern)
+                    pattern.sign = True
                     #print(lt+"-"+str(len(self.batch))+" \tremove 1 \t"+ str(pattern.count) + " "+str(sorted(pattern.value)))
                 
                 if(sa.issubset(sc)):
@@ -112,6 +114,9 @@ class Batch(object):
                 #print("add node 2\t\t"+str(pattern.count)+" "+str(count)+" "+str(ssc))
                 newNode = Node.PatternNode(list(ssc), totalCount)
                 mBatch.append(newNode)
+        for pattern in self.batch[:]:
+            if(pattern.sign == True):
+                self.batch.remove(pattern)
 
         if flag1==False:
             #print("add new node \t"+str(count) +" "+str(item))
@@ -311,9 +316,9 @@ class Batch(object):
                 lb = str(len(mbatch))
                 if len(q) >0:
                     if sa.issubset(q):
-                         item1.sign = -1
+                         item1.sign = True
                     if sb.issubset(q):
-                         item2.sign = -1
+                         item2.sign = True
                     #print(len(mbatch))
                     for item3 in mbatch[:]:
                         sd = set(item3.value)
@@ -335,12 +340,12 @@ class Batch(object):
                 j +=1
             i +=1
         for item1 in self.batch[:]:
-            if item1.sign == -1:
+            if item1.sign == True:
                 #print("remove item in batch "+ str(item1.count)+" \t"+str(item1.value))
                 self.batch.remove(item1)
         
         for item1 in other.batch:
-            if item1.sign != -1:
+            if item1.sign != True:
                 #print("add item in batch "+str(item1.count)+" \t"+str(item1.value))
                 self.batch.append(item1)
                 
@@ -350,7 +355,7 @@ class Batch(object):
             
     def HMergeBatch(self, other):        
         mbatch = []
-        mbatch2 = []
+
         i = 1
         for item1 in self.batch:
             sa = set(item1.value)
@@ -361,23 +366,24 @@ class Batch(object):
                 counttotal = item1.count+ item2.count
                 lb = str(len(mbatch))
                 if len(q) >0:
-                    #print("add "+str(counttotal)+" "+str(sc))
                     sq = sorted(q, key = lambda x: int(x))
                     mbatch.append(Node.PatternNode(sq,counttotal))                    
-                #print(str(i)+"-"+str(j)+":\t"+lb+"-"+str(len(mbatch)))
+                    #print(str(i)+"-"+str(j)+":\t"+lb+"-"+str(len(mbatch)))
                 j +=1
             i +=1
-
+        
+        print(len(self.batch))
+        print(len(other.batch))
         print(len(mbatch))
         #R = copy.copy(mbatch)
         for item1 in range(len(mbatch)-1):
-            if mbatch[item1].sign ==True:
-                print("continue1\t"+str(item1))
+            if mbatch[item1].sign == True:
+                #print("continue1\t"+str(item1))
                 continue
                 
             sa = sorted(mbatch[item1].value)
             for item2 in range(item1+1,len(mbatch)-1):
-                if mbatch[item2].sign ==True:
+                if mbatch[item2].sign == True:
                     continue
                 #print("000000 " + str(item1)+" "+str(item2))
                 sb = sorted(mbatch[item2].value)
@@ -385,27 +391,30 @@ class Batch(object):
                     if mbatch[item1].count <= mbatch[item2].count and mbatch[item1].sign == False:
                         mbatch[item1].sign = True
                         #print("111111 " + str(item1)+" "+str(item2))
-                    elif mbatch[item2].count <= mbatch[item1].count and mbatch[item2].sign == False:
+                    elif mbatch[item2].count < mbatch[item1].count and mbatch[item2].sign == False:
                         mbatch[item2].sign = True
                         #print("222222 " + str(item1)+" "+str(item2))
 
-        
         for item in mbatch[:]:
             if item.sign == True:
                 mbatch.remove(item)
-            else:
-                print(str(item.count)+" \t"+str(item.value))
+            #else:
+            #    print(str(item.count)+" \t"+str(item.value))
         print(len(mbatch))
         
         #R1 = copy.copy(self.batch)
-        for item1 in self.batch[:]:
+        for item1 in self.batch:
             sa = sorted(item1.value)
             for item2 in mbatch:
                 sb = sorted(item2.value)
                 if sa == sb and item1.count <= item2.count:
-                    print("..."+str(item2.value))
-                    self.batch.remove(item1)
+                    item1.sign = True
 
+        for item1 in self.batch[:]:
+            if item1.sign == True:
+                self.batch.remove(item1)
+                #print(str(item1.count)+"..."+str(item1.value)+"..."+str(item2.count)+"..."+str(item2.value))
+                        
         print(len(self.batch))
         
         R2 = copy.copy(other.batch)
@@ -414,7 +423,13 @@ class Batch(object):
             for item2 in mbatch:
                 sb = sorted(item2.value)
                 if sa == sb and item1.count <= item2.count:
-                    R2.remove(item1)
+                    item1.sign = True
+        for item1 in R2[:]:             
+            if item1.sign == True:
+                R2.remove(item1)
+                #print(str(item1.count)+"..."+str(item1.value)+"..."+str(item2.count)+"..."+str(item2.value))
+
+                        
         
         print(len(R2))
         self.batch.extend(R2)
