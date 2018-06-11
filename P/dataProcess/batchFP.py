@@ -354,8 +354,8 @@ class Batch(object):
             self.batch.append(item1)
             
     def HMergeBatch(self, other):        
-        mbatch = []
-
+        #mbatch = []
+        mbtm = {}
         i = 1
         for item1 in self.batch:
             sa = set(item1.value)
@@ -364,24 +364,39 @@ class Batch(object):
                 sb = set(item2.value)
                 q = sa.intersection(sb)
                 counttotal = item1.count+ item2.count
-                lb = str(len(mbatch))
+                #lb = str(len(mbatch))
                 if len(q) >0:
                     sq = sorted(q, key = lambda x: int(x))
-                    mbatch.append(Node.PatternNode(sq,counttotal))                    
+                    #mbatch.append(Node.PatternNode(sq,counttotal))                    
+                    key = tuple(sq)
+                    try:
+                        if(counttotal > mbtm[key]):
+                            #print(str(key)+"\t"+str(mbtm[key])+"\t: new: "+str(counttotal))
+                            mbtm[key] = counttotal
+                    except:
+                        mbtm[key] = counttotal
+                        pass
+                    
                     #print(str(i)+"-"+str(j)+":\t"+lb+"-"+str(len(mbatch)))
                 j +=1
             i +=1
-        
-        print(len(self.batch))
-        print(len(other.batch))
-        print(len(mbatch))
+        '''
+        k = 0
+        for item1 in mbtm.keys():
+            print(str(k)+"\txxxx\t"+str(list(item1)) +"\t"+str(mbtm[item1]))
+            k +=1
+        '''
+        print(str(len(self.batch))+"\t"+str(len(other.batch))+"\t"+str(len(mbtm)))
+        '''
         #R = copy.copy(mbatch)
         for item1 in range(len(mbatch)-1):
+            #print(".")
             if mbatch[item1].sign == True:
-                #print("continue1\t"+str(item1))
+                print("continue1\t"+str(item1))
                 continue
-                
+            
             sa = sorted(mbatch[item1].value)
+        
             for item2 in range(item1+1,len(mbatch)-1):
                 if mbatch[item2].sign == True:
                     continue
@@ -394,12 +409,19 @@ class Batch(object):
                     elif mbatch[item2].count < mbatch[item1].count and mbatch[item2].sign == False:
                         mbatch[item2].sign = True
                         #print("222222 " + str(item1)+" "+str(item2))
-
+        
+        
         for item in mbatch[:]:
             if item.sign == True:
                 mbatch.remove(item)
             #else:
             #    print(str(item.count)+" \t"+str(item.value))
+        
+        print(len(mbatch))
+        '''
+        mbatch = []
+        for item2 in mbtm.keys():
+            mbatch.append(Node.PatternNode(list(item2),mbtm[item2]))
         print(len(mbatch))
         
         #R1 = copy.copy(self.batch)
@@ -418,22 +440,26 @@ class Batch(object):
         print(len(self.batch))
         
         R2 = copy.copy(other.batch)
-        for item1 in other.batch:
+        for item1 in R2:
             sa = sorted(item1.value)
             for item2 in mbatch:
                 sb = sorted(item2.value)
                 if sa == sb and item1.count <= item2.count:
                     item1.sign = True
+        
         for item1 in R2[:]:             
             if item1.sign == True:
                 R2.remove(item1)
                 #print(str(item1.count)+"..."+str(item1.value)+"..."+str(item2.count)+"..."+str(item2.value))
 
-                        
-        
         print(len(R2))
         self.batch.extend(R2)
+        '''
+        for item2 in mbtm.keys():
+            self.batch.append(Node.PatternNode(list(item2),mbtm[item2]))
+        '''
         self.batch.extend(mbatch)
+        
         print(len(self.batch))
         
     def VMergeBatch(self, other):
@@ -483,18 +509,21 @@ def runBatchMerge(transactions, threshold):
     batch1 = Batch(transactions[0], threshold)
     
     mining_order = sorted(batch1.batch, key=lambda x: x.count, reverse=True)
+    '''
     count = 0
     for pattern in mining_order:
         print(str(count) +"\t"+ str(pattern.count)+"\tbatch1: "+ str(pattern.value))
         count +=1
-    
+    '''
     batch2 = Batch(transactions[1], threshold)
     
     mining_order = sorted(batch2.batch, key=lambda x: x.count, reverse=True)
+    '''
     count = 0
     for pattern in mining_order:
         print(str(count) +"\t"+ str(pattern.count)+"\tbatch2: "+ str(pattern.value))
         count +=1
+    '''
     startTime = time.time()
     
     batch1.HMergeBatch(batch2)

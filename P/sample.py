@@ -200,7 +200,7 @@ if __name__ == "__main__":
         nRecord = dataSize[0][0]
         nItem = dataSize[0][1]
         runData = path+dataName[0]
-        blockSize = int(nRecord/50)
+        blockSize = int(nRecord/10)
         
         transactions3 = ior.read2RawData(runData,0, nRecord, nItem)
         
@@ -215,10 +215,8 @@ if __name__ == "__main__":
         data.append(transactions3[(blockSize)*8+1:(blockSize)*9])
         data.append(transactions3[(blockSize)*9+1:(blockSize)*10])
     
-       
-        #fpg.runFPtreeMerge(data, 2)
-    
-        bfg.runBatchMerge(data, 2)
+        bfg.runBatchMerge(data, 0)
+        fpg.runFPtreeMerge(data, 0)
         
         #bfg.test(data, 2)
         #fpg.test(data, 2)
