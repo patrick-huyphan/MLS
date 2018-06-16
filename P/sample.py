@@ -216,7 +216,7 @@ if __name__ == "__main__":
         data.append(transactions3[(blockSize)*9+1:(blockSize)*10])
     
         bfg.runBatchMerge(data, 0)
-        fpg.runFPtreeMerge(data, 0)
+        #fpg.runFPtreeMerge(data, 1)
         
         #bfg.test(data, 2)
         #fpg.test(data, 2)
