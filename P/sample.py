@@ -156,23 +156,24 @@ if __name__ == "__main__":
     
     typeR = cf.getRunningConfig(path+"config.txt")
     
-    dataName = ["T10I4D100K.dat",
-                "accidents.dat",
-                "connect.dat",
+    dataName = ["T10I4D100K.dat", #
+                "accidents.dat", #
+                "connect.dat", #
+                "retail.dat",#
                 "kosarak.dat",
                 "mushroom.dat",
                 "pumsb.dat",
-                "pumsb_star.dat",
-                "retail.dat"]
+                "pumsb_star.dat"
+                ]
                 
-    dataSize = [[10000, 1000],
+    dataSize = [[100000, 1000],
                 [340183, 1000],
                 [67557, 1000],
+                [88162, 1000],
                 [990002, 1000],
                 [8124, 1000],
                 [49046, 1000],
-                [49046, 1000],
-                [88162, 1000]]
+                [49046, 1000]]
     #cf.pythonVer()
     
     #linear.lnr()
@@ -196,14 +197,26 @@ if __name__ == "__main__":
         #transactions1 = ior.read2RawData(path+dataName[4],0, 550, 160) #8124
         #data.append(transactions1[0:100])
         #data.append(transactions1[200:320])
+        coreNum = 100
+        while coreNum >1:
+            for dataset in range(7):
+                nRecord = dataSize[dataset][0]
+                nItem = dataSize[dataset][1]
+                runData = path+dataName[dataset]
+                blockSize = int(nRecord/coreNum)
+                transactions3 = ior.read2RawData(runData,0, nRecord, nItem)
+                print("Num of core: "+str(coreNum)+"\tdataset: "+dataName[dataset])
+                for i in range(coreNum):
+                    if i ==0:
+                        #print(str(i)+" "+str(blockSize)+" "+str(blockSize*i) +" "+ str(blockSize*(i+1)))
+                        data.append(transactions3[0:blockSize*(i+1)])
+                    else:
+                        #print(str(i)+" "+str(blockSize)+" "+str(blockSize*i+1) +" "+ str(blockSize*(i+1)))
+                        data.append(transactions3[(blockSize)*i+1:blockSize*(i+1)])   
+                bfg.test_3(data, 0)
+                coreNum -=2
         
-        nRecord = dataSize[0][0]
-        nItem = dataSize[0][1]
-        runData = path+dataName[0]
-        blockSize = int(nRecord/10)
-        
-        transactions3 = ior.read2RawData(runData,0, nRecord, nItem)
-        
+        '''    
         data.append(transactions3[0:blockSize])
         data.append(transactions3[(blockSize)+1:(blockSize)*2])
         data.append(transactions3[(blockSize)*2+1:(blockSize)*3])
@@ -214,11 +227,14 @@ if __name__ == "__main__":
         data.append(transactions3[(blockSize)*7+1:(blockSize)*8])
         data.append(transactions3[(blockSize)*8+1:(blockSize)*9])
         data.append(transactions3[(blockSize)*9+1:(blockSize)*10])
-    
-        bfg.runBatchMerge(data, 0)
+        '''
+        #bfg.runBatchMerge(data, 0)
         #fpg.runFPtreeMerge(data, 1)
         
-        #bfg.test(data, 2)
+        
+        
+        #bfg.test_2(data, 0)
+        
         #fpg.test(data, 2)
     elif typeR == 1:
         transactions = ior.read2RawData(path+"T10I4D100K.dat",0, 10000,1000)
