@@ -140,6 +140,20 @@ def linuxDataPath():
 def winDataPath():
     return 
 '''
+def test(coreNum, dataSet, nRecord, blockSize):
+    data = []
+    transactions = ior.read2RawData(dataSet,0, nRecord, 2000)
+    
+    print(str(dataSet)+" "+str(nRecord))
+    for i in range(coreNum):
+        if i ==0:
+            #print(str(i)+" "+str(blockSize)+" "+str(blockSize*i) +" "+ str(blockSize*(i+1)))
+            data.append(transactions[0:blockSize*(i+1)])
+        else:
+            #print(str(i)+" "+str(blockSize)+" "+str(blockSize*i+1) +" "+ str(blockSize*(i+1)))
+            data.append(transactions[(blockSize)*i+1:blockSize*(i+1)])   
+    bfg.test_3(data, 0)
+    return 0
 
 if __name__ == "__main__":
     print("main start")
@@ -156,24 +170,23 @@ if __name__ == "__main__":
     
     typeR = cf.getRunningConfig(path+"config.txt")
     
-    dataName = ["T10I4D100K.dat", #
-                "accidents.dat", #
-                "connect.dat", #
-                "retail.dat",#
-                "kosarak.dat",
-                "mushroom.dat",
+    dataName = [#"T10I4D100K.dat", #
+                #"retail.dat",#
+                "kosarak.dat",#
+                #"connect.dat", #
                 "pumsb.dat",
-                "pumsb_star.dat"
-                ]
+                "pumsb_star.dat",
+                #"accidents.dat",
+                "mushroom.dat"]
                 
-    dataSize = [[100000, 1000],
-                [340183, 1000],
-                [67557, 1000],
-                [88162, 1000],
-                [990002, 1000],
-                [8124, 1000],
-                [49046, 1000],
-                [49046, 1000]]
+    dataSize = [#[100000, 1000],#0
+                #[88162, 1000],#2
+                [990002, 1000],#2
+                #[67557, 1000],#7
+                [49046, 1000],#6
+                [49046, 1000],#6
+                #[340183, 1000],#3
+                [8124, 1000]]#4
     #cf.pythonVer()
     
     #linear.lnr()
@@ -197,24 +210,17 @@ if __name__ == "__main__":
         #transactions1 = ior.read2RawData(path+dataName[4],0, 550, 160) #8124
         #data.append(transactions1[0:100])
         #data.append(transactions1[200:320])
-        coreNum = 100
-        while coreNum >1:
-            for dataset in range(7):
+        coreNum = 2000
+
+        while coreNum >0:
+            for dataset in range(8):
                 nRecord = dataSize[dataset][0]
-                nItem = dataSize[dataset][1]
-                runData = path+dataName[dataset]
+                #nItem = dataSize[dataset][1]
+                runDataSet = path+dataName[dataset]
                 blockSize = int(nRecord/coreNum)
-                transactions3 = ior.read2RawData(runData,0, nRecord, nItem)
-                print("Num of core: "+str(coreNum)+"\tdataset: "+dataName[dataset])
-                for i in range(coreNum):
-                    if i ==0:
-                        #print(str(i)+" "+str(blockSize)+" "+str(blockSize*i) +" "+ str(blockSize*(i+1)))
-                        data.append(transactions3[0:blockSize*(i+1)])
-                    else:
-                        #print(str(i)+" "+str(blockSize)+" "+str(blockSize*i+1) +" "+ str(blockSize*(i+1)))
-                        data.append(transactions3[(blockSize)*i+1:blockSize*(i+1)])   
-                bfg.test_3(data, 0)
-                coreNum -=2
+                print("============Num of core: "+str(coreNum)+"\tdataset: "+dataName[dataset])
+                test(coreNum, runDataSet, nRecord, blockSize)
+            coreNum -=2
         
         '''    
         data.append(transactions3[0:blockSize])

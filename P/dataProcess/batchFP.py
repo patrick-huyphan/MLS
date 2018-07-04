@@ -45,8 +45,10 @@ class Batch(object):
         """
         Build patern.
         """
+        #print("build_batch "+str(len(transactions)))
         #batchtmp = []
         for transaction in transactions:
+            #print(transaction)
             sorted_items = [x for x in transaction if x in frequent]
             #print("sorted_items "+str(sorted_items))
             if len(sorted_items) > 0:
@@ -793,6 +795,7 @@ def test_2(transactions, threshold):
     
 def test_3(transactions, threshold):
     i = 0
+    #print("=====================\t"+ str(len(transactions)))
     for transaction in transactions:
         startTime = time.time()
         Batch(transaction, threshold)
