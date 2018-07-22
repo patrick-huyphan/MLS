@@ -8,6 +8,7 @@ import itertools
 import dataProcess.Node as Node
 import time
 import copy
+from datetime import datetime
 
 class Batch(object):
     def __init__(self, transactions, threshold):
@@ -519,7 +520,14 @@ class Batch(object):
         for pattern in seft.batch:
             print(str(pattern.count)+ "\t"+str(pattern.value))
 
-
+    def save(parttern):
+        path = ""
+        return path
+    
+    def load(path):
+        pattern
+        return pattern
+    
 def find_frequent_patterns_batch(transactions, support_threshold):
     """
     Given a set of transactions, find the patterns in it
@@ -617,6 +625,36 @@ def test(transactions, threshold):
     print("Build Bath 9 take total time: "+str(endTime))
     
     startTime = time.time()
+    batch11 = Batch(transactions[10], threshold)
+    endTime = time.time() - startTime
+    print("Build Bath 10 take total time: "+str(endTime))
+    
+    startTime = time.time()
+    batch12 = Batch(transactions[11], threshold)
+    endTime = time.time() - startTime
+    print("Build Bath 11 take total time: "+str(endTime))
+    
+    startTime = time.time()
+    batch13 = Batch(transactions[12], threshold)
+    endTime = time.time() - startTime
+    print("Build Bath 12 take total time: "+str(endTime))
+    
+    startTime = time.time()
+    batch14 = Batch(transactions[13], threshold)
+    endTime = time.time() - startTime
+    print("Build Bath 13 take total time: "+str(endTime))
+    
+    startTime = time.time()
+    batch15 = Batch(transactions[14], threshold)
+    endTime = time.time() - startTime
+    print("Build Bath 14 take total time: "+str(endTime))
+    
+    startTime = time.time()
+    batch16 = Batch(transactions[15], threshold)
+    endTime = time.time() - startTime
+    print("Build Bath 15 take total time: "+str(endTime))
+    
+    startTime = time.time()
     #batch3 = 
     batch1.HMergeBatch(batch2)
     endTime = time.time() - startTime
@@ -648,31 +686,68 @@ def test(transactions, threshold):
     
     startTime = time.time()
     #batch3 = 
+    batch11.HMergeBatch(batch12)
+    endTime = time.time() - startTime
+    print("BathcMerge(11-12) take total time: "+str(endTime))
+    
+    startTime = time.time()
+    #batch3 = 
+    batch13.HMergeBatch(batch14)
+    endTime = time.time() - startTime
+    print("BathcMerge(13-14) take total time: "+str(endTime))
+    
+    startTime = time.time()
+    #batch3 = 
+    batch15.HMergeBatch(batch16)
+    endTime = time.time() - startTime
+    print("BathcMerge(15-16) take total time: "+str(endTime))
+    
+    startTime = time.time()
+    #batch3 = 
     batch1.HMergeBatch(batch4)
     endTime = time.time() - startTime
-    print("BathcMerge(1-3) take total time: "+str(endTime))
+    print("BathcMerge(12-34) take total time: "+str(endTime))
     
     startTime = time.time()
     #batch3 = 
     batch6.HMergeBatch(batch8)
     endTime = time.time() - startTime
-    print("BathcMerge(5-7) take total time: "+str(endTime))
+    print("BathcMerge(56-78) take total time: "+str(endTime))
+    
+    startTime = time.time()
+    #batch3 = 
+    batch10.HMergeBatch(batch11)
+    endTime = time.time() - startTime
+    print("BathcMerge(910-1112) take total time: "+str(endTime))
+    
+    startTime = time.time()
+    #batch3 = 
+    batch13.HMergeBatch(batch15)
+    endTime = time.time() - startTime
+    print("BathcMerge(1314-1516) take total time: "+str(endTime))
     
     startTime = time.time()
     #batch3 = 
     batch1.HMergeBatch(batch6)
     endTime = time.time() - startTime
-    print("BathcMerge(1-5) take total time: "+str(endTime))
+    print("BathcMerge(1-8) take total time: "+str(endTime))
+    
+    startTime = time.time()
+    #batch3 = 
+    batch10.HMergeBatch(batch13)
+    endTime = time.time() - startTime
+    print("BathcMerge(9-16) take total time: "+str(endTime))
     
     startTime = time.time()
     #batch3 = 
     batch1.HMergeBatch(batch10)
     endTime = time.time() - startTime
-    print("BathcMerge(1-9) take total time: "+str(endTime))
+    print("BathcMerge(1-16) take total time: "+str(endTime))
     
+    '''
     for pattern in batch1.batch:
         print(" batch3: "+ str(pattern.value) +" "+ str(pattern.count))
-
+    '''
 
     #endTime = time.time() - startTime
     #print("BathcMerge take total time: "+str(endTime))
@@ -800,6 +875,6 @@ def test_3(transactions, threshold):
         startTime = time.time()
         Batch(transaction, threshold)
         endTime = time.time() - startTime
-        print(str(i)+" Build Bath take: "+str(endTime))
+        print(str(i)+"\t"+str(endTime))
         i +=1
     return 0

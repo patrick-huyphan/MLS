@@ -21,7 +21,7 @@ import dataProcess.Node as node
 from pyspark import SparkContext, SparkConf
 from pyspark.mllib.fpm import FPGrowth
 from operator import add
-
+from datetime import datetime
 
 
 from numpy import arange,array,ones,linalg
@@ -144,8 +144,8 @@ def test(coreNum, dataSet, nRecord, blockSize):
     data = []
     transactions = ior.read2RawData(dataSet,0, nRecord, 2000)
     
-    print(str(dataSet)+" "+str(nRecord))
-    for i in range(coreNum):
+    print(str(dataSet)+" "+str(nRecord) +"\t("+str(datetime.now())+")")
+    for i in range(int(coreNum)):
         if i ==0:
             #print(str(i)+" "+str(blockSize)+" "+str(blockSize*i) +" "+ str(blockSize*(i+1)))
             data.append(transactions[0:blockSize*(i+1)])
@@ -155,6 +155,35 @@ def test(coreNum, dataSet, nRecord, blockSize):
     bfg.test_3(data, 0)
     return 0
 
+def test2(coreNum, transactions, blockSize):
+    data = []
+    for i in range(int(coreNum)):
+        if i ==0:
+            #print(str(i)+" "+str(blockSize)+" "+str(blockSize*i) +" "+ str(blockSize*(i+1)))
+            data.append(transactions[0:blockSize*(i+1)])
+        else:
+            #print(str(i)+" "+str(blockSize)+" "+str(blockSize*i+1) +" "+ str(blockSize*(i+1)))
+            data.append(transactions[(blockSize)*i+1:blockSize*(i+1)])   
+    #bfg.test_3(data, 0)
+    bfg.test(data,0)
+    return 0
+    
+def testFpg(transactions, blockSize):
+    data = []
+    '''
+    for i in range(int(coreNum)):
+        if i ==0:
+            #print(str(i)+" "+str(blockSize)+" "+str(blockSize*i) +" "+ str(blockSize*(i+1)))
+            data.append(transactions[0:blockSize*(i+1)])
+        else:
+            #print(str(i)+" "+str(blockSize)+" "+str(blockSize*i+1) +" "+ str(blockSize*(i+1)))
+            data.append(transactions[(blockSize)*i+1:blockSize*(i+1)])   
+    '''
+    data.append(transactions[0:blockSize])
+    data.append(transactions[blockSize+1:blockSize*2])
+    fpg.test_3(data, 0)
+    return 0
+    
 if __name__ == "__main__":
     print("main start")
 
@@ -170,23 +199,25 @@ if __name__ == "__main__":
     
     typeR = cf.getRunningConfig(path+"config.txt")
     
-    dataName = [#"T10I4D100K.dat", #
-                #"retail.dat",#
+    dataName = ["T10I4D100K.dat", #
+                "retail.dat",#
+                "pumsb_star.dat",#
+                "pumsb.dat",#
                 "kosarak.dat",#
-                #"connect.dat", #
-                "pumsb.dat",
-                "pumsb_star.dat",
-                #"accidents.dat",
-                "mushroom.dat"]
+                "mushroom.dat",
+                "connect.dat",#
+                "accidents.dat"
+                ]
                 
-    dataSize = [#[100000, 1000],#0
-                #[88162, 1000],#2
-                [990002, 1000],#2
-                #[67557, 1000],#7
-                [49046, 1000],#6
-                [49046, 1000],#6
-                #[340183, 1000],#3
-                [8124, 1000]]#4
+    dataSize = [[100000, 1000],
+                [88162, 1000],
+                [49046, 1000],
+                [49046, 1000],
+                [990002, 1000],
+                [8124, 1000],
+                [67557, 1000],
+                [340183, 1000]
+                ]
     #cf.pythonVer()
     
     #linear.lnr()
@@ -210,18 +241,66 @@ if __name__ == "__main__":
         #transactions1 = ior.read2RawData(path+dataName[4],0, 550, 160) #8124
         #data.append(transactions1[0:100])
         #data.append(transactions1[200:320])
-        coreNum = 2000
-
-        while coreNum >0:
-            for dataset in range(8):
+        '''
+        coreNum = 4
+        while coreNum >2:
+            for dataset in range(1,2):
                 nRecord = dataSize[dataset][0]
-                #nItem = dataSize[dataset][1]
                 runDataSet = path+dataName[dataset]
                 blockSize = int(nRecord/coreNum)
                 print("============Num of core: "+str(coreNum)+"\tdataset: "+dataName[dataset])
                 test(coreNum, runDataSet, nRecord, blockSize)
-            coreNum -=2
+            coreNum = coreNum/2
+        '''
+        '''
+        coreNum = 1024
+        while coreNum >8:
+            for dataset in range(2,6):
+                nRecord = dataSize[dataset][0]
+                runDataSet = path+dataName[dataset]
+                blockSize = int(nRecord/coreNum)
+                print("============Num of core: "+str(coreNum)+"\tdataset: "+dataName[dataset])
+                test(coreNum, runDataSet, nRecord, blockSize)
+            coreNum = coreNum/2
+        '''
         
+        dataset = 0
+        nRecord = dataSize[dataset][0]
+        runDataSet = path+dataName[dataset]
+        transactions = ior.read2RawData(runDataSet,0, nRecord, 2000)
+        coreNum = 16
+        blockSize = int(nRecord/coreNum)
+        test2(coreNum, transactions, blockSize)
+        
+        '''
+        
+        while(blockSize < nRecord/2):
+            print("============ "+str(blockSize))
+            testFpg(transactions, blockSize)
+            blockSize = blockSize*2
+        '''
+        
+        '''
+        coreNum = 8192
+        while coreNum >4:
+            blockSize = int(nRecord/coreNum)
+            print("============Num of core: "+str(coreNum)+"\tdataset: "+dataName[dataset] +" "+str(nRecord) +"\t("+str(datetime.now())+")")
+            #print(str(dataSet)+" "+str(nRecord) +"\t("+str(datetime.now())+")")
+            testFpg(coreNum, transactions, blockSize)
+            coreNum = coreNum/2
+        '''
+        
+        '''
+        coreNum = 8192 #4096 
+        while coreNum >32:
+            #for dataset in range(6,8):
+            nRecord = dataSize[7][0]
+            runDataSet = path+dataName[7]
+            blockSize = int(nRecord/coreNum)
+            print("============Num of core: "+str(coreNum)+"\tdataset: "+dataName[7])
+            test(coreNum, runDataSet, nRecord, blockSize)
+            coreNum = coreNum/2
+        '''
         '''    
         data.append(transactions3[0:blockSize])
         data.append(transactions3[(blockSize)+1:(blockSize)*2])

@@ -320,7 +320,7 @@ class FPTree(object):
         
     # read itemSet to vector and arange with gOrder
     def readItemSets(self, gOrder):
-        print("\n ReadItemSets")
+        #print("\n ReadItemSets")
         vItemSet = []
         #self.printTree()
         mining_order = sorted(self.frequent.keys(), key=lambda x: self.frequent[x], reverse=False)
@@ -384,7 +384,7 @@ class FPTree(object):
         # add new header
         for item in gOrder:
             if item not in self.headers.keys():
-                print("add key "+str(item))
+                #print("add key "+str(item))
                 self.headers[item] = None
                 
         return rvItemSet
@@ -960,3 +960,23 @@ def test(transactions, threshold):
     '''
     return 0
     
+def test_3(transactions, threshold):
+    i = 0
+    #print("=====================\t"+ str(len(transactions)))
+    #for transaction in transactions:
+    startTime = time.time()
+    rootTree = FPTree(transactions[0], threshold, None, None)
+    
+    rootTree2 = FPTree(transactions[1], threshold, None, None)
+    #endTime = time.time() - startTime
+    #print(str(i)+"\t"+str(endTime))
+    
+    rootTree.BIT_FPGrowth(rootTree2)
+    
+    #startTime = time.time()
+    rootTree.mine_patterns(threshold)
+    endTime = time.time() - startTime
+    print(str(i)+" mine_patterns take total time: "+str(endTime))
+    #i +=1
+        
+    return 0
